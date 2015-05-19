@@ -185,7 +185,7 @@ public class Parser {
 
         if (paragraph != null && infile != null) {
 
-            File newDir = new File(wDir + File.separator + FilenameUtils.removeExtension(infile.getName()));
+            File newDir = new File(wDir + File.separator + "Corporae" + File.separator + FilenameUtils.removeExtension(infile.getName()));
             System.out.println("Folder: " + newDir);
 
             if (!newDir.exists()) {

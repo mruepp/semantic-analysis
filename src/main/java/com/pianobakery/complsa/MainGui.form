@@ -73,7 +73,7 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
-                  <text value="Next"/>
+                  <text value="Parse"/>
                 </properties>
               </component>
               <component id="173c3" class="javax.swing.JLabel">
