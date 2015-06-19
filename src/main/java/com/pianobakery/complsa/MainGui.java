@@ -1,16 +1,11 @@
 package com.pianobakery.complsa;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.tika.exception.TikaException;
 import org.xml.sax.SAXException;
-
 import javax.swing.*;
-import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +13,7 @@ import java.util.Arrays;
 
 
 /**
- * Created by michael on 16.05.15.
+ * Created by michael ruepp on 16.05.15.
  */
 public class MainGui {
     private JPanel mainPanel;
@@ -323,7 +318,6 @@ public class MainGui {
 
 
 
-
     //ProjectFolder
     public void createNewProjectFolder(){
 
@@ -400,6 +394,7 @@ public class MainGui {
     }
 
 
+
     //Enable and Disable UI Conditionally until wDir is set
     private void enableUIElements(boolean enabled) {
         //enable all Components as long as wDir is not set.
@@ -413,7 +408,7 @@ public class MainGui {
     }
 
 
-
+    //Manual UI Construction
     private void createUIComponents() {
         this.setListModel(new DefaultListModel());
         System.out.println("Liste ist: " + getListModel().toString());
