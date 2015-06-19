@@ -33,6 +33,7 @@ public class MainGui {
     private JComboBox selectTrainCorp;
     private JPanel searchDocs;
     private JButton removeCorpusButton;
+    private JCheckBox addCorpRecursiveCheckBox;
     private DefaultListModel listModel;
     private File[] files;
     private File wDir;
@@ -142,16 +143,25 @@ public class MainGui {
             public void actionPerformed(ActionEvent e) {
                 chooseNewProjectFolder();
 
-
             }
         });
 
         addTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                File folder = chooseAddCorpusFolder();
 
-                try {
-                    AddCorpusDialog dialog = new AddCorpusDialog();
-                    dialog.showDialog();
+                if (folder != null) {
+                    System.out.println("Corpus Folder chosen: " + folder.toString());
+
+                }
+
+                                //chooseAddCorpusFolder();
+
+                /*try {
+
+
+                    //AddCorpusDialog dialog = new AddCorpusDialog();
+                    //dialog.showDialog();
 
                     /*JFileChooser chooser = new JFileChooser();
                     chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
@@ -166,12 +176,12 @@ public class MainGui {
                             listModel.addElement(f.toString ());
                         }
 
-                    }*/
+                    }
 
 
                 } catch(Exception ex){
                     JOptionPane.showMessageDialog(null, "Falsche Eingabe");
-                }
+                }*/
 
             }
         });
@@ -391,6 +401,37 @@ public class MainGui {
         }
 
 
+    }
+
+    public File chooseAddCorpusFolder(){
+
+        try {
+
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+            chooser.setDialogTitle("Create Working Folder");
+            chooser.setFileHidingEnabled(Boolean.TRUE);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setMultiSelectionEnabled(false);
+            chooser.setAcceptAllFileFilterUsed(false);
+            int whatChoose =  chooser.showOpenDialog(null);
+            File selected;
+            if(whatChoose == JFileChooser.APPROVE_OPTION ) {
+                //String text = chooser.getSelectedFile().toString();
+                //wDirText.setText(text);
+                selected = chooser.getSelectedFile();
+                System.out.println("AddCorpDir is: " + selected.toString());
+                System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+                System.out.println("getSelectedFile() : " +  chooser.getSelectedFile());
+                enableUIElements(true);
+                return selected;
+            }
+
+        } catch(Exception ex){
+            JOptionPane.showMessageDialog(null, "Falsche Eingabe");
+        }
+
+        return null;
     }
 
 
