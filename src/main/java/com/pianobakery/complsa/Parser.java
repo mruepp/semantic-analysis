@@ -1,16 +1,9 @@
 package com.pianobakery.complsa;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.tika.example.ContentHandlerExample;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.language.LanguageIdentifier;
 import org.apache.tika.metadata.Metadata;
@@ -21,20 +14,14 @@ import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.apache.commons.io.FilenameUtils;
 
-import javax.swing.*;
+
 
 
 /**
  * Created by michael on 16.05.15.
  */
 public class Parser {
-
-
-
-
-
 
 
     public String parseDocToPlainText(File infile) throws IOException, SAXException, TikaException {
@@ -65,7 +52,7 @@ public class Parser {
 
         try {
             parser.parse(stream, handler, metadata);
-            logger.debug
+            //logger.debug
             return handler.toString();
         }finally {
             stream.close();
@@ -73,38 +60,12 @@ public class Parser {
         }
     }
 
-    public List<String> parseToPlainTextChunks(File infile, int maxchunks) throws IOException, SAXException, TikaException {
-        final List<String> chunks = new ArrayList<String>();
-        chunks.add("");
-        ContentHandlerDecorator handler = new ContentHandlerDecorator() {
-            @Override
-            public void characters(char[] ch, int start, int length) {
-                String lastChunk = chunks.get(chunks.size()-1);
-                String thisStr = new String(ch, start, length);
-
-                if (lastChunk.length()+length > maxchunks) {
-                    chunks.add(thisStr);
-                } else {
-                    chunks.set(chunks.size()-1, lastChunk+thisStr);
-                }
-            }
-        };
-
-        TikaInputStream stream = TikaInputStream.get(infile);
-        AutoDetectParser parser = new AutoDetectParser();
-        Metadata metadata = new Metadata();
-        try {
-            parser.parse(stream, handler, metadata);
-            return chunks;
-        } finally {
-            stream.close();
-        }
-    }
 
 
 
 
-    public Metadata getMetaData(File infile) {
+
+    public Metadata getMetaData(File infile) throws IOException, SAXException, TikaException {
 
         BodyContentHandler handler = new BodyContentHandler();
         TikaInputStream stream = TikaInputStream.get(infile);

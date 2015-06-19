@@ -16,15 +16,23 @@
           </grid>
           <forms defaultalign-vert="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <enabled value="true"/>
+        </properties>
         <border type="none"/>
         <children>
-          <grid id="6a08a" binding="impDocPanel" layout-manager="FormLayout">
+          <grid id="6a08a" binding="setupPanel" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:d:noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
-            <rowspec value="center:d:grow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <colspec value="fill:d:noGrow"/>
@@ -34,46 +42,23 @@
             <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:max(d;4px):grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
             <constraints>
-              <tabbedpane title="Split Documents"/>
+              <tabbedpane title="Setup"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="2f310" class="javax.swing.JButton" binding="newButton">
+              <component id="2f310" class="javax.swing.JButton" binding="newFolderButton">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="New"/>
-                </properties>
-              </component>
-              <component id="ba6b0" class="javax.swing.JButton" binding="addDocumentsButton" default-binding="true">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text value="Add Documents"/>
-                </properties>
-              </component>
-              <component id="2f271" class="javax.swing.JButton" binding="removeDocumentsButton" default-binding="true">
-                <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text value="Remove Documents"/>
-                </properties>
-              </component>
-              <component id="8c734" class="javax.swing.JButton" binding="impNextButton">
-                <constraints>
-                  <grid row="6" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties>
-                  <text value="Parse"/>
+                  <text value="New Folder"/>
                 </properties>
               </component>
               <component id="173c3" class="javax.swing.JLabel">
@@ -82,47 +67,107 @@
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
-                  <text value="Project Folder"/>
+                  <text value="Project Folder:"/>
                 </properties>
               </component>
-              <component id="84e37" class="javax.swing.JButton" binding="selectButton" default-binding="true">
+              <component id="84e37" class="javax.swing.JButton" binding="selectFolderButton">
                 <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Select"/>
+                  <text value="Select Folder"/>
                 </properties>
               </component>
               <component id="9a656" class="javax.swing.JTextField" binding="wDirText">
                 <constraints>
-                  <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
                   <editable value="false"/>
-                  <text value="Choose or create Project Folder"/>
+                  <text value="Create or select Project Folder"/>
                 </properties>
               </component>
-              <scrollpane id="2e7d8">
+              <component id="8bcb8" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-vert="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="11" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
                 </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="a4c4a" class="javax.swing.JList" binding="impDocList" custom-create="true">
-                    <constraints/>
-                    <properties/>
-                  </component>
-                </children>
-              </scrollpane>
+                <properties>
+                  <text value="The Project Folder contains the Topic Corpora and the Working Corpus. Please delete the folder manually if necessary."/>
+                </properties>
+              </component>
+              <component id="b19fc" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="8" column="0" row-span="1" col-span="11" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Arrange your Corpus in a Folder. Then add or remove a Topic Corpus Folder."/>
+                </properties>
+              </component>
+              <component id="ba6b0" class="javax.swing.JButton" binding="addTopicCorpusButton">
+                <constraints>
+                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <text value=" Add Corpus"/>
+                </properties>
+              </component>
+              <component id="cc3cc" class="javax.swing.JComboBox" binding="selectTrainCorp">
+                <constraints>
+                  <grid row="10" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                </properties>
+              </component>
+              <component id="e9d90" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Training Corpora:"/>
+                </properties>
+              </component>
+              <component id="2f271" class="javax.swing.JButton" binding="removeTopicCorpusButton">
+                <constraints>
+                  <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <text value="Rename Corpus"/>
+                </properties>
+              </component>
+              <component id="8c734" class="javax.swing.JButton" binding="impNextButton">
+                <constraints>
+                  <grid row="12" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="Train "/>
+                </properties>
+              </component>
+              <component id="8575b" class="javax.swing.JButton" binding="removeCorpusButton" default-binding="true">
+                <constraints>
+                  <grid row="10" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Remove Corpus"/>
+                </properties>
+              </component>
             </children>
           </grid>
-          <grid id="2044a" layout-manager="FormLayout">
+          <grid id="2044a" binding="searchDocs" layout-manager="FormLayout">
             <rowspec value="center:d:noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
@@ -136,7 +181,9 @@
             <constraints>
               <tabbedpane title="Parse Documents"/>
             </constraints>
-            <properties/>
+            <properties>
+              <enabled value="true"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="1f440" class="javax.swing.JLabel">
