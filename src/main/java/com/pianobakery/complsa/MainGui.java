@@ -1,15 +1,26 @@
 package com.pianobakery.complsa;
 
+import com.sun.codemodel.internal.JOp;
+import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.tika.exception.TikaException;
 import org.xml.sax.SAXException;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Random;
 
 
 /**
@@ -34,6 +45,7 @@ public class MainGui {
     private JPanel searchDocs;
     private JButton removeCorpusButton;
     private JCheckBox addCorpRecursiveCheckBox;
+    private JCheckBox createChunksCheckBox;
     private DefaultListModel listModel;
     private File[] files;
     private File wDir;
@@ -149,39 +161,90 @@ public class MainGui {
         addTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 File folder = chooseAddCorpusFolder();
+                File newDir = new File(wDir + File.separator + "TopicCorp" + File.separator + folder.getName());
+                System.out.println("Corpus Folder: " + folder.toString());
+                System.out.println("Import Folder: " + newDir.toString());
+                System.out.println("Working Folder : " + wDir.toString());
+                System.out.println("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
 
-                if (folder != null) {
-                    System.out.println("Corpus Folder chosen: " + folder.toString());
+                //Create Corpus Folder
+                if (!newDir.exists()) {
 
-                }
+                    System.out.println("Creating directory: " + newDir);
+                    boolean result = false;
 
-                                //chooseAddCorpusFolder();
+                    try {
+                        FileUtils.forceMkdir(newDir);
+                        result = true;
+                    } catch (SecurityException se) {
+                        JOptionPane.showMessageDialog(null, "No permission or File Exists");
 
-                /*try {
+                        //return Boolean.FALSE;
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    if (result) {
+                        System.out.println("DIR created");
+                    }
+                } else {
 
-
-                    //AddCorpusDialog dialog = new AddCorpusDialog();
-                    //dialog.showDialog();
-
-                    /*JFileChooser chooser = new JFileChooser();
-                    chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
-                    chooser.setDialogTitle("Add Documents");
-                    chooser.setMultiSelectionEnabled(true);
-                    int whatChoose =  chooser.showOpenDialog(null);
-
-                    if(whatChoose == JFileChooser.APPROVE_OPTION ) {
-                        files = chooser.getSelectedFiles();
-                        System.out.println("Dateipfad ist: " + Arrays.toString(files));
-                        for(File f : files){
-                            listModel.addElement(f.toString ());
-                        }
-
+                    int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Topic Corpus? You have to re-train!");
+                    System.out.println("DIR not created");
+                    if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
+                        return;
                     }
 
 
-                } catch(Exception ex){
-                    JOptionPane.showMessageDialog(null, "Falsche Eingabe");
-                }*/
+                }
+
+                //Run recursive import
+                if (folder != null && addCorpRecursiveCheckBox.isSelected()) {
+                    System.out.println("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
+                    Collection<File> files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+
+
+                    for (File file : files) {
+
+                        Boolean result = new Parser().saveDocToWorkingDirFolder(newDir,file);
+
+                        if (result==true){
+                            System.out.println("Lucky");
+
+                        }
+
+
+
+
+
+                    }
+                    System.out.println("Corpus Folder Content: " + files.size());
+
+
+
+
+
+
+                //Run non recursive import
+                }else if(folder != null && !addCorpRecursiveCheckBox.isSelected()){
+
+
+
+                    Collection<File> files = FileUtils.listFiles(folder, FileFileFilter.FILE, FalseFileFilter.FALSE);
+                    System.out.println("Corpus Folder Content: " + files.toString());
+
+
+
+                    for (File file : files) {
+
+                        System.out.println("Corpus Folder Content: " + file.toString());
+
+
+                    }
+                    System.out.println("Corpus Folder Content: " + files.size());
+
+
+                }
+
 
             }
         });
@@ -445,6 +508,7 @@ public class MainGui {
         selectTrainCorp.setEnabled(enabled);
         removeCorpusButton.setEnabled(enabled);
         impNextButton.setEnabled(enabled);
+        addCorpRecursiveCheckBox.setEnabled(enabled);
 
     }
 
@@ -460,4 +524,7 @@ public class MainGui {
         this.getImpDocList().setVisibleRowCount(12);
         System.out.println("Jlist ist: " + this.getImpDocList().toString());
     }
+
+
+
 }

@@ -4,9 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.language.LanguageIdentifier;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.parser.*;
 import org.apache.tika.sax.BodyContentHandler;
@@ -15,18 +21,19 @@ import org.apache.tika.sax.ToXMLContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-
+import javax.swing.*;
 
 
 /**
  * Created by michael on 16.05.15.
  */
 public class Parser {
+    private final int writeLimit = -1;
 
 
     public String parseDocToPlainText(File infile) throws IOException, SAXException, TikaException {
 
-        BodyContentHandler handler = new BodyContentHandler();
+        BodyContentHandler handler = new BodyContentHandler(writeLimit);
         TikaInputStream stream = TikaInputStream.get(infile);
 
         AutoDetectParser parser = new AutoDetectParser();
@@ -67,7 +74,7 @@ public class Parser {
 
     public Metadata getMetaData(File infile) throws IOException, SAXException, TikaException {
 
-        BodyContentHandler handler = new BodyContentHandler();
+        BodyContentHandler handler = new BodyContentHandler(writeLimit);
         TikaInputStream stream = TikaInputStream.get(infile);
 
         AutoDetectParser parser = new AutoDetectParser();
@@ -76,6 +83,11 @@ public class Parser {
 
         try {
             parser.parse(stream, handler, metadata);
+
+            String[] metadataNames = metadata.names();
+            for(String name : metadataNames) {
+                System.out.println(name + ": " + metadata.get(name));
+            }
 
             return metadata;
             }finally{
@@ -90,10 +102,16 @@ public class Parser {
     }
 
     public String identifyTitle(Metadata metadata) {
+
+
         String title = metadata.get("title");
-        System.out.println("title:" + title); // good
+        System.out.println("Title:" + title); // good
         return title;
     }
+
+
+
+
 
     public String identifyLanguage(String text) {
         LanguageIdentifier identifier = new LanguageIdentifier(text);
@@ -104,30 +122,52 @@ public class Parser {
 
 
 
-    /*public Boolean saveDocToWorkingDirFolder(String[] paragraph, File infile) {
+    public Boolean saveDocToWorkingDirFolder(File corpDir, File infile) {
 
-        if (paragraph != null && infile != null) {
+        if (corpDir != null && infile != null) {
+            String newTitle;
+            File newDocDir = null;
 
-            File newDir = new File(wDir + File.separator + "Corporae" + File.separator + FilenameUtils.removeExtension(infile.getName()));
-            System.out.println("Folder: " + newDir);
+            try {
+                Random rand = new Random();
+                Metadata metadata = this.getMetaData(infile);
+                String title  = new String(FilenameUtils.removeExtension(infile.getName()) + "-" + Integer.toString(rand.nextInt(10000)));
+                newTitle = title;
+                System.out.println("Title: " + newTitle);
 
-            if (!newDir.exists()) {
+                File docDir = new File(corpDir + File.separator + newTitle);
+                System.out.println("Document Directory: " + docDir);
+                newDocDir = docDir;
 
-                System.out.println("Creating directory: " + newDir);
+            }catch (IOException | SAXException | TikaException e) {
+                System.out.println("Exception" + e.toString());
+                //JOptionPane.showMessageDialog(null, "No permission");
+                //return false;
+
+            }
+
+
+
+
+            if (!newDocDir.exists()) {
+
+                System.out.println("Creating directory: " + newDocDir);
                 boolean result = false;
 
                 try {
-                    newDir.mkdir();
+                    newDocDir.mkdir();
                     result = true;
                 } catch (SecurityException se) {
                     JOptionPane.showMessageDialog(null, "No permission");
-                    return Boolean.FALSE;
+                    //return Boolean.FALSE;
                 }
                 if (result) {
                     System.out.println("DIR created");
                 }
+
             }
 
+            /*
 
             int counter = 1;
             for (String p : paragraph) {
@@ -168,11 +208,11 @@ public class Parser {
                 }
 
 
-            }
+            }*/
         }
-        return Boolean.TRUE;
+        return true;
 
-    }*/
+    }
 }
 
 
