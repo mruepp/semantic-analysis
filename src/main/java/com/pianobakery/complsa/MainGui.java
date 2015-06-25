@@ -543,6 +543,7 @@ public class MainGui {
                 if (bar.getButtonCancel()) break;
 
             }
+            selectTrainCorp.addItem(folder.getName().toString());
             return null;
         }
 
@@ -569,6 +570,7 @@ public class MainGui {
         TaskWithBar task = new TaskWithBar(bar);
 
         task.execute();
+
     }
 
 
