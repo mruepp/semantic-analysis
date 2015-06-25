@@ -14,6 +14,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -46,9 +48,13 @@ public class MainGui {
     private JButton removeCorpusButton;
     private JCheckBox addCorpRecursiveCheckBox;
     private JCheckBox createChunksCheckBox;
+    private JButton runTaskButton;
     private DefaultListModel listModel;
     private File[] files;
     private File wDir;
+
+    //private ProgressBar progressBar;
+    //private Task task;
 
     private static JMenuBar menuBar;
     private static JMenu menu, submenu;
@@ -57,8 +63,7 @@ public class MainGui {
     private static JRadioButtonMenuItem rbMenuItem;
     private static JCheckBoxMenuItem cbMenuItem;
     private static MainGui maingui;
-
-
+    private static JFrame frame;
 
 
     //Getter and Setter
@@ -111,12 +116,10 @@ public class MainGui {
     }
 
 
-
-
     //Main
     public static void main(String[] args) {
-
-        JFrame frame = new JFrame("MainGui");
+        //StartUI
+        frame = new JFrame("MainGui");
         maingui = new MainGui();
 
         frame.setContentPane(maingui.mainPanel);
@@ -126,10 +129,11 @@ public class MainGui {
         int frameWidth = 1024;
         int frameHeight = 800;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setBounds((int) screenSize.getWidth()/2 - frameWidth/2, (int) screenSize.getHeight()/4 - frameHeight/4, frameWidth, frameHeight);
+        frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         JMenuBar menu = MenuExp();
         frame.setJMenuBar(menu);
         frame.setVisible(true);
+
 
     }
 
@@ -137,8 +141,13 @@ public class MainGui {
     //Main Gui Constructor
     public MainGui() {
 
+        runTaskButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
+                runNewTaskWithBar(getProgressBarWithTitleLater("This is fucked up"));
 
+            }
+        });
 
         //Disable all Components as long as wDir is not set.
         enableUIElements(false);
@@ -160,6 +169,9 @@ public class MainGui {
 
         addTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                //addTopicCorpTaskkWithBar(getProgressBarWithTitleLater("Add Topic Corpus"));
+
+
                 File folder = chooseAddCorpusFolder();
                 File newDir = new File(wDir + File.separator + "TopicCorp" + File.separator + folder.getName());
                 System.out.println("Corpus Folder: " + folder.toString());
@@ -197,51 +209,9 @@ public class MainGui {
 
                 }
 
-                //Run recursive import
-                if (folder != null && addCorpRecursiveCheckBox.isSelected()) {
-                    System.out.println("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
-                    Collection<File> files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
-
-
-                    for (File file : files) {
-
-                        Boolean result = new Parser().saveDocToWorkingDirFolder(newDir,file);
-
-                        if (result==true){
-                            System.out.println("Lucky");
-
-                        }
-
-
-
-
-
-                    }
-                    System.out.println("Corpus Folder Content: " + files.size());
-
-
-
-
-
-
-                //Run non recursive import
-                }else if(folder != null && !addCorpRecursiveCheckBox.isSelected()){
-
-
-
-                    Collection<File> files = FileUtils.listFiles(folder, FileFileFilter.FILE, FalseFileFilter.FALSE);
-                    System.out.println("Corpus Folder Content: " + files.toString());
-
-
-
-                    for (File file : files) {
-
-                        System.out.println("Corpus Folder Content: " + file.toString());
-
-
-                    }
-                    System.out.println("Corpus Folder Content: " + files.size());
-
+                //Run import
+                if (folder != null ) {
+                    addTopicCorpTaskkWithBar(getProgressBarWithTitleLater("Add Topic Corpus"),folder, newDir, addCorpRecursiveCheckBox.isSelected());
 
                 }
 
@@ -252,7 +222,7 @@ public class MainGui {
             public void actionPerformed(ActionEvent e) {
 
                 try {
-                    if(impDocList.getSelectedIndices().length > 0) {
+                    if (impDocList.getSelectedIndices().length > 0) {
                         int[] selectedIndices = impDocList.getSelectedIndices();
                         System.out.println("Remove selected Indices: " + Arrays.toString(selectedIndices));
                         for (int i = selectedIndices.length - 1; i >= 0; i--) {
@@ -260,7 +230,7 @@ public class MainGui {
                         }
                     }
 
-                } catch(Exception ex){
+                } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Falsche Eingabe");
 
                 }
@@ -272,12 +242,10 @@ public class MainGui {
             public void actionPerformed(ActionEvent e) {
 
 
-
-
                 if (wDir != null && files != null) {
 
 
-                    for (File f : files){
+                    for (File f : files) {
 
                         Parser parser = new Parser();
                         try {
@@ -299,14 +267,11 @@ public class MainGui {
                     //JOptionPane.showMessageDialog(null, parser.parseDocsToXhtml());
 
 
-                }
-                else if (wDir == null && files == null) {
+                } else if (wDir == null && files == null) {
                     JOptionPane.showMessageDialog(null, "Kein Working Folder und Dokumente ausgewählt!");
-                }
-                else if (wDir == null){
+                } else if (wDir == null) {
                     JOptionPane.showMessageDialog(null, "Kein Working Folder ausgewählt!");
-                }
-                else if (files == null){
+                } else if (files == null) {
                     JOptionPane.showMessageDialog(null, "Keine Dokumente Folder ausgewählt!");
                 }
             }
@@ -314,85 +279,82 @@ public class MainGui {
     }
 
 
-
     //Menubar
     public static JMenuBar MenuExp() {
 
 
+        // Creates a menubar for a JFrame
+        JMenuBar menuBar = new JMenuBar();
 
-            // Creates a menubar for a JFrame
-            JMenuBar menuBar = new JMenuBar();
+        // Add the menubar to the frame
+        //setJMenuBar(menuBar);
 
-            // Add the menubar to the frame
-            //setJMenuBar(menuBar);
+        // Define and add two drop down menu to the menubar
+        JMenu fileMenu = new JMenu("Project");
+        JMenu editMenu = new JMenu("Edit");
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
 
-            // Define and add two drop down menu to the menubar
-            JMenu fileMenu = new JMenu("Project");
-            JMenu editMenu = new JMenu("Edit");
-            menuBar.add(fileMenu);
-            menuBar.add(editMenu);
+        // Create and add simple menu item to one of the drop down menu
+        JMenuItem newAction = new JMenuItem("New Folder");
+        JMenuItem openAction = new JMenuItem("Choose Folder");
+        JMenuItem exitAction = new JMenuItem("Exit");
+        JMenuItem cutAction = new JMenuItem("Cut");
+        JMenuItem copyAction = new JMenuItem("Copy");
+        JMenuItem pasteAction = new JMenuItem("Paste");
 
-            // Create and add simple menu item to one of the drop down menu
-            JMenuItem newAction = new JMenuItem("New Folder");
-            JMenuItem openAction = new JMenuItem("Choose Folder");
-            JMenuItem exitAction = new JMenuItem("Exit");
-            JMenuItem cutAction = new JMenuItem("Cut");
-            JMenuItem copyAction = new JMenuItem("Copy");
-            JMenuItem pasteAction = new JMenuItem("Paste");
+        // Create and add CheckButton as a menu item to one of the drop down
+        // menu
+        JCheckBoxMenuItem checkAction = new JCheckBoxMenuItem("Check Action");
+        // Create and add Radio Buttons as simple menu items to one of the drop
+        // down menu
+        JRadioButtonMenuItem radioAction1 = new JRadioButtonMenuItem(
+                "Radio Button1");
+        JRadioButtonMenuItem radioAction2 = new JRadioButtonMenuItem(
+                "Radio Button2");
+        // Create a ButtonGroup and add both radio Button to it. Only one radio
+        // button in a ButtonGroup can be selected at a time.
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(radioAction1);
+        bg.add(radioAction2);
+        fileMenu.add(newAction);
+        fileMenu.add(openAction);
+        fileMenu.add(checkAction);
+        fileMenu.addSeparator();
+        fileMenu.add(exitAction);
+        editMenu.add(cutAction);
+        editMenu.add(copyAction);
+        editMenu.add(pasteAction);
+        editMenu.addSeparator();
+        editMenu.add(radioAction1);
+        editMenu.add(radioAction2);
+        // Add a listener to the New menu item. actionPerformed() method will
+        // invoked, if user triggred this menu item
+        newAction.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                maingui.createNewProjectFolder();
+                System.out.println("You have clicked on the new action");
+            }
+        });
+        openAction.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                maingui.chooseNewProjectFolder();
+                System.out.println("You have clicked on the new action");
+            }
+        });
+        exitAction.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                System.exit(0);
+                System.out.println("You have clicked on the new action");
+            }
+        });
 
-            // Create and add CheckButton as a menu item to one of the drop down
-            // menu
-            JCheckBoxMenuItem checkAction = new JCheckBoxMenuItem("Check Action");
-            // Create and add Radio Buttons as simple menu items to one of the drop
-            // down menu
-            JRadioButtonMenuItem radioAction1 = new JRadioButtonMenuItem(
-                    "Radio Button1");
-            JRadioButtonMenuItem radioAction2 = new JRadioButtonMenuItem(
-                    "Radio Button2");
-            // Create a ButtonGroup and add both radio Button to it. Only one radio
-            // button in a ButtonGroup can be selected at a time.
-            ButtonGroup bg = new ButtonGroup();
-            bg.add(radioAction1);
-            bg.add(radioAction2);
-            fileMenu.add(newAction);
-            fileMenu.add(openAction);
-            fileMenu.add(checkAction);
-            fileMenu.addSeparator();
-            fileMenu.add(exitAction);
-            editMenu.add(cutAction);
-            editMenu.add(copyAction);
-            editMenu.add(pasteAction);
-            editMenu.addSeparator();
-            editMenu.add(radioAction1);
-            editMenu.add(radioAction2);
-            // Add a listener to the New menu item. actionPerformed() method will
-            // invoked, if user triggred this menu item
-            newAction.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    maingui.createNewProjectFolder();
-                    System.out.println("You have clicked on the new action");
-                }
-            });
-            openAction.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    maingui.chooseNewProjectFolder();
-                    System.out.println("You have clicked on the new action");
-                }
-            });
-            exitAction.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    System.exit(0);
-                    System.out.println("You have clicked on the new action");
-                }
-            });
-
-            return menuBar;
+        return menuBar;
     }
 
 
-
     //ProjectFolder
-    public void createNewProjectFolder(){
+    public void createNewProjectFolder() {
 
         try {
             JFrame frame = new JFrame();
@@ -410,9 +372,9 @@ public class MainGui {
 
             //Disable Save as
             ArrayList<JPanel> jpanels = new ArrayList<JPanel>();
-            for(Component c : chooser.getComponents()){
-                if( c instanceof JPanel ){
-                    jpanels.add((JPanel)c);
+            for (Component c : chooser.getComponents()) {
+                if (c instanceof JPanel) {
+                    jpanels.add((JPanel) c);
                 }
 
             }
@@ -420,24 +382,24 @@ public class MainGui {
             frame.pack();
             frame.setLocationRelativeTo(null);
 
-            int whatChoose =  chooser.showSaveDialog(null);
-            if(whatChoose == JFileChooser.APPROVE_OPTION ) {
+            int whatChoose = chooser.showSaveDialog(null);
+            if (whatChoose == JFileChooser.APPROVE_OPTION) {
                 String path = chooser.getCurrentDirectory().toString();
                 wDirText.setText(path);
                 wDir = chooser.getCurrentDirectory();
                 System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                System.out.println("getSelectedFile() : " +  chooser.getSelectedFile());
+                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
                 System.out.println("WDir is: " + wDir.toString());
                 enableUIElements(true);
             }
 
 
-            } catch(Exception ex){
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Falsche Eingabe");
-            }
+        }
     }
 
-    public void chooseNewProjectFolder(){
+    public void chooseNewProjectFolder() {
 
         try {
 
@@ -448,25 +410,25 @@ public class MainGui {
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setMultiSelectionEnabled(false);
             chooser.setAcceptAllFileFilterUsed(false);
-            int whatChoose =  chooser.showOpenDialog(null);
+            int whatChoose = chooser.showOpenDialog(null);
 
-            if(whatChoose == JFileChooser.APPROVE_OPTION ) {
+            if (whatChoose == JFileChooser.APPROVE_OPTION) {
                 String text = chooser.getSelectedFile().toString();
                 wDirText.setText(text);
                 wDir = chooser.getSelectedFile();
                 System.out.println("WDir is: " + wDir.toString());
                 System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                System.out.println("getSelectedFile() : " +  chooser.getSelectedFile());
+                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
                 enableUIElements(true);
             }
-        } catch(Exception ex){
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Falsche Eingabe");
         }
 
 
     }
 
-    public File chooseAddCorpusFolder(){
+    public File chooseAddCorpusFolder() {
 
         try {
 
@@ -477,26 +439,25 @@ public class MainGui {
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setMultiSelectionEnabled(false);
             chooser.setAcceptAllFileFilterUsed(false);
-            int whatChoose =  chooser.showOpenDialog(null);
+            int whatChoose = chooser.showOpenDialog(null);
             File selected;
-            if(whatChoose == JFileChooser.APPROVE_OPTION ) {
+            if (whatChoose == JFileChooser.APPROVE_OPTION) {
                 //String text = chooser.getSelectedFile().toString();
                 //wDirText.setText(text);
                 selected = chooser.getSelectedFile();
                 System.out.println("AddCorpDir is: " + selected.toString());
                 System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                System.out.println("getSelectedFile() : " +  chooser.getSelectedFile());
+                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
                 enableUIElements(true);
                 return selected;
             }
 
-        } catch(Exception ex){
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Falsche Eingabe");
         }
 
         return null;
     }
-
 
 
     //Enable and Disable UI Conditionally until wDir is set
@@ -524,6 +485,208 @@ public class MainGui {
         this.getImpDocList().setVisibleRowCount(12);
         System.out.println("Jlist ist: " + this.getImpDocList().toString());
     }
+
+
+    public void addTopicCorpTaskkWithBar(ProgressBar bar, File folder, File newDir,Boolean sel) {
+
+
+        addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel);
+        System.out.println("Runs");
+        task.execute();
+    }
+
+
+    class addTopicCorpTask extends SwingWorker<Integer, Integer> {
+        private ProgressBar bar;
+        private File folder;
+        private File newDir;
+        private Boolean sel;
+        private Collection<File> files = null;
+
+        public addTopicCorpTask(ProgressBar aBar, File aFolder, File aNewDir, Boolean aSel) {
+            this.bar = aBar;
+            this.folder = aFolder;
+            this.newDir = aNewDir;
+            this.sel = aSel;
+
+        }
+
+        @Override
+        public Integer doInBackground() {
+            System.out.println("Folder: " + folder.toString());
+            System.out.println("Folder: " + newDir.toString());
+            System.out.println("Runs");
+
+            if (sel) {
+                files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+            }else if (!sel){
+                files = FileUtils.listFiles(folder, FileFileFilter.FILE, FalseFileFilter.FALSE);
+            };
+
+            Integer amount = files.size();
+            bar.setProgressBarMax(amount);
+            bar.setTextField(amount.toString());
+
+
+
+            for (File file : files ) {
+
+
+                Boolean result = new Parser().saveDocToWorkingDirFolder(newDir, file);
+
+                if (result == false) {
+                    System.out.println("Error happened");
+
+                }
+                amount--;
+                bar.setProgressBarValue(amount);
+                if (bar.getButtonCancel()) break;
+
+            }
+            return null;
+        }
+
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+            System.out.println("Done");
+            Toolkit.getDefaultToolkit().beep();
+            bar.dispose();
+            JOptionPane.showMessageDialog(null, "Import completed");
+
+        }
+    }
+
+
+
+
+
+    public void runNewTaskWithBar(ProgressBar bar) {
+
+
+        TaskWithBar task = new TaskWithBar(bar);
+
+        task.execute();
+    }
+
+
+    class TaskWithBar extends SwingWorker<Integer, Integer> {
+        private ProgressBar bar;
+
+        public TaskWithBar(ProgressBar aBar) {
+            this.bar = aBar;
+
+        }
+
+        @Override
+        public Integer doInBackground() {
+            bar.setProgressBarMax(100);
+            Random random = new Random();
+            int progress = 0;
+            // Initialize progress property.
+            setProgress(0);
+            while (progress < 100 && !bar.getButtonCancel()) {
+                // Sleep for up to one second.
+                try {
+                    Thread.sleep(random.nextInt(1000));
+                } catch (InterruptedException ignore) {
+                }
+                // Make random progress.
+                progress += random.nextInt(10);
+                //publish(progress);
+                bar.setProgressBarValue(progress);
+                setProgress(Math.min(progress, 100));
+            }
+            return null;
+        }
+
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+            System.out.println("Done");
+            Toolkit.getDefaultToolkit().beep();
+
+        }
+    }
+
+
+    public ProgressBar getProgressBarWithTitleLater(String title){
+        final ProgressBar bar = new ProgressBar();
+        bar.setTitle(title);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+
+                bar.setLocationRelativeTo(frame);
+                //bar.pack();
+                bar.setProgressBarValue(0);
+                bar.pack();
+                bar.setVisible(true);
+
+            }
+
+        });
+        return bar;
+    }
+
+
+/*
+    public void runTaskWithBar(ProgressBar bar) {
+
+
+        Task task = new Task();
+        task.addPropertyChangeListener(
+                new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if ("progress".equals(evt.getPropertyName())) {
+                            bar.setProgressBarValue((Integer) evt.getNewValue());
+                        }
+                    }
+                }
+        );
+        System.out.println("Runs");
+        task.execute();
+    }
+
+    class Task extends SwingWorker<Integer, Integer> {
+
+        @Override
+        public Integer doInBackground() {
+            Random random = new Random();
+            int progress = 0;
+            // Initialize progress property.
+            setProgress(0);
+            while (progress < 100) {
+                // Sleep for up to one second.
+                try {
+                    Thread.sleep(random.nextInt(1000));
+                } catch (InterruptedException ignore) {
+                }
+                // Make random progress.
+                progress += random.nextInt(10);
+                publish(progress);
+                setProgress(Math.min(progress, 100));
+            }
+            return null;
+        }
+
+
+        /*
+         * Executed in event dispatching thread
+         */
+        /*@Override
+        public void done() {
+            Toolkit.getDefaultToolkit().beep();
+            //startButton.setEnabled(true);
+            //setCursor(null); // turn off the wait cursor
+            //taskOutput.append("Done!\n");
+        }
+    }*/
 
 
 

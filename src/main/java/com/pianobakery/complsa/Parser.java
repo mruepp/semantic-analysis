@@ -52,6 +52,7 @@ public class Parser {
     public String parseDocToXhtml(File infile) throws IOException, SAXException, TikaException {
 
         ContentHandler handler = new BodyContentHandler(new ToXMLContentHandler());
+
         TikaInputStream stream = TikaInputStream.get(infile);
 
         AutoDetectParser parser = new AutoDetectParser();
@@ -128,26 +129,15 @@ public class Parser {
             String newTitle;
             File newDocDir = null;
 
-            try {
                 Random rand = new Random();
-                Metadata metadata = this.getMetaData(infile);
-                String title  = new String(FilenameUtils.removeExtension(infile.getName()) + "-" + Integer.toString(rand.nextInt(10000)));
+                //Metadata metadata = this.getMetaData(infile);
+                String title  = new String(FilenameUtils.removeExtension(infile.getName()) + "-" + Integer.toString(rand.nextInt(100000)));
                 newTitle = title;
                 System.out.println("Title: " + newTitle);
 
                 File docDir = new File(corpDir + File.separator + newTitle);
                 System.out.println("Document Directory: " + docDir);
                 newDocDir = docDir;
-
-            }catch (IOException | SAXException | TikaException e) {
-                System.out.println("Exception" + e.toString());
-                //JOptionPane.showMessageDialog(null, "No permission");
-                //return false;
-
-            }
-
-
-
 
             if (!newDocDir.exists()) {
 
@@ -163,6 +153,25 @@ public class Parser {
                 }
                 if (result) {
                     System.out.println("DIR created");
+                }
+
+            } else {
+                System.out.println("Folder exists, second try new random");
+                String secondtitle  = new String(FilenameUtils.removeExtension(infile.getName()) + "-" + Integer.toString(rand.nextInt(100000)));
+                newTitle = secondtitle;
+                File seconddocDir = new File(corpDir + File.separator + newTitle);
+                System.out.println("Creating directory: " + seconddocDir);
+                boolean result = false;
+
+                try {
+                    seconddocDir.mkdir();
+                    result = true;
+                } catch (SecurityException se) {
+                    JOptionPane.showMessageDialog(null, "No permission");
+                    //return Boolean.FALSE;
+                }
+                if (result) {
+                    System.out.println("DIR created 2nd try");
                 }
 
             }
