@@ -44,10 +44,9 @@ public class MainGui {
     private JComboBox comboBox1;
     private JComboBox selectTrainCorp;
     private JPanel searchDocs;
-    private JButton removeCorpusButton;
+    //private JButton removeCorpusButton;
     private JCheckBox addCorpRecursiveCheckBox;
     private JCheckBox createChunksCheckBox;
-    private JButton runTaskButton;
     private DefaultListModel listModel;
     private File[] files;
     private File wDir;
@@ -65,6 +64,7 @@ public class MainGui {
     private static JCheckBoxMenuItem cbMenuItem;
     private static MainGui maingui;
     private static JFrame frame;
+    private static String topicFolder = "TopicCorp";
 
 
     //Getter and Setter
@@ -148,24 +148,6 @@ public class MainGui {
 
 
 
-        selectTrainCorp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox)e.getSource();
-                trainCorp.get(cb.getSelectedItem().toString());
-                System.out.println("TrainCorp Map: " + trainCorp.get(cb.getSelectedItem().toString()));
-                System.out.println("Selected Item is: " + cb.getSelectedItem().toString());
-
-            }
-        });
-
-        runTaskButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-                runNewTaskWithBar(getProgressBarWithTitleLater("This is fucked up"));
-
-            }
-        });
 
         //Disable all Components as long as wDir is not set.
         enableUIElements(false);
@@ -174,8 +156,23 @@ public class MainGui {
         newFolderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createNewProjectFolder();
-                if (new File(wDir + File.separator + "TopicCorp").exists()) {
+                File topFolder = new File(wDir + File.separator + topicFolder);
+                if (topFolder.exists()) {
                     System.out.println("TopicCorp Exists");
+
+                    File[] theFolders;
+                    theFolders = topFolder.listFiles((java.io.FileFilter) DirectoryFileFilter.INSTANCE);
+                    for ( File afolder : theFolders ) {
+                        try {
+                            addRemoveItemToTopicBox(afolder,true);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+
+
+
                 }
 
             }
@@ -184,14 +181,20 @@ public class MainGui {
         selectFolderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 chooseNewProjectFolder();
-                File topFolder = new File(wDir + File.separator + "TopicCorp");
+                File topFolder = new File(wDir + File.separator + topicFolder);
                 if (topFolder.exists()) {
                     System.out.println("TopicCorp Exists");
 
                     File[] theFolders;
                     theFolders = topFolder.listFiles((java.io.FileFilter) DirectoryFileFilter.INSTANCE);
                     for ( File afolder : theFolders ) {
-                        System.out.println(afolder.toString());
+                        System.out.println("Add A Folder: " + afolder.toString());
+                        File theFile = afolder;
+                        try {
+                            addRemoveItemToTopicBox(theFile, true);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
                     }
 
 
@@ -207,7 +210,7 @@ public class MainGui {
 
 
                 File folder = chooseAddCorpusFolder();
-                File newDir = new File(wDir + File.separator + "TopicCorp" + File.separator + folder.getName());
+                File newDir = new File(wDir + File.separator + topicFolder + File.separator + folder.getName());
                 System.out.println("Corpus Folder: " + folder.toString());
                 System.out.println("Import Folder: " + newDir.toString());
                 System.out.println("Working Folder : " + wDir.toString());
@@ -246,15 +249,43 @@ public class MainGui {
                 //Run import
                 if (folder != null ) {
                     addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus"), folder, newDir, addCorpRecursiveCheckBox.isSelected());
+                    try {
+                        addRemoveItemToTopicBox(newDir,true);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
 
                 }
 
 
             }
         });
-        removeTopicCorpusButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
 
+
+        removeTopicCorpusButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) throws ArrayIndexOutOfBoundsException {
+                File theFile = trainCorp.get(selectTrainCorp.getSelectedItem());
+
+                if (theFile != null){
+                    try {
+                        addRemoveItemToTopicBox(theFile,false);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                } else if (theFile == null) {
+
+                    try {
+                        selectTrainCorp.removeItemAt(0);
+                        System.out.printf("Items of selectTrainingCorp: " + selectTrainCorp.getItemAt(0));
+
+                    }catch (ArrayIndexOutOfBoundsException e2) {
+                        JOptionPane.showMessageDialog(null, "Keine Topic Corps mehr vorhanden");
+                    }
+
+                }
+
+
+/*
                 try {
                     if (impDocList.getSelectedIndices().length > 0) {
                         int[] selectedIndices = impDocList.getSelectedIndices();
@@ -268,10 +299,15 @@ public class MainGui {
                     JOptionPane.showMessageDialog(null, "Falsche Eingabe");
 
                 }
-                System.out.println("Elements still there: " + listModel.toString());
+                */
+                //System.out.println("Elements still there: " + listModel.toString());
             }
 
         });
+
+
+
+
         impNextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
@@ -501,9 +537,10 @@ public class MainGui {
         addTopicCorpusButton.setEnabled(enabled);
         removeTopicCorpusButton.setEnabled(enabled);
         selectTrainCorp.setEnabled(enabled);
-        removeCorpusButton.setEnabled(enabled);
+        //removeCorpusButton.setEnabled(enabled);
         impNextButton.setEnabled(enabled);
         addCorpRecursiveCheckBox.setEnabled(enabled);
+        createChunksCheckBox.setEnabled(enabled);
 
     }
 
@@ -551,7 +588,7 @@ public class MainGui {
         @Override
         public Integer doInBackground() {
             System.out.println("Folder: " + folder.toString());
-            System.out.println("Folder: " + newDir.toString());
+            System.out.println("Folder newDir: " + newDir.toString());
             System.out.println("Runs");
 
             if (sel) {
@@ -582,9 +619,9 @@ public class MainGui {
                 if (bar.getButtonCancel()) break;
 
             }
-            trainCorp.put(folder.getName(), folder);
-            selectTrainCorp.addItem(folder.getName().toString());
-            System.out.println("TrainCorp Map: " + trainCorp.get(folder.getName().toString()));
+            //trainCorp.put(folder.getName(), folder);
+            //selectTrainCorp.addItem(folder.getName().toString());
+            //System.out.println("TrainCorp Map: " + trainCorp.get(folder.getName()));
             return null;
         }
 
@@ -605,56 +642,7 @@ public class MainGui {
 
 
 
-    public void runNewTaskWithBar(ProgressBar bar) {
 
-
-        TaskWithBar task = new TaskWithBar(bar);
-
-        task.execute();
-
-    }
-
-
-    class TaskWithBar extends SwingWorker<Integer, Integer> {
-        private ProgressBar bar;
-
-        public TaskWithBar(ProgressBar aBar) {
-            this.bar = aBar;
-
-        }
-
-        @Override
-        public Integer doInBackground() {
-            bar.setProgressBarMax(100);
-            Random random = new Random();
-            int progress = 0;
-            // Initialize progress property.
-            setProgress(0);
-            while (progress < 100 && !bar.getButtonCancel()) {
-                // Sleep for up to one second.
-                try {
-                    Thread.sleep(random.nextInt(1000));
-                } catch (InterruptedException ignore) {
-                }
-                // Make random progress.
-                progress += random.nextInt(10);
-                //publish(progress);
-                bar.setProgressBarValue(progress);
-                setProgress(Math.min(progress, 100));
-            }
-            return null;
-        }
-
-        /*
-         * Executed in event dispatching thread
-         */
-        @Override
-        public void done() {
-            System.out.println("Done");
-            Toolkit.getDefaultToolkit().beep();
-
-        }
-    }
 
 
     public ProgressBar getProgressBarWithTitleLater(String title){
@@ -676,7 +664,66 @@ public class MainGui {
         return bar;
     }
 
-    //public void readTrainCorpContentToMap()
+    public void addRemoveItemToTopicBox(File aFile, Boolean add) throws IOException {
+        File theFile = trainCorp.get(aFile.getName());
+        if (add && theFile == null) {
+            trainCorp.put(aFile.getName(), aFile);
+            selectTrainCorp.addItem(aFile.getName());
+            System.out.println("Added Item to Map: " + trainCorp.get(aFile.getName()).toString());
+            System.out.println("Added Item to Map - Mapsize: " + trainCorp.size());
+        } else if (!add && theFile != null){
+
+            System.out.println("Removed Item from Map: " + aFile.toString());
+            System.out.println("Removed Item from Map - Mapsize: " + trainCorp.size());
+
+            File parent = new File(wDir + File.separator + topicFolder);
+            System.out.println("Parentfolder: " + parent.toString());
+
+            boolean isIt = isSubDirectory(parent, aFile);
+
+
+
+            int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (isIt && result == JOptionPane.YES_OPTION) {
+
+                System.out.printf("Delete this Path: " + aFile.toString());
+
+                try {
+                    FileUtils.deleteDirectory(aFile);
+                }catch (IOException e1) {
+                    JOptionPane.showMessageDialog(null, "Unable to delete Folder");
+                    //return;
+                }
+                trainCorp.remove(aFile.getName());
+                selectTrainCorp.removeItem(aFile.getName());
+            } else if (!isIt || result == JOptionPane.NO_OPTION) {
+                System.out.println("No delete, because cancel:" + aFile.toString());
+
+            }
+
+
+
+        }
+
+
+
+
+    }
+
+    public boolean isSubDirectory(File base, File child)
+            throws IOException {
+        base = base.getCanonicalFile();
+        child = child.getCanonicalFile();
+
+        File parentFile = child;
+        while (parentFile != null) {
+            if (base.equals(parentFile)) {
+                return true;
+            }
+            parentFile = parentFile.getParentFile();
+        }
+        return false;
+    }
 
 
 
@@ -732,8 +779,56 @@ public class MainGui {
             //setCursor(null); // turn off the wait cursor
             //taskOutput.append("Done!\n");
         }
+    }
+
+    public void runNewTaskWithBar(ProgressBar bar) {
+
+
+        TaskWithBar task = new TaskWithBar(bar);
+
+        task.execute();
+
+    }
+
+
+    class TaskWithBar extends SwingWorker<Integer, Integer> {
+        private ProgressBar bar;
+
+        public TaskWithBar(ProgressBar aBar) {
+            this.bar = aBar;
+
+        }
+
+        @Override
+        public Integer doInBackground() {
+            bar.setProgressBarMax(100);
+            Random random = new Random();
+            int progress = 0;
+            // Initialize progress property.
+            setProgress(0);
+            while (progress < 100 && !bar.getButtonCancel()) {
+                // Sleep for up to one second.
+                try {
+                    Thread.sleep(random.nextInt(1000));
+                } catch (InterruptedException ignore) {
+                }
+                // Make random progress.
+                progress += random.nextInt(10);
+                //publish(progress);
+                bar.setProgressBarValue(progress);
+                setProgress(Math.min(progress, 100));
+            }
+            return null;
+        }
+
+
+
+        @Override
+        public void done() {
+            System.out.println("Done");
+            Toolkit.getDefaultToolkit().beep();
+
+        }
     }*/
-
-
 
 }
