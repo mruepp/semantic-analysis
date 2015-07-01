@@ -10,6 +10,8 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.tika.exception.TikaException;
 import org.xml.sax.SAXException;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.bind.SchemaOutputResolver;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,10 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -52,6 +51,8 @@ public class MainGui {
     private DefaultListModel listModel;
     private File[] files;
     private File wDir;
+    private HashMap<String, File> trainCorp;
+
 
     //private ProgressBar progressBar;
     //private Task task;
@@ -122,6 +123,7 @@ public class MainGui {
         frame = new JFrame("MainGui");
         maingui = new MainGui();
 
+
         frame.setContentPane(maingui.mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -135,11 +137,27 @@ public class MainGui {
         frame.setVisible(true);
 
 
+
     }
 
 
     //Main Gui Constructor
     public MainGui() {
+
+        trainCorp = new HashMap<String, File>();
+
+
+
+        selectTrainCorp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox)e.getSource();
+                trainCorp.get(cb.getSelectedItem().toString());
+                System.out.println("TrainCorp Map: " + trainCorp.get(cb.getSelectedItem().toString()));
+                System.out.println("Selected Item is: " + cb.getSelectedItem().toString());
+
+            }
+        });
 
         runTaskButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -156,6 +174,9 @@ public class MainGui {
         newFolderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createNewProjectFolder();
+                if (new File(wDir + File.separator + "TopicCorp").exists()) {
+                    System.out.println("TopicCorp Exists");
+                }
 
             }
         });
@@ -163,13 +184,26 @@ public class MainGui {
         selectFolderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 chooseNewProjectFolder();
+                File topFolder = new File(wDir + File.separator + "TopicCorp");
+                if (topFolder.exists()) {
+                    System.out.println("TopicCorp Exists");
+
+                    File[] theFolders;
+                    theFolders = topFolder.listFiles((java.io.FileFilter) DirectoryFileFilter.INSTANCE);
+                    for ( File afolder : theFolders ) {
+                        System.out.println(afolder.toString());
+                    }
+
+
+
+
+                }
 
             }
         });
 
         addTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //addTopicCorpTaskkWithBar(getProgressBarWithTitleLater("Add Topic Corpus"));
 
 
                 File folder = chooseAddCorpusFolder();
@@ -211,7 +245,7 @@ public class MainGui {
 
                 //Run import
                 if (folder != null ) {
-                    addTopicCorpTaskkWithBar(getProgressBarWithTitleLater("Add Topic Corpus"),folder, newDir, addCorpRecursiveCheckBox.isSelected());
+                    addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus"), folder, newDir, addCorpRecursiveCheckBox.isSelected());
 
                 }
 
@@ -473,6 +507,9 @@ public class MainGui {
 
     }
 
+    //TODO Add Method to scan TopicCorpus and fill Combobox when  Workingdir selected
+
+
 
     //Manual UI Construction
     private void createUIComponents() {
@@ -487,7 +524,7 @@ public class MainGui {
     }
 
 
-    public void addTopicCorpTaskkWithBar(ProgressBar bar, File folder, File newDir,Boolean sel) {
+    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir,Boolean sel) {
 
 
         addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel);
@@ -521,11 +558,13 @@ public class MainGui {
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
             }else if (!sel){
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, FalseFileFilter.FALSE);
-            };
+            }
 
             Integer amount = files.size();
             bar.setProgressBarMax(amount);
             bar.setTextField(amount.toString());
+            //Integer value = 0;
+            //bar.setProgressBarValue(value);
 
 
 
@@ -543,7 +582,9 @@ public class MainGui {
                 if (bar.getButtonCancel()) break;
 
             }
+            trainCorp.put(folder.getName(), folder);
             selectTrainCorp.addItem(folder.getName().toString());
+            System.out.println("TrainCorp Map: " + trainCorp.get(folder.getName().toString()));
             return null;
         }
 
@@ -634,6 +675,9 @@ public class MainGui {
         });
         return bar;
     }
+
+    //public void readTrainCorpContentToMap()
+
 
 
 /*

@@ -31,6 +31,9 @@ public class Parser {
     private final int writeLimit = -1;
 
 
+    //TODO Add Method to parse Document String into List of Sentences and/or Pages with certain amount of Sentences
+
+
     public String parseDocToPlainText(File infile) throws IOException, SAXException, TikaException {
 
         BodyContentHandler handler = new BodyContentHandler(writeLimit);
