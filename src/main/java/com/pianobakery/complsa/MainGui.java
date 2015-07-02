@@ -210,52 +210,59 @@ public class MainGui {
 
 
                 File folder = chooseAddCorpusFolder();
-                File newDir = new File(wDir + File.separator + topicFolder + File.separator + folder.getName());
-                System.out.println("Corpus Folder: " + folder.toString());
-                System.out.println("Import Folder: " + newDir.toString());
-                System.out.println("Working Folder : " + wDir.toString());
-                System.out.println("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
 
-                //Create Corpus Folder
-                if (!newDir.exists()) {
+                if (folder != null) {
 
-                    System.out.println("Creating directory: " + newDir);
-                    boolean result = false;
+                    File newDir = new File(wDir + File.separator + topicFolder + File.separator + folder.getName());
+                    System.out.println("Corpus Folder: " + folder.toString());
+                    System.out.println("Import Folder: " + newDir.toString());
+                    System.out.println("Working Folder : " + wDir.toString());
+                    System.out.println("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
 
-                    try {
-                        FileUtils.forceMkdir(newDir);
-                        result = true;
-                    } catch (SecurityException se) {
-                        JOptionPane.showMessageDialog(null, "No permission or File Exists");
+                    //Create Corpus Folder
+                    if (!newDir.exists()) {
 
-                        //return Boolean.FALSE;
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                        System.out.println("Creating directory: " + newDir);
+                        boolean result = false;
+
+                        try {
+                            FileUtils.forceMkdir(newDir);
+                            result = true;
+                        } catch (SecurityException se) {
+                            JOptionPane.showMessageDialog(null, "No permission or File Exists");
+
+                            //return Boolean.FALSE;
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        if (result) {
+                            System.out.println("DIR created");
+                        }
+                    } else {
+
+                        int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Topic Corpus? You have to re-train!");
+                        System.out.println("DIR not created");
+                        if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
+                            return;
+                        }
+
+
                     }
-                    if (result) {
-                        System.out.println("DIR created");
-                    }
-                } else {
 
-                    int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Topic Corpus? You have to re-train!");
-                    System.out.println("DIR not created");
-                    if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
-                        return;
-                    }
+                    //Run import
+                    if (folder != null ) {
+                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus"), folder, newDir, addCorpRecursiveCheckBox.isSelected());
+                        try {
+                            addRemoveItemToTopicBox(newDir,true);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
 
+                    }
 
                 }
 
-                //Run import
-                if (folder != null ) {
-                    addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus"), folder, newDir, addCorpRecursiveCheckBox.isSelected());
-                    try {
-                        addRemoveItemToTopicBox(newDir,true);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
 
-                }
 
 
             }

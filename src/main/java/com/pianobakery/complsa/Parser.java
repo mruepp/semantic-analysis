@@ -160,14 +160,15 @@ public class Parser {
 
             } else {
                 System.out.println("Folder exists, second try new random");
-                String secondtitle  = new String(FilenameUtils.removeExtension(infile.getName()) + "-" + Integer.toString(rand.nextInt(100000)));
-                newTitle = secondtitle;
-                File seconddocDir = new File(corpDir + File.separator + newTitle);
-                System.out.println("Creating directory: " + seconddocDir);
+                title  = new String(FilenameUtils.removeExtension(infile.getName()) + "-" + Integer.toString(rand.nextInt(100000)));
+                newTitle = title;
+                docDir = new File(corpDir + File.separator + newTitle);
+                System.out.println("Creating directory: " + docDir);
+                newDocDir = docDir;
                 boolean result = false;
 
                 try {
-                    seconddocDir.mkdir();
+                    newDocDir.mkdir();
                     result = true;
                 } catch (SecurityException se) {
                     JOptionPane.showMessageDialog(null, "No permission");
@@ -178,6 +179,10 @@ public class Parser {
                 }
 
             }
+
+
+            //TODO Get the infile and split it to
+
 
             /*
 
