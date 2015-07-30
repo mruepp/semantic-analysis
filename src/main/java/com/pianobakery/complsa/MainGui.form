@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.pianobakery.complsa.MainGui">
   <grid id="27dc6" binding="mainPanel" layout-manager="FormLayout">
-    <rowspec value="center:d:grow"/>
-    <colspec value="fill:d:grow"/>
+    <rowspec value="center:max(m;600px):grow"/>
+    <colspec value="fill:max(m;620px):grow"/>
     <constraints>
-      <xy x="20" y="20" width="769" height="488"/>
+      <xy x="20" y="20" width="1304" height="706"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -35,23 +35,96 @@
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
             <colspec value="fill:d:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:125px:noGrow"/>
-            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:126px:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
-            <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:max(d;4px):grow"/>
-            <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:5dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:52px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="fill:66px:noGrow"/>
             <constraints>
-              <tabbedpane title="Setup"/>
+              <tabbedpane title="Project"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -85,7 +158,7 @@
               </component>
               <component id="9a656" class="javax.swing.JTextField" binding="wDirText">
                 <constraints>
-                  <grid row="4" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="4" column="6" row-span="1" col-span="48" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
@@ -97,25 +170,70 @@
               </component>
               <component id="8bcb8" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="15" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="The Project Folder contains the Topic Corpora and the Working Corpus. Please delete the folder manually if necessary."/>
+                  <text value="The Project Folder contains the Project Data."/>
                 </properties>
               </component>
               <component id="b19fc" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="15" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="14" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Arrange your Corpus in a Folder. Then add or remove a Topic Corpus Folder."/>
+                  <text value="Arrange your Documents in a Folder. Then add it to the Software."/>
+                </properties>
+              </component>
+              <component id="aeff9" class="javax.swing.JButton" binding="downloadModelButton" default-binding="true">
+                <constraints>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Download Models"/>
+                </properties>
+              </component>
+              <component id="ada0a" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Language Models:"/>
+                </properties>
+              </component>
+              <component id="2842b" class="javax.swing.JLabel" binding="langModelsText">
+                <constraints>
+                  <grid row="8" column="6" row-span="1" col-span="48" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="8c734" class="javax.swing.JButton" binding="trainCorpButton">
+                <constraints>
+                  <grid row="32" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="Train Semantics"/>
+                </properties>
+              </component>
+              <component id="f4f7b" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="24" column="0" row-span="1" col-span="7" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Create Semantic Knowledge with selected Training Corpus:"/>
                 </properties>
               </component>
               <component id="ba6b0" class="javax.swing.JButton" binding="addTopicCorpusButton">
                 <constraints>
-                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
@@ -123,64 +241,324 @@
                   <text value=" Add Corpus Folder"/>
                 </properties>
               </component>
+              <component id="cdaa9" class="javax.swing.JCheckBox" binding="addCorpRecursiveCheckBox">
+                <constraints>
+                  <grid row="18" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="Recursive"/>
+                </properties>
+              </component>
+              <component id="2f687" class="javax.swing.JCheckBox" binding="createChunksCheckBox" default-binding="true">
+                <constraints>
+                  <grid row="18" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="Split in Paragraph of:"/>
+                </properties>
+              </component>
+              <component id="9ece1" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="16" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Add/Remove Training Corpus:"/>
+                </properties>
+              </component>
+              <component id="915d2" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="20" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Select Training Corpus:"/>
+                </properties>
+              </component>
               <component id="cc3cc" class="javax.swing.JComboBox" binding="selectTrainCorp">
                 <constraints>
-                  <grid row="10" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="22" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
                   <enabled value="true"/>
                 </properties>
               </component>
+              <component id="2f271" class="javax.swing.JButton" binding="removeTopicCorpusButton">
+                <constraints>
+                  <grid row="22" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <horizontalAlignment value="2"/>
+                  <text value="Remove Training Corpus"/>
+                </properties>
+              </component>
+              <component id="7cda4" class="javax.swing.JComboBox" binding="indexTypeComboBox" custom-create="true">
+                <constraints>
+                  <grid row="32" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="d7cf0" class="javax.swing.JTextField" binding="amountOfSentencesPerTextField" default-binding="true">
+                <constraints>
+                  <grid row="18" column="8" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <text value="20"/>
+                </properties>
+              </component>
+              <component id="c2784" class="javax.swing.JTextField" binding="posIndRadiusTextField">
+                <constraints>
+                  <grid row="32" column="8" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <text value="20"/>
+                </properties>
+              </component>
+              <component id="29641" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="32" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="Indextype:"/>
+                </properties>
+              </component>
+              <component id="40f45" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="18" column="14" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <text value="Sentences"/>
+                </properties>
+              </component>
+              <component id="fef6a" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="32" column="14" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <text value="Words"/>
+                </properties>
+              </component>
+              <component id="ce005" class="javax.swing.JComboBox" binding="termComboBox" custom-create="true">
+                <constraints>
+                  <grid row="32" column="30" row-span="1" col-span="19" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="29530" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="32" column="17" row-span="1" col-span="13" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Termweight:"/>
+                </properties>
+              </component>
+              <component id="7a78c" class="javax.swing.JButton" binding="updateIndexButton" default-binding="true">
+                <constraints>
+                  <grid row="28" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Update Index"/>
+                </properties>
+              </component>
+              <component id="2f65a" class="javax.swing.JButton" binding="removeIndexButton" default-binding="true">
+                <constraints>
+                  <grid row="28" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Remove Index"/>
+                </properties>
+              </component>
+              <component id="21f52" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="40" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Add/Remove Search Corpus:"/>
+                </properties>
+              </component>
+              <component id="13d25" class="javax.swing.JButton" binding="impSearchCorpButton">
+                <constraints>
+                  <grid row="42" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Add Search Corpus"/>
+                </properties>
+              </component>
+              <component id="8f4de" class="javax.swing.JCheckBox" binding="impSearchCorpRecursiveCheckBox">
+                <constraints>
+                  <grid row="42" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="Recursive"/>
+                </properties>
+              </component>
+              <component id="304d5" class="javax.swing.JCheckBox" binding="splitSearchCorpCheckBox">
+                <constraints>
+                  <grid row="42" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="Split in Paragraph of:"/>
+                </properties>
+              </component>
+              <component id="1d5f9" class="javax.swing.JTextField" binding="amountSearchCorpSent">
+                <constraints>
+                  <grid row="42" column="8" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <text value="20"/>
+                </properties>
+              </component>
+              <component id="1fd8f" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="42" column="14" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                  <text value="Sentences"/>
+                </properties>
+              </component>
+              <component id="d3092" class="javax.swing.JComboBox" binding="searchCorpComboBox">
+                <constraints>
+                  <grid row="46" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="9" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="91906" class="javax.swing.JButton" binding="removeSearchCorpButton" default-binding="true">
+                <constraints>
+                  <grid row="46" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Remove Search Corpus"/>
+                </properties>
+              </component>
+              <component id="b2bca" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="44" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Select Search Corpus:"/>
+                </properties>
+              </component>
+              <component id="f7608" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="38" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Arrange your Search Corpus in a Folder. Then add it to the Software. "/>
+                </properties>
+              </component>
+              <component id="650d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="26" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="First update the Index."/>
+                </properties>
+              </component>
+              <component id="15451" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="30" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Then select an Algorithm and train the Software. You can select the Algorithms you used on the Search Tab. Experiment with different Algorithms."/>
+                </properties>
+              </component>
+              <component id="92b09" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Download Language Models:"/>
+                </properties>
+              </component>
               <component id="e9d90" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="12" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
                   <text value="Training Corpora:"/>
                 </properties>
               </component>
-              <component id="8c734" class="javax.swing.JButton" binding="impNextButton">
+              <component id="bc7b9" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="12" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms defaultalign-horz="false"/>
+                  <grid row="36" column="0" row-span="1" col-span="54" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
                 </constraints>
                 <properties>
-                  <text value="Train "/>
+                  <text value="Search Corpora:"/>
                 </properties>
               </component>
-              <component id="2f271" class="javax.swing.JButton" binding="removeTopicCorpusButton">
+              <component id="97c9" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="10" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="Remove Corpus"/>
+                  <text value=" "/>
                 </properties>
               </component>
-              <component id="cdaa9" class="javax.swing.JCheckBox" binding="addCorpRecursiveCheckBox">
+              <component id="278b6" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="34" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Recursive"/>
-                </properties>
-              </component>
-              <component id="2f687" class="javax.swing.JCheckBox" binding="createChunksCheckBox" default-binding="true">
-                <constraints>
-                  <grid row="12" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text value="Create Chunks"/>
+                  <text value=" "/>
                 </properties>
               </component>
             </children>
           </grid>
           <grid id="2044a" binding="searchDocs" layout-manager="FormLayout">
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:d:noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
@@ -188,60 +566,315 @@
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
-            <colspec value="fill:d:noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:243px:grow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:max(d;4px):noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:38px:noGrow"/>
+            <rowspec value="top:3dlu:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:378px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:277px:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(m;400px):grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(m;200px):noGrow"/>
             <constraints>
-              <tabbedpane title="Parse Documents"/>
+              <tabbedpane title="Search"/>
             </constraints>
             <properties>
               <enabled value="true"/>
             </properties>
             <border type="none"/>
             <children>
-              <component id="1f440" class="javax.swing.JLabel">
+              <component id="6c171" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Set Options:"/>
+                  <text value="Choose Semantic Knowledge Algorithm:"/>
                 </properties>
               </component>
-              <component id="7bf8a" class="javax.swing.JCheckBox" binding="withMetadataCheckBox" default-binding="true">
+              <component id="31c35" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="19" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="with Metadata"/>
+                  <text value="Enter Search Text or select Search Document:"/>
                 </properties>
               </component>
-              <component id="2291c" class="javax.swing.JCheckBox" binding="splitParagraphsCheckBox" default-binding="true">
+              <component id="aa186" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="9" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="split Paragraphs"/>
+                  <text value="Document Search Results:"/>
                 </properties>
               </component>
-              <component id="6fc5b" class="javax.swing.JCheckBox" binding="translateToCheckBox" default-binding="true">
+              <component id="534fc" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="26" column="9" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Translate to:"/>
+                  <text value="Selection Metadata:"/>
                 </properties>
               </component>
-              <component id="7773" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+              <component id="da1f8" class="javax.swing.JComboBox" binding="searchTrainComboBox">
                 <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="9" column="6" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="5a1f9" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="7" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Index Type:"/>
+                </properties>
+              </component>
+              <component id="bd703" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="11" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Termweight:"/>
+                </properties>
+              </component>
+              <component id="92631" class="javax.swing.JComboBox" binding="searchTFComboBox">
+                <constraints>
+                  <grid row="13" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="8a7b1" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="15" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Number of search results:"/>
+                </properties>
+              </component>
+              <component id="e41e5" class="javax.swing.JTextField" binding="noOfSearchResultsText">
+                <constraints>
+                  <grid row="17" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="20"/>
+                </properties>
+              </component>
+              <scrollpane id="2af75">
+                <constraints>
+                  <grid row="21" column="6" row-span="2" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="1bdfb" class="javax.swing.JTextArea" binding="searchTextArea">
+                    <constraints/>
+                    <properties>
+                      <lineWrap value="true"/>
+                      <text value=""/>
+                      <wrapStyleWord value="true"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="407a0" class="javax.swing.JRadioButton" binding="selTextRadioButton">
+                <constraints>
+                  <grid row="21" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="cb73e" class="javax.swing.JLabel" binding="algTextField">
+                <constraints>
+                  <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
                 </constraints>
                 <properties>
-                  <model/>
+                  <text value="Knowledge Corpus: null"/>
+                </properties>
+              </component>
+              <component id="83a64" class="javax.swing.JButton" binding="selectDocumentButton" default-binding="true">
+                <constraints>
+                  <grid row="24" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <enabled value="false"/>
+                  <text value="Select Document"/>
+                </properties>
+              </component>
+              <component id="bcc3a" class="javax.swing.JRadioButton" binding="selDocRadioButton">
+                <constraints>
+                  <grid row="24" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="35dee" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="29" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Select Corpus to Search:"/>
+                </properties>
+              </component>
+              <component id="41405" class="javax.swing.JRadioButton" binding="searchTopCorpRadio">
+                <constraints>
+                  <grid row="31" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="Topic Corpus"/>
+                </properties>
+              </component>
+              <component id="bbe61" class="javax.swing.JRadioButton" binding="searchDocsRadio">
+                <constraints>
+                  <grid row="33" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <selected value="false"/>
+                  <text value="Search Corpus"/>
+                </properties>
+              </component>
+              <component id="ffbd3" class="javax.swing.JButton" binding="searchButton" default-binding="true">
+                <constraints>
+                  <grid row="35" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Search"/>
+                </properties>
+              </component>
+              <scrollpane id="376b2">
+                <constraints>
+                  <grid row="29" column="9" row-span="7" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="e81ab" class="javax.swing.JTextArea" binding="selectedMetadataText">
+                    <constraints/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <scrollpane id="ccb0">
+                <constraints>
+                  <grid row="2" column="13" row-span="21" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <verticalScrollBarPolicy value="22"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="4a076" class="javax.swing.JTable" binding="termSearchResTable" custom-create="true">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                      <autoResizeMode value="2"/>
+                      <fillsViewportHeight value="false"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <scrollpane id="13e4a">
+                <constraints>
+                  <grid row="2" column="9" row-span="21" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
+                <properties>
+                  <verticalScrollBarPolicy value="22"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="340c9" class="javax.swing.JTable" binding="docSearchResTable" custom-create="true">
+                    <constraints/>
+                    <properties>
+                      <autoCreateRowSorter value="true"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="ded80" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="13" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Term Search Result"/>
+                </properties>
+              </component>
+              <component id="d7eca" class="javax.swing.JLabel" binding="searchDocValue">
+                <constraints>
+                  <grid row="24" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <text value="nothing selected"/>
+                </properties>
+              </component>
+              <component id="fda64" class="javax.swing.JButton" binding="openSearchDocumentButton" default-binding="true">
+                <constraints>
+                  <grid row="24" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="false"/>
+                  <text value="Open Search Document"/>
                 </properties>
               </component>
             </children>

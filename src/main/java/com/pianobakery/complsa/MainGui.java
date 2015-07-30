@@ -1,81 +1,145 @@
 package com.pianobakery.complsa;
 
-import com.sun.codemodel.internal.JOp;
-import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.xml.sax.SAXException;
+import pitt.search.semanticvectors.Search;
+import pitt.search.semanticvectors.*;
+
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.bind.SchemaOutputResolver;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.awt.event.*;
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.net.HttpURLConnection;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 
 /**
  * Created by michael ruepp on 16.05.15.
  */
 public class MainGui {
-    private JPanel mainPanel;
-    private JTabbedPane tabbedPane1;
-    private JButton newFolderButton;
-    private JButton selectFolderButton;
-    private JList impDocList;
-    private JButton addTopicCorpusButton;
-    private JButton removeTopicCorpusButton;
-    private JButton impNextButton;
-    private JPanel setupPanel;
-    private JTextField wDirText;
-    private JCheckBox withMetadataCheckBox;
-    private JCheckBox splitParagraphsCheckBox;
-    private JCheckBox translateToCheckBox;
-    private JComboBox comboBox1;
-    private JComboBox selectTrainCorp;
-    private JPanel searchDocs;
-    //private JButton removeCorpusButton;
-    private JCheckBox addCorpRecursiveCheckBox;
-    private JCheckBox createChunksCheckBox;
-    private DefaultListModel listModel;
-    private File[] files;
-    private File wDir;
-    private HashMap<String, File> trainCorp;
-
-
-    //private ProgressBar progressBar;
-    //private Task task;
-
     private static JMenuBar menuBar;
     private static JMenu menu, submenu;
     private static JMenuItem menuItem;
     private static JMenuItem newProjFolderMenuItem;
     private static JRadioButtonMenuItem rbMenuItem;
     private static JCheckBoxMenuItem cbMenuItem;
+
+    private JTabbedPane tabbedPane1;
+    private JPanel setupPanel;
+    private JPanel searchDocs;
+    private JPanel mainPanel;
+
+    private JButton newFolderButton;
+    private JButton selectFolderButton;
+    private JButton trainCorpButton;
+    private JButton addTopicCorpusButton;
+    private JButton removeTopicCorpusButton;
+    private JButton downloadModelButton;
+    private JButton updateIndexButton;
+    private JButton removeIndexButton;
+    private JButton searchButton;
+    private JButton impSearchCorpButton;
+    private JButton removeSearchCorpButton;
+
+    private JCheckBox addCorpRecursiveCheckBox;
+    private JCheckBox createChunksCheckBox;
+    private JCheckBox impSearchCorpRecursiveCheckBox;
+    private JCheckBox splitSearchCorpCheckBox;
+
+    private JTextField wDirText;
+    private JTextField amountOfSentencesPerTextField;
+    private JTextField posIndRadiusTextField;
+    private JTextField amountSearchCorpSent;
+
+    private JComboBox selectTrainCorp;
+    private JComboBox termComboBox;
+    private JComboBox indexTypeComboBox;
+    private JComboBox searchCorpComboBox;
+
+    private JComboBox searchTrainComboBox;
+    private JComboBox searchTFComboBox;
+    private Map<String, List<String>> searchModelList = new LinkedHashMap<String, List<String>>();
+
+    private JLabel langModelsText;
+
+    private JTextArea searchTextArea;
+
+    private JRadioButton searchDocsRadio;
+    private JRadioButton searchTopCorpRadio;
+
+    private JTextField noOfSearchResultsText;
+    private JRadioButton selTextRadioButton;
+    private JLabel algTextField;
+    private JRadioButton selDocRadioButton;
+    private JButton selectDocumentButton;
+    private JTextArea selectedMetadataText;
+    private JTable termSearchResTable;
+    private JTable docSearchResTable;
+    private JLabel searchDocValue;
+    private JButton openSearchDocumentButton;
+
+    private String[] docSearchTitles;
+    private DocSearchModel docSearchResModel;
+    private String[] termSearchTitles;
+    private DefaultTableModel termSearchResModel;
+
+    private ReaderGui reader;
+    private ReaderGui searchDocReader;
+    private int docSelCounter;
+    private List<File> selDocdirContent;
+
+    private String searchFileString;
+
+
+
+
+    //private DefaultListModel listModel;
+
+    private File[] files;
+    private File wDir;
+    private HashMap<String, File> trainCorp;
+    private HashMap<String, File> trainSentModels;
+    private HashMap<String, File> indexFilesModel;
+    private HashMap<String, File> searchCorpusModel;
+
     private static MainGui maingui;
     private static JFrame frame;
     private static String topicFolder = "TopicCorp";
+    private static String searchFolder = "SearchCorp";
+    private static String trainModelFolder = "TrainModels";
+    private static String modelUrl = "http://opennlp.sourceforge.net/models-1.5";
+    private static String[] indexType= {"Standard","LSA", "Positional"};
+    private static String[] termweights= {"None", "IDF", "LOGENTROPY", "SQRT"};
+
+
+    private static File openFolderDebug = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
+
+    final static Logger logger = Logger.getLogger(MainGui.class);
+
 
 
     //Getter and Setter
-    public JList getImpDocList() {
-        return impDocList;
-    }
-
-    public void setImpDocList(JList impDocList) {
-        this.impDocList = impDocList;
-    }
-
     public JTabbedPane getTabbedPane1() {
         return tabbedPane1;
     }
@@ -84,13 +148,55 @@ public class MainGui {
         this.tabbedPane1 = tabbedPane1;
     }
 
-    public DefaultListModel getListModel() {
-        return listModel;
+
+    public int getSelectedDocTableRow() {
+
+
+
+        int row = docSearchResTable.getSelectedRow();
+        logger.debug("Row Selected: " + row);
+
+        if (row > docSearchResModel.getRowCount() - 1 || row < 0) {
+            return -1;
+        }
+
+        return row;
+
     }
 
-    public void setListModel(DefaultListModel listModel) {
-        this.listModel = listModel;
+    public void setSelectedDocTableRow(int theRow) {
+
+        logger.debug("Row Set: " + theRow);
+
+        if (theRow < 0 || theRow >= docSearchResModel.getRowCount()) {
+            return;
+        }
+
+        if (docSearchResTable.getRowCount() != 0) {
+            docSearchResTable.setRowSelectionInterval(theRow,theRow);
+        }
+
     }
+
+    public String[]getSelectedTermTableWords() {
+        List<String> theStrings = new ArrayList<String>();
+
+        int[] theRows = termSearchResTable.getSelectedRows();
+        if (theRows.length != 0) {
+            for (int aRow : theRows) {
+                //String aString = (String)termSearchResTable.getValueAt(aRow,1);
+                int modelRow = termSearchResTable.convertRowIndexToModel(aRow);
+                String aString = (String)termSearchResTable.getModel().getValueAt(modelRow,1);
+                theStrings.add(aString);
+            }
+
+        }
+        String[] theStringArr = new String[theStrings.size()];
+        theStringArr = theStrings.toArray(theStringArr);
+        return theStringArr;
+
+    }
+
 
     public File[] getFiles() {
         return files;
@@ -117,8 +223,44 @@ public class MainGui {
     }
 
 
+
+
+    //Runtime Parameter
+    public void runtimeParameters() {
+        RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+        List<String> aList = bean.getInputArguments();
+        long heapSize = Runtime.getRuntime().totalMemory();
+        logger.info("Heap Size = " + heapSize);
+        long heapSizeMax = Runtime.getRuntime().maxMemory();
+        System.out.println("Heap Size max= " + heapSize);
+
+        for (int i = 0; i < aList.size(); i++) {
+            logger.info("Runtime Infos: " + aList.get(i));
+        }
+    }
+
     //Main
     public static void main(String[] args) {
+        // take the menu bar off the jframe
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+        // set the name of the application menu item
+        //System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Sementic Analysis");
+
+        // set the look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
+
         //StartUI
         frame = new JFrame("MainGui");
         maingui = new MainGui();
@@ -128,15 +270,19 @@ public class MainGui {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        int frameWidth = 1024;
+        frame.setTitle("Semantic Text Search");
+        int frameWidth = 1280;
         int frameHeight = 800;
+        frame.setMinimumSize(new Dimension(frameWidth,frameHeight));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         JMenuBar menu = MenuExp();
         frame.setJMenuBar(menu);
+
+
+
+
         frame.setVisible(true);
-
-
 
     }
 
@@ -144,69 +290,126 @@ public class MainGui {
     //Main Gui Constructor
     public MainGui() {
 
+        runtimeParameters();
         trainCorp = new HashMap<String, File>();
-
-
-
-
+        trainSentModels = new HashMap<String, File>();
+        indexFilesModel = new HashMap<String, File>();
+        searchCorpusModel = new HashMap<String, File>();
+        selDocdirContent = new ArrayList<File>();
+        langModelsText.setText("None");
+        posIndRadiusTextField.setEnabled(false);
         //Disable all Components as long as wDir is not set.
         enableUIElements(false);
 
+        ButtonGroup selSearchGroup =new ButtonGroup();
+        selSearchGroup.add(searchDocsRadio);
+        selSearchGroup.add(searchTopCorpRadio);
 
+        ButtonGroup searchSelGroup = new ButtonGroup();
+        searchSelGroup.add(selTextRadioButton);
+        searchSelGroup.add(selDocRadioButton);
+
+
+
+
+        //Project Page
+        //Project Folder
         newFolderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
+                clearSelections();
                 createNewProjectFolder();
-                File topFolder = new File(wDir + File.separator + topicFolder);
-                if (topFolder.exists()) {
-                    System.out.println("TopicCorp Exists");
-
-                    File[] theFolders;
-                    theFolders = topFolder.listFiles((java.io.FileFilter) DirectoryFileFilter.INSTANCE);
-                    for ( File afolder : theFolders ) {
-                        try {
-                            addRemoveItemToTopicBox(afolder,true);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-
-
-
+                try {
+                    addExistingSentModelsToMap();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
+                try {
+                    loadTopicCorp();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    loadSearchCorp();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    updateIndexFileFolder();
 
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
         selectFolderButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                clearSelections();
                 chooseNewProjectFolder();
-                File topFolder = new File(wDir + File.separator + topicFolder);
-                if (topFolder.exists()) {
-                    System.out.println("TopicCorp Exists");
-
-                    File[] theFolders;
-                    theFolders = topFolder.listFiles((java.io.FileFilter) DirectoryFileFilter.INSTANCE);
-                    for ( File afolder : theFolders ) {
-                        System.out.println("Add A Folder: " + afolder.toString());
-                        File theFile = afolder;
-                        try {
-                            addRemoveItemToTopicBox(theFile, true);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-
-
-
+                try {
+                    addExistingSentModelsToMap();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    loadTopicCorp();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    loadSearchCorp();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                try {
+                    updateIndexFileFolder();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
 
             }
         });
 
+
+        //Download Language Models
+        downloadModelButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logger.debug("Download Models");
+
+                try {
+                    if (testURL(modelUrl)) {
+                        downloadModelTaskWithBar(getProgressBarWithTitleLater("Download Model Files...",true));
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Connection Timeout - check your Internet connection");
+                }
+
+
+            }
+        });
+
+
+        //Add-Remove Topic Corpus
         addTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                logger.debug("Numeric?: " + StringUtils.isNumeric(amountOfSentencesPerTextField.getText()));
+                logger.debug("Chunk selected: " + createChunksCheckBox.isSelected());
+
+
+                if (createChunksCheckBox.isSelected() && !StringUtils.isNumeric(amountOfSentencesPerTextField.getText())) {
+
+                    JOptionPane.showMessageDialog(null, "Enter Number");
+                    return;
+
+                }
+                if (trainSentModels.size() == 0) {
+                    JOptionPane.showMessageDialog(null, "Download Sentence Models first");
+                    return;
+                }
 
 
                 File folder = chooseAddCorpusFolder();
@@ -214,15 +417,15 @@ public class MainGui {
                 if (folder != null) {
 
                     File newDir = new File(wDir + File.separator + topicFolder + File.separator + folder.getName());
-                    System.out.println("Corpus Folder: " + folder.toString());
-                    System.out.println("Import Folder: " + newDir.toString());
-                    System.out.println("Working Folder : " + wDir.toString());
-                    System.out.println("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
+                    logger.debug("Corpus Folder: " + folder.toString());
+                    logger.debug("Import Folder: " + newDir.toString());
+                    logger.debug("Working Folder : " + wDir.toString());
+                    logger.debug("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
 
                     //Create Corpus Folder
                     if (!newDir.exists()) {
 
-                        System.out.println("Creating directory: " + newDir);
+                        logger.debug("Creating directory: " + newDir);
                         boolean result = false;
 
                         try {
@@ -236,12 +439,12 @@ public class MainGui {
                             e1.printStackTrace();
                         }
                         if (result) {
-                            System.out.println("DIR created");
+                            logger.debug("DIR created");
                         }
                     } else {
 
                         int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Topic Corpus? You have to re-train!");
-                        System.out.println("DIR not created");
+                        logger.debug("DIR not created");
                         if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
                             return;
                         }
@@ -251,9 +454,9 @@ public class MainGui {
 
                     //Run import
                     if (folder != null ) {
-                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus"), folder, newDir, addCorpRecursiveCheckBox.isSelected());
+                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(),Integer.parseInt(amountOfSentencesPerTextField.getText()));
                         try {
-                            addRemoveItemToTopicBox(newDir,true);
+                            addRemoveItemToTopicBox(newDir,true,true);
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -268,6 +471,22 @@ public class MainGui {
             }
         });
 
+        selectTrainCorp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+
+
+                frame.setTitle("Selected Training Corpus: " + selectTrainCorp.getSelectedItem() + " and " + "Sel. Search Corpus: " + searchCorpComboBox.getSelectedItem());
+                algTextField.setText("Knowledge Corpus: " + selectTrainCorp.getSelectedItem());
+
+                try {
+                    updateIndexFileFolder();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
 
         removeTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) throws ArrayIndexOutOfBoundsException {
@@ -275,7 +494,8 @@ public class MainGui {
 
                 if (theFile != null){
                     try {
-                        addRemoveItemToTopicBox(theFile,false);
+                        addRemoveItemToTopicBox(theFile,false,true);
+                        updateIndexFileFolder();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -284,6 +504,11 @@ public class MainGui {
                     try {
                         selectTrainCorp.removeItemAt(0);
                         System.out.printf("Items of selectTrainingCorp: " + selectTrainCorp.getItemAt(0));
+                        try {
+                            updateIndexFileFolder();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
 
                     }catch (ArrayIndexOutOfBoundsException e2) {
                         JOptionPane.showMessageDialog(null, "Keine Topic Corps mehr vorhanden");
@@ -291,70 +516,552 @@ public class MainGui {
 
                 }
 
-
-/*
-                try {
-                    if (impDocList.getSelectedIndices().length > 0) {
-                        int[] selectedIndices = impDocList.getSelectedIndices();
-                        System.out.println("Remove selected Indices: " + Arrays.toString(selectedIndices));
-                        for (int i = selectedIndices.length - 1; i >= 0; i--) {
-                            listModel.removeElementAt(selectedIndices[i]);
-                        }
-                    }
-
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Falsche Eingabe");
-
-                }
-                */
-                //System.out.println("Elements still there: " + listModel.toString());
             }
 
         });
 
 
+        //Update and remove Index
+        updateIndexButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectTrainCorp.getSelectedItem() == null) {
+                    logger.debug("Corpus selection = null");
+                    return;
+                }
+                int wordRadius = 0;
+                ProgressBar bar;
+                bar = getProgressBarWithTitleLater("Train on selected Corpus", false);
+                bar.setProgressBarIndeterminate(true);
+
+                logger.debug("Train the Selected Corpus");
 
 
-        impNextButton.addActionListener(new ActionListener() {
+                logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
+                logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
+                File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+
+
+                trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), true);
+
+
+            }
+        });
+
+        removeIndexButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectTrainCorp.getSelectedItem() == null) {
+                    logger.debug("Corpus selection = null");
+                    return;
+                }
+                File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+                File indexFolderParent = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                File indexFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + corpDir.getName());
+
+                logger.debug("The Indexfolder to be deleted: " + indexFolder);
+                boolean isChild = false;
+                try {
+                    isChild = isSubDirectory(indexFolderParent, indexFolder);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                if (isChild && indexFolder.exists()) {
+                    try {
+                        FileUtils.deleteDirectory(indexFolder);
+
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Unable to delete Index Folder");
+                        //return;
+                    }
+
+                } else {
+
+                }
+
+            }
+        });
+
+
+        //Train Semantic
+        trainCorpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
+                logger.debug("The Index File Folder Path: " + theIndexFileFolder);
+
+                if (!theIndexFileFolder.exists()) {
+                    JOptionPane.showMessageDialog(null, "Update Index first");
+                    return;
+                }
+
+
+                int wordRadius = 0;
+
+
+                if (indexTypeComboBox.getSelectedIndex() == 2 && (posIndRadiusTextField.getText().isEmpty() || !StringUtils.isNumeric(posIndRadiusTextField.getText()) || Integer.parseInt(posIndRadiusTextField.getText()) == 0)) {
+
+
+                    JOptionPane.showMessageDialog(null, "Enter Number");
+                    return;
+
+                } else if (indexTypeComboBox.getSelectedIndex() == 2 && StringUtils.isNumeric(posIndRadiusTextField.getText())) {
+                    wordRadius = Integer.parseInt(posIndRadiusTextField.getText());
+                    logger.debug("Position Radius Field is: " + posIndRadiusTextField.getText());
+                }
+
+                ProgressBar bar;
+                bar = getProgressBarWithTitleLater("Train on selected Corpus", false);
+                bar.setProgressBarIndeterminate(true);
+
+                logger.debug("Train the Selected Corpus");
+
+                if (selectTrainCorp.getSelectedItem() == null) {
+                    logger.debug("Corpus selection = null");
+                    return;
+                }
+                logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
+                logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
+                File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+
+
+                trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), false);
+
+
+            }
+        });
+
+        indexTypeComboBox.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
 
 
-                if (wDir != null && files != null) {
+                if (indexTypeComboBox.getSelectedIndex() == 2) {
+                    logger.debug("Enable indexType Combo with Index: " + indexTypeComboBox.getSelectedIndex());
+
+                    posIndRadiusTextField.setEnabled(true);
+                    return;
+                }
+                logger.debug("Disable indexType Combo with Index: " + indexTypeComboBox.getSelectedIndex());
+                posIndRadiusTextField.setEnabled(false);
+
+            }
+        });
 
 
-                    for (File f : files) {
+        //Import and remove Search Corpora
+        impSearchCorpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-                        Parser parser = new Parser();
+                logger.debug("Numeric?: " + StringUtils.isNumeric(amountSearchCorpSent.getText()));
+                logger.debug("Chunk selected: " + splitSearchCorpCheckBox.isSelected());
+
+
+                if (splitSearchCorpCheckBox.isSelected() && !StringUtils.isNumeric(amountSearchCorpSent.getText())) {
+
+                    JOptionPane.showMessageDialog(null, "Enter Number");
+                    return;
+
+                }
+
+
+                File folder = chooseAddCorpusFolder();
+
+                if (folder != null) {
+
+                    File newDir = new File(wDir + File.separator + searchFolder + File.separator + folder.getName());
+                    logger.debug("Corpus Folder: " + folder.toString());
+                    logger.debug("Import Folder: " + newDir.toString());
+                    logger.debug("Working Folder : " + wDir.toString());
+                    logger.debug("Corpus Folder recursive is: " + impSearchCorpRecursiveCheckBox.isSelected());
+
+                    //Create Corpus Folder
+                    if (!newDir.exists()) {
+
+                        logger.debug("Creating directory: " + newDir);
+                        boolean result = false;
+
                         try {
-                            parser.parseDocToXhtml(f);
+                            FileUtils.forceMkdir(newDir);
+                            result = true;
+                        } catch (SecurityException se) {
+                            JOptionPane.showMessageDialog(null, "No permission or File Exists");
+
+                            //return Boolean.FALSE;
                         } catch (IOException e1) {
                             e1.printStackTrace();
-                        } catch (SAXException e1) {
-                            e1.printStackTrace();
-                        } catch (TikaException e1) {
+                        }
+                        if (result) {
+                            logger.debug("DIR created");
+                        }
+                    } else {
+
+                        int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Search Corpus?");
+                        logger.debug("DIR not created");
+                        if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
+                            return;
+                        }
+
+
+                    }
+
+                    //Run import
+                    if (folder != null) {
+                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()));
+                        try {
+                            addRemoveItemToTopicBox(newDir, true, false);
+                        } catch (IOException e1) {
                             e1.printStackTrace();
                         }
-                        //parser.setwDir(wDir);
-                        //parser.setFiles(files);
-                        //System.out.println(parser);
+
+                    }
+
+                }
+
+            }
+        });
+
+        searchCorpComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setTitle("Selected Training Corpus: " + selectTrainCorp.getSelectedItem() + " and " + "Sel. Search Corpus: " + searchCorpComboBox.getSelectedItem());
+            }
+        });
+
+        removeSearchCorpButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) throws ArrayIndexOutOfBoundsException {
+                File theFile = searchCorpusModel.get(searchCorpComboBox.getSelectedItem());
+
+                if (theFile != null) {
+                    try {
+                        addRemoveItemToTopicBox(theFile, false, false);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                } else if (theFile == null) {
+
+                    try {
+                        searchCorpComboBox.removeItemAt(0);
+                        System.out.printf("Items of select Search Corps: " + searchCorpComboBox.getItemAt(0));
+
+                    } catch (ArrayIndexOutOfBoundsException e2) {
+                        JOptionPane.showMessageDialog(null, "Keine Search Corps mehr vorhanden");
+                    }
+
+                }
+
+            }
+
+        });
+
+
+
+
+        //Search Page
+        //Choose Index Type
+        searchTrainComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (searchModelList.isEmpty()) {
+                    return;
+                }
+
+                if (searchModelList.get(searchTrainComboBox.getSelectedItem()) == null) {
+                    return;
+                }
+
+                List<String> theList = searchModelList.get(searchTrainComboBox.getSelectedItem().toString());
+                searchTFComboBox.removeAllItems();
+                for (String aTFItem : theList) {
+                    searchTFComboBox.addItem(aTFItem);
+                }
+
+                getSelectedSearchModelFiles();
+
+
+            }
+        });
+
+        searchTFComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (searchModelList.isEmpty()) {
+                    return;
+                }
+
+                if (searchModelList.get(searchTrainComboBox.getSelectedItem()) == null) {
+                    return;
+                }
+                getSelectedSearchModelFiles();
+            }
+        });
+
+
+        //Select Search Type
+        selTextRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectDocumentButton.setEnabled(false);
+                searchTextArea.setEnabled(true);
+                searchDocValue.setText("nothing selected");
+
+            }
+        });
+
+        selDocRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectDocumentButton.setEnabled(true);
+                searchTextArea.setText(null);
+                searchTextArea.setEnabled(false);
+
+            }
+        });
+
+        selectDocumentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                importSearchFile();
+                openSearchDocumentButton.setEnabled(true);
+
+            }
+        });
+
+        openSearchDocumentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (searchDocReader == null) {
+                    searchDocReader = getReaderLater(null, maingui);
+                    searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                } else if (!searchDocReader.getFrameVisible()) {
+                    searchDocReader.setFrameVisible(true);
+                    searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                }
+                searchDocReader.setDocumentText(searchFileString);
+                searchDocReader.setViewPane(2);
+                searchDocReader.disableComponents();
+                searchDocReader.setSearchTerms(getSelectedTermTableWords());
+
+            }
+        });
+
+        //Search Button
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+
+                if (searchTextArea.getText().isEmpty() && selTextRadioButton.isSelected()) {
+                    JOptionPane.showMessageDialog(null, "Enter Search Terms");
+                    return;
+                }
+
+                if ((searchFileString == null || searchFileString.isEmpty()) && selDocRadioButton.isSelected()) {
+                    JOptionPane.showMessageDialog(null, "Import Search Document");
+                    return;
+                }
+                if (searchTopCorpRadio.isSelected() && (searchTrainComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
+                    JOptionPane.showMessageDialog(null, "Import Training Corpus and train it");
+                    return;
+                }
+                if (searchDocsRadio.isSelected() && searchCorpComboBox.getItemCount() == 0) {
+                    JOptionPane.showMessageDialog(null, "Import Search Corpus first");
+                    return;
+                }
+
+
+
+
+                if (searchCorpComboBox.getItemCount() != 0 && searchDocsRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
+
+                    if (selDocRadioButton.isSelected()) {
+                        logger.debug("run Doc search on Search Corpus");
+                        ProgressBar bar = getProgressBarWithTitleLater("Search Document Similarities...", false);
+                        File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                        compareCorpDocsWithSearchDocTaskWithBar(bar, corpDir);
+                    } else if (selTextRadioButton.isSelected()) {
+                        logger.debug("run Text search on Search Docs");
+                        ProgressBar bar = getProgressBarWithTitleLater("Search Text Similarities...", false);
+                        File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                        compareCorpDocsWithSearchDocTaskWithBar(bar, corpDir);
 
                     }
 
 
-                    //JOptionPane.showMessageDialog(null, parser.parseDocsToXhtml());
 
 
-                } else if (wDir == null && files == null) {
-                    JOptionPane.showMessageDialog(null, "Kein Working Folder und Dokumente ausgewählt!");
-                } else if (wDir == null) {
-                    JOptionPane.showMessageDialog(null, "Kein Working Folder ausgewählt!");
-                } else if (files == null) {
-                    JOptionPane.showMessageDialog(null, "Keine Dokumente Folder ausgewählt!");
+                } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
+
+                    if (selDocRadioButton.isSelected()) {
+                        ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
+                        searchDocInTopicCorpTaskWithBar(bar);
+
+                        //searchDocInTopicCorp();
+
+                        ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
+                        searchTermInTopicCorpTaskWithBar(bar2);
+
+                        //searchTermInTopicCorp();
+                        logger.debug("run Doc search on Train Corpus");
+                    } else if (selTextRadioButton.isSelected()) {
+                        logger.debug("run Text search on Topic Corp");
+                        ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
+                        searchDocInTopicCorpTaskWithBar(bar);
+
+
+
+                        //searchDocInTopicCorp();
+
+                        ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
+                        searchTermInTopicCorpTaskWithBar(bar2);
+                        //searchTermInTopicCorp();
+                    }
+
+                }
+
+            }
+
+
+        });
+
+        //Table Listeners
+        docSearchResTable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                JTable table = (JTable) me.getSource();
+                Point p = me.getPoint();
+                int row = docSearchResTable.rowAtPoint(p);
+                switch (me.getClickCount()) {
+                    case 1:
+                        if (row == -1) {
+                            break;
+                        }
+                        if (docSearchResTable.getRowCount() > 0) {
+                            logger.debug("Single click Doc: " + ((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(row).getFile().toString());
+                            fillMetaDataField(((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(row).getFile());
+                            if (reader != null) {
+                                reader.setSearchTerms(getSelectedTermTableWords());
+                            }
+                            if (searchDocReader != null) {
+                                searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                            }
+                            setSelReaderContent();
+                            setDocReaderContent(0);
+                            if (reader != null) {
+                                reader.setSearchTerms(getSelectedTermTableWords());
+                            }
+                            if (searchDocReader != null) {
+                                searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                            }
+
+                        }
+                        break;
+                    case 2:
+                        if (row == -1) {
+                            break;
+                        }
+                        if (docSearchResTable.getRowCount() > 0) {
+                            logger.debug("Double click Doc: " + ((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(row).getFile().toString());
+                            fillMetaDataField(((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(row).getFile());
+
+                            if (reader == null) {
+                                reader = getReaderLater((DocSearchModel) docSearchResTable.getModel(), maingui);
+                                reader.setSearchTerms(getSelectedTermTableWords());
+                            } else if (!reader.getFrameVisible()) {
+                                reader.setFrameVisible(true);
+                                reader.setSearchTerms(getSelectedTermTableWords());
+                            }
+                            setSelReaderContent();
+                            setDocReaderContent(0);
+                            if (reader != null) {
+                                reader.setSearchTerms(getSelectedTermTableWords());
+                            }
+                            if (searchDocReader != null) {
+                                searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                            }
+                        }
+                        break;
+                }
+
+            }
+        });
+
+        termSearchResTable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                JTable table = (JTable) me.getSource();
+                Point p = me.getPoint();
+                int row = docSearchResTable.rowAtPoint(p);
+                switch (me.getClickCount()) {
+                    case 1:
+                        logger.debug("Single click Term: " + termSearchResTable.getModel().getValueAt(row, 1));
+                        logger.debug("Selected Terms: " + Arrays.toString(getSelectedTermTableWords()));
+                        if (reader != null) {
+                            reader.setSearchTerms(getSelectedTermTableWords());
+
+                        }
+                        if (searchDocReader != null) {
+                            searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                        }
+                        break;
+                    case 2:
+                        logger.debug("Double click Term: " + termSearchResTable.getModel().getValueAt(row, 1));
+                        if (reader != null) {
+                            reader.setSearchTerms(getSelectedTermTableWords());
+                        }
+                        if (searchDocReader != null) {
+                            searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                        }
+                        break;
+
+                }
+
+            }
+        });
+
+        docSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (docSearchResTable.getSelectedRow() > -1) {
+                    // print first column value from selected row
+                    logger.debug("KeyboardSelection: " + ((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow())).getFile().toString());
+                    fillMetaDataField(((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow())).getFile());
+                    setSelReaderContent();
+                    setDocReaderContent(0);
+                    if (reader != null) {
+                        reader.setSearchTerms(getSelectedTermTableWords());
+                    }
+                    if (searchDocReader != null) {
+                        searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                    }
+
+
                 }
             }
         });
-    }
 
+        termSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (termSearchResTable.getSelectedRow() > -1) {
+                    // print first column value from selected row
+                    if (reader != null) {
+                        reader.setSearchTerms(getSelectedTermTableWords());
+                    }
+                    if (searchDocReader != null) {
+                        searchDocReader.setSearchTerms(getSelectedTermTableWords());
+                    }
+
+
+                }
+
+            }
+        });
+
+    }
 
     //Menubar
     public static JMenuBar MenuExp() {
@@ -410,25 +1117,24 @@ public class MainGui {
         newAction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 maingui.createNewProjectFolder();
-                System.out.println("You have clicked on the new action");
+                logger.debug("You have clicked on the new action");
             }
         });
         openAction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 maingui.chooseNewProjectFolder();
-                System.out.println("You have clicked on the new action");
+                logger.debug("You have clicked on the new action");
             }
         });
         exitAction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 System.exit(0);
-                System.out.println("You have clicked on the new action");
+                logger.debug("You have clicked on the new action");
             }
         });
 
         return menuBar;
     }
-
 
     //ProjectFolder
     public void createNewProjectFolder() {
@@ -436,8 +1142,9 @@ public class MainGui {
         try {
             JFrame frame = new JFrame();
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(openFolderDebug);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+            //chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
             chooser.setDialogTitle("Create Working Folder");
             chooser.setFileHidingEnabled(Boolean.TRUE);
             chooser.setMultiSelectionEnabled(false);
@@ -464,9 +1171,9 @@ public class MainGui {
                 String path = chooser.getCurrentDirectory().toString();
                 wDirText.setText(path);
                 wDir = chooser.getCurrentDirectory();
-                System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-                System.out.println("WDir is: " + wDir.toString());
+                logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+                logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
+                logger.debug("WDir is: " + wDir.toString());
                 enableUIElements(true);
             }
 
@@ -481,7 +1188,8 @@ public class MainGui {
         try {
 
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+            chooser.setCurrentDirectory(openFolderDebug);
+            //chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
             chooser.setDialogTitle("Create Working Folder");
             chooser.setFileHidingEnabled(Boolean.TRUE);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -493,11 +1201,58 @@ public class MainGui {
                 String text = chooser.getSelectedFile().toString();
                 wDirText.setText(text);
                 wDir = chooser.getSelectedFile();
-                System.out.println("WDir is: " + wDir.toString());
-                System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+                logger.debug("WDir is: " + wDir.toString());
+                logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+                logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
                 enableUIElements(true);
             }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Falsche Eingabe");
+        }
+
+
+    }
+
+    public void importSearchFile() {
+        searchDocValue.setText("loading...");
+
+        try {
+            File selected;
+            searchFileString = "";
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+            chooser.setDialogTitle("Choose Search File");
+            chooser.setFileHidingEnabled(Boolean.TRUE);
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setMultiSelectionEnabled(false);
+            chooser.setAcceptAllFileFilterUsed(false);
+            int whatChoose = chooser.showOpenDialog(null);
+            if (whatChoose == JFileChooser.APPROVE_OPTION) {
+                selected = chooser.getSelectedFile();
+                logger.debug("AddCorpDir is: " + selected.toString());
+                logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+                logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
+                enableUIElements(true);
+                if (selected.exists()) {
+
+                    Parser parser = new Parser(selected);
+                    try {
+                        parser.parseDocToPlainText();
+
+                        searchFileString = Utilities.removeQuoteFromString(parser.getPlainText());
+                        logger.debug("The Search File: " + searchFileString);
+                        searchDocValue.setText(selected.getParentFile().getName() + File.separator + selected.getName());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (SAXException e) {
+                        e.printStackTrace();
+                    } catch (TikaException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Falsche Eingabe");
         }
@@ -519,14 +1274,15 @@ public class MainGui {
             int whatChoose = chooser.showOpenDialog(null);
             File selected;
             if (whatChoose == JFileChooser.APPROVE_OPTION) {
-                //String text = chooser.getSelectedFile().toString();
-                //wDirText.setText(text);
                 selected = chooser.getSelectedFile();
-                System.out.println("AddCorpDir is: " + selected.toString());
-                System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+                logger.debug("AddCorpDir is: " + selected.toString());
+                logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+                logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
                 enableUIElements(true);
-                return selected;
+
+                    return selected;
+
+
             }
 
         } catch (Exception ex) {
@@ -536,7 +1292,6 @@ public class MainGui {
         return null;
     }
 
-
     //Enable and Disable UI Conditionally until wDir is set
     private void enableUIElements(boolean enabled) {
         //enable all Components as long as wDir is not set.
@@ -544,59 +1299,127 @@ public class MainGui {
         addTopicCorpusButton.setEnabled(enabled);
         removeTopicCorpusButton.setEnabled(enabled);
         selectTrainCorp.setEnabled(enabled);
-        //removeCorpusButton.setEnabled(enabled);
-        impNextButton.setEnabled(enabled);
+        trainCorpButton.setEnabled(enabled);
         addCorpRecursiveCheckBox.setEnabled(enabled);
         createChunksCheckBox.setEnabled(enabled);
+        amountOfSentencesPerTextField.setEnabled(enabled);
+        downloadModelButton.setEnabled(enabled);
+        updateIndexButton.setEnabled(enabled);
+        termComboBox.setEnabled(enabled);
+        indexTypeComboBox.setEnabled(enabled);
+        removeIndexButton.setEnabled(enabled);
+        searchTextArea.setEnabled(enabled);
+        searchTrainComboBox.setEnabled(enabled);
+        impSearchCorpButton.setEnabled(enabled);
+        impSearchCorpRecursiveCheckBox.setEnabled(enabled);
+        splitSearchCorpCheckBox.setEnabled(enabled);
+        amountSearchCorpSent.setEnabled(enabled);
+        searchCorpComboBox.setEnabled(enabled);
+        removeSearchCorpButton.setEnabled(enabled);
+        searchDocsRadio.setEnabled(enabled);
+        searchTopCorpRadio.setEnabled(enabled);
+        searchButton.setEnabled(enabled);
+        searchTFComboBox.setEnabled(enabled);
+        noOfSearchResultsText.setEnabled(enabled);
+        selTextRadioButton.setEnabled(enabled);
+        selDocRadioButton.setEnabled(enabled);
+        //selectDocumentButton.setEnabled(enabled);
+
 
     }
-
-    //TODO Add Method to scan TopicCorpus and fill Combobox when  Workingdir selected
-
-
 
     //Manual UI Construction
     private void createUIComponents() {
-        this.setListModel(new DefaultListModel());
-        System.out.println("Liste ist: " + getListModel().toString());
-        this.setImpDocList(new JList(this.getListModel()));
-        this.getImpDocList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        this.getImpDocList().setSelectedIndex(0);
-        //this.getImpDocList().addListSelectionListener(this);
-        this.getImpDocList().setVisibleRowCount(12);
-        System.out.println("Jlist ist: " + this.getImpDocList().toString());
+
+        this.indexTypeComboBox = new JComboBox(indexType);
+        this.termComboBox = new JComboBox(termweights);
+
+
+
+        //docSearchTitles = new String[]{"%Similarity","Path","Show"};
+        docSearchResModel = new DocSearchModel();
+
+        docSearchResTable = new JTable(docSearchResModel);
+        docSearchResTable.setShowHorizontalLines(false);
+        docSearchResTable.setShowVerticalLines(true);
+        docSearchResTable.setFillsViewportHeight(true);
+        docSearchResTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        docSearchResTable.setShowGrid(false);
+        docSearchResTable.setGridColor(Color.DARK_GRAY);
+        docSearchResTable.setAutoscrolls(true);
+        docSearchResTable.getColumn("%Similarities:").setPreferredWidth(100);
+        docSearchResTable.getColumn("%Similarities:").setWidth(25);
+        docSearchResTable.getColumn("Filename:").setPreferredWidth(600);
+        docSearchResTable.getColumn("Filename:").setWidth(100);
+        docSearchResTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(JLabel.LEFT);
+        docSearchResTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
+
+
+
+        termSearchTitles = new String[]{"%Similarity","Terms"};
+        termSearchResModel = new DefaultTableModel(termSearchTitles, 0 ){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        termSearchResTable = new JTable(termSearchResModel);
+        termSearchResTable.setFillsViewportHeight(true);
+        termSearchResTable.setShowVerticalLines(true);
+        termSearchResTable.setFillsViewportHeight(true);
+        termSearchResTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        termSearchResTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+
+        //docSearchResTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        //docSearchResTable.getColumnModel().getColumn(1).sizeWidthToFit();
+
+
+
+
+
+
+
+
+
+
+
     }
 
+    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir,boolean sel, int amSent) {
 
-    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir,Boolean sel) {
-
-
-        addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel);
-        System.out.println("Runs");
+        addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel, amSent);
+        logger.debug("Runs");
         task.execute();
     }
-
 
     class addTopicCorpTask extends SwingWorker<Integer, Integer> {
         private ProgressBar bar;
         private File folder;
         private File newDir;
-        private Boolean sel;
+        private boolean sel;
+        private int amSent;
         private Collection<File> files = null;
 
-        public addTopicCorpTask(ProgressBar aBar, File aFolder, File aNewDir, Boolean aSel) {
+        public addTopicCorpTask(ProgressBar aBar, File aFolder, File aNewDir, boolean aSel, int amSent) {
             this.bar = aBar;
             this.folder = aFolder;
             this.newDir = aNewDir;
             this.sel = aSel;
+            this.amSent = amSent;
 
         }
 
         @Override
         public Integer doInBackground() {
-            System.out.println("Folder: " + folder.toString());
-            System.out.println("Folder newDir: " + newDir.toString());
-            System.out.println("Runs");
+            logger.debug("Folder: " + folder.toString());
+            logger.debug("Folder newDir: " + newDir.toString());
+            logger.debug("Runs");
+            //int amSent = Integer.parseInt(amountOfSentencesPerTextField.getText());
+            logger.debug("amSent=" + amSent);
+            boolean chunks = createChunksCheckBox.isSelected();
 
             if (sel) {
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
@@ -604,21 +1427,31 @@ public class MainGui {
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, FalseFileFilter.FALSE);
             }
 
+
+            for (File aFile : files) {
+                logger.debug("A Filda: " + aFile.toString());
+            }
+            logger.debug("Create Chunks: " + chunks + " and how much: " + amSent);
+
+
             Integer amount = files.size();
             bar.setProgressBarMax(amount);
-            bar.setTextField(amount.toString());
-            //Integer value = 0;
-            //bar.setProgressBarValue(value);
-
+            bar.setTextField("");
 
 
             for (File file : files ) {
+                bar.setTextField(file.getName().toString());
 
-
-                Boolean result = new Parser().saveDocToWorkingDirFolder(newDir, file);
+                Parser ps = new Parser(file);
+                Boolean result = null;
+                try {
+                    result = ps.saveDocToWorkingDirFolder(newDir, chunks, amSent, trainSentModels);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
                 if (result == false) {
-                    System.out.println("Error happened");
+                    logger.debug("Error happened");
 
                 }
                 amount--;
@@ -628,7 +1461,7 @@ public class MainGui {
             }
             //trainCorp.put(folder.getName(), folder);
             //selectTrainCorp.addItem(folder.getName().toString());
-            //System.out.println("TrainCorp Map: " + trainCorp.get(folder.getName()));
+            //logger.debug("TrainCorp Map: " + trainCorp.get(folder.getName()));
             return null;
         }
 
@@ -637,7 +1470,7 @@ public class MainGui {
          */
         @Override
         public void done() {
-            System.out.println("Done");
+            logger.debug("Done");
             Toolkit.getDefaultToolkit().beep();
             bar.dispose();
             JOptionPane.showMessageDialog(null, "Import completed");
@@ -645,22 +1478,14 @@ public class MainGui {
         }
     }
 
-
-
-
-
-
-
-
-    public ProgressBar getProgressBarWithTitleLater(String title){
-        final ProgressBar bar = new ProgressBar();
+    public ProgressBar getProgressBarWithTitleLater(String title, boolean withCancelButton){
+        final ProgressBar bar = new ProgressBar(withCancelButton);
         bar.setTitle(title);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
 
                 bar.setLocationRelativeTo(frame);
-                //bar.pack();
                 bar.setProgressBarValue(0);
                 bar.pack();
                 bar.setVisible(true);
@@ -671,42 +1496,399 @@ public class MainGui {
         return bar;
     }
 
-    public void addRemoveItemToTopicBox(File aFile, Boolean add) throws IOException {
-        File theFile = trainCorp.get(aFile.getName());
-        if (add && theFile == null) {
-            trainCorp.put(aFile.getName(), aFile);
-            selectTrainCorp.addItem(aFile.getName());
-            System.out.println("Added Item to Map: " + trainCorp.get(aFile.getName()).toString());
-            System.out.println("Added Item to Map - Mapsize: " + trainCorp.size());
-        } else if (!add && theFile != null){
-
-            System.out.println("Removed Item from Map: " + aFile.toString());
-            System.out.println("Removed Item from Map - Mapsize: " + trainCorp.size());
-
-            File parent = new File(wDir + File.separator + topicFolder);
-            System.out.println("Parentfolder: " + parent.toString());
-
-            boolean isIt = isSubDirectory(parent, aFile);
+    public ReaderGui getReaderLater(DocSearchModel aModel, MainGui maingui){
+        final ReaderGui reader = new ReaderGui(aModel,maingui);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
 
 
+                reader.showGui();
 
-            int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (isIt && result == JOptionPane.YES_OPTION) {
-
-                System.out.printf("Delete this Path: " + aFile.toString());
-
-                try {
-                    FileUtils.deleteDirectory(aFile);
-                }catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null, "Unable to delete Folder");
-                    //return;
-                }
-                trainCorp.remove(aFile.getName());
-                selectTrainCorp.removeItem(aFile.getName());
-            } else if (!isIt || result == JOptionPane.NO_OPTION) {
-                System.out.println("No delete, because cancel:" + aFile.toString());
 
             }
+
+        });
+        return reader;
+    }
+
+
+    public void setDocReaderContent(int addRem) {
+
+        File theSelFile;
+        File theParentFolder;
+
+        if (addRem == 0) {
+            if (selDocdirContent.size() != 0) {
+                selDocdirContent.clear();
+            }
+
+            docSelCounter = -1;
+            int row = docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow());
+            logger.debug("Selected Doc row: " + row + " RowCount: " + docSearchResTable.getRowCount());
+
+            DocSearchModel theModel = (DocSearchModel) docSearchResTable.getModel();
+            theSelFile = theModel.getDocSearchFile(row).getFile();
+            theParentFolder = new File(theSelFile.getParent());
+            File[] dirContentArray = theParentFolder.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File current, String name) {
+
+                    return new File(current, name).isFile();
+                }
+
+            });
+            logger.debug("The Selected Doc File: " + theModel.getDocSearchFile(row).getFile());
+            logger.debug("File Array: " + dirContentArray.toString());
+
+            selDocdirContent = new ArrayList<File>(Arrays.asList(dirContentArray));
+
+            logger.debug("File List: " + selDocdirContent.toString());
+            docSelCounter = selDocdirContent.indexOf(theSelFile);
+            logger.debug("Docselcounter: " + docSelCounter);
+
+            if((reader != null) && (docSelCounter > 0 ) && (docSelCounter < (selDocdirContent.size() -1))) {
+                reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+            } else if (docSelCounter == 0 && reader != null) {
+                reader.setBeforeDocText("Reached Beginning of Text");;
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+            } else if ((docSelCounter == (selDocdirContent.size() - 1)) && (reader != null)) {
+                reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText("Reached End of Text");
+            }
+
+        } else if(addRem == -1) {
+            if (docSelCounter == 0) {
+                return;
+            }
+            docSelCounter = docSelCounter - 1;
+            logger.debug("Docselcounter: " + docSelCounter);
+            if((reader != null) && (docSelCounter > 0 ) && (docSelCounter < (selDocdirContent.size() -1))) {
+                reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+            } else if (docSelCounter == 0 && reader != null) {
+                reader.setBeforeDocText("Reached Beginning of Text");;
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+            } else if ((docSelCounter == (selDocdirContent.size() - 1)) && (reader != null)) {
+                reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText("Reached End of Text");
+            }
+
+
+        } else if (addRem == 1) {
+            if (docSelCounter == selDocdirContent.size() - 1) {
+                return;
+            }
+
+            docSelCounter = docSelCounter + 1;
+            logger.debug("Docselcounter: " + docSelCounter);
+            if((reader != null) && (docSelCounter > 0 ) && (docSelCounter < (selDocdirContent.size() -1))) {
+                reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+            } else if (docSelCounter == 0 && reader != null) {
+                reader.setBeforeDocText("Reached Beginning of Text");;
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+            } else if ((docSelCounter == (selDocdirContent.size() - 1)) && (reader != null)) {
+                reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
+                reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
+                reader.setAfterDocText("Reached End of Text");
+            }
+
+        }
+        if (reader != null) {
+            reader.setSearchTerms(getSelectedTermTableWords());
+        }
+
+
+
+    }
+
+    public void setSelReaderContent() {
+
+        int row = docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow());
+        logger.debug("Selected row: " + row + " RowCount: " + docSearchResTable.getRowCount());
+        DocSearchModel theModel = (DocSearchModel) docSearchResTable.getModel();
+        logger.debug("The Selected Doc File: " + theModel.getDocSearchFile(row).getFile());
+
+
+        if((reader != null) && (row > 0 ) && (row < (docSearchResTable.getRowCount() -1))) {
+            reader.setBeforeText(Utilities.readFileToString(theModel.getDocSearchFile(row - 1).getFile()));
+            reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
+            reader.setAfterText(Utilities.readFileToString(theModel.getDocSearchFile(row + 1).getFile()));
+        } else if (row == 0 && reader != null) {
+            reader.setBeforeText("Reached Beginning of Text");
+            reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
+            reader.setAfterText(Utilities.readFileToString(theModel.getDocSearchFile(row + 1).getFile()));
+        } else if ((row == (docSearchResTable.getRowCount() - 1)) && (reader != null)) {
+            reader.setBeforeText(Utilities.readFileToString(theModel.getDocSearchFile(row - 1).getFile()));
+            reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
+            reader.setAfterText("Reached End of Text");
+        }
+
+        if (reader != null) {
+
+            File theSelFile = theModel.getDocSearchFile(row).getFile();
+            File theParentFolder = new File(theSelFile.getParent());
+            File[] dirContentArray = theParentFolder.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File current, String name) {
+
+                    return new File(current, name).isFile();
+                }
+
+        });
+            logger.debug("File Array: " + dirContentArray.toString());
+
+            List <File> theFileList = new ArrayList<File>(Arrays.asList(dirContentArray));
+
+            logger.debug("File List: " + theFileList.toString());
+
+            StringBuilder theComplete = new StringBuilder();
+
+            for (File aFile : theFileList) {
+
+                String aString = Utilities.readFileToString(aFile);
+
+                theComplete.append(aString + System.getProperty("line.separator"));
+        }
+            reader.setDocumentText(theComplete.toString());
+        }
+        if (reader != null) {
+            reader.setSearchTerms(getSelectedTermTableWords());
+        }
+
+    }
+
+
+    public void addRemoveItemToTopicBox(File aFile, Boolean add, boolean isTopicCorp) throws IOException {
+
+        if (isTopicCorp) {
+            File theFile = trainCorp.get(aFile.getName());
+            if (add && theFile == null) {
+                trainCorp.put(aFile.getName(), aFile);
+                selectTrainCorp.addItem(aFile.getName());
+                logger.debug("Added Item to Map: " + trainCorp.get(aFile.getName()).toString());
+                logger.debug("Added Item to Map - Mapsize: " + trainCorp.size());
+            } else if (!add && theFile != null){
+
+                logger.debug("Removed Item from Map: " + aFile.toString());
+                logger.debug("Removed Item from Map - Mapsize: " + trainCorp.size());
+
+                File parent = new File(wDir + File.separator + topicFolder);
+                File indexParent = new File (wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                File indexFolder = new File (indexParent + File.separator + aFile.getName());
+                File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
+                File indexFileFolder = new File (indexFileParent + File.separator + aFile.getName());
+
+                logger.debug("Parentfolder: " + parent.toString());
+                logger.debug("Lucene Index Parent Folder: " + indexParent.toString() + " and Index Folder Path: " + indexFolder.toString());
+                logger.debug("Lucene Index File Parent Folder: " + indexFileParent.toString() + " and Index File Folder Path: " + indexFileFolder.toString());
+
+                boolean isIt = isSubDirectory(parent, aFile);
+                boolean isIndexIt = isSubDirectory(indexParent, indexFolder);
+                boolean isIndexFileIt = isSubDirectory(indexFileParent, indexFileFolder);
+
+                int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                if (isIt && result == JOptionPane.YES_OPTION && isIndexIt && isIndexFileIt) {
+
+                    System.out.printf("Delete this Path: " + aFile.toString());
+
+                    try {
+                        FileUtils.deleteDirectory(aFile);
+                        FileUtils.deleteDirectory(indexFolder);
+                        FileUtils.deleteDirectory(indexFileFolder);
+                    }catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Unable to delete Folder");
+                        //return;
+                    }
+                    trainCorp.remove(aFile.getName());
+                    selectTrainCorp.removeItem(aFile.getName());
+                } else if (!isIt || result == JOptionPane.NO_OPTION) {
+                    logger.debug("No delete, because cancel:" + aFile.toString());
+                }
+            }
+
+        } else if (!isTopicCorp) {
+            File theFile = searchCorpusModel.get(aFile.getName());
+            if (add && theFile == null) {
+                searchCorpusModel.put(aFile.getName(), aFile);
+                searchCorpComboBox.addItem(aFile.getName());
+                logger.debug("Added Item to Map: " + searchCorpusModel.get(aFile.getName()).toString());
+                logger.debug("Added Item to Map - Mapsize: " + searchCorpusModel.size());
+            } else if (!add && theFile != null){
+
+                logger.debug("Removed Item from Map: " + aFile.toString());
+                logger.debug("Removed Item from Map - Mapsize: " + searchCorpusModel.size());
+
+                File parent = new File(wDir + File.separator + searchFolder);
+                File indexParent = new File (wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                File indexFolder = new File (indexParent + File.separator + aFile.getName());
+                File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
+                File indexFileFolder = new File (indexFileParent + File.separator + aFile.getName());
+
+                logger.debug("Parentfolder: " + parent.toString());
+                logger.debug("Lucene Index Parent Folder: " + indexParent.toString() + " and Index Folder Path: " + indexFolder.toString());
+                logger.debug("Lucene Index File Parent Folder: " + indexFileParent.toString() + " and Index File Folder Path: " + indexFileFolder.toString());
+
+                boolean isIt = isSubDirectory(parent, aFile);
+                boolean isIndexIt = isSubDirectory(indexParent, indexFolder);
+                boolean isIndexFileIt = isSubDirectory(indexFileParent, indexFileFolder);
+
+                int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                if (isIt && result == JOptionPane.YES_OPTION && isIndexIt && isIndexFileIt) {
+
+                    System.out.printf("Delete this Path: " + aFile.toString());
+
+                    try {
+                        FileUtils.deleteDirectory(aFile);
+                        //FileUtils.deleteDirectory(indexFolder);
+                        //FileUtils.deleteDirectory(indexFileFolder);
+                    }catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Unable to delete Folder");
+                        //return;
+                    }
+                    searchCorpusModel.remove(aFile.getName());
+                    searchCorpComboBox.removeItem(aFile.getName());
+                } else if (!isIt || result == JOptionPane.NO_OPTION) {
+                    logger.debug("No delete, because cancel:" + aFile.toString());
+                }
+            }
+
+        }
+
+
+    }
+
+    public void addExistingSentModelsToMap() throws IOException {
+
+        trainSentModels.clear();
+        File theFolder = new File(wDir + File.separator + trainModelFolder);
+        File[] theModels = theFolder.listFiles();
+        if (theModels != null) {
+
+            for (File aFile : theModels){
+                String ext = FilenameUtils.getExtension(aFile.toString());
+                String filename = FilenameUtils.getBaseName(aFile.toString());
+
+
+                if (ext.equals("bin")) {
+                    String langPre = filename.split("-")[0];
+                    String langSuf = filename.split("-")[1];
+
+                    if (langSuf.equals("sent")){
+                        trainSentModels.put(langPre, aFile);
+                        logger.debug("Put to TrainSentModel:" + trainSentModels.get(langPre));
+                    }
+
+                }
+
+            }
+
+            if (!trainSentModels.isEmpty()){
+                langModelsText.setText(String.valueOf(trainSentModels.keySet()));
+            }else {
+                langModelsText.setText("None");
+            }
+
+        } else {
+            langModelsText.setText("None");
+        }
+
+    }
+
+    public void updateIndexFileFolder() throws IOException {
+
+        if (trainCorp.isEmpty()) {
+            indexFilesModel.clear();
+            searchModelList.clear();
+            searchTrainComboBox.removeAllItems();
+            searchTFComboBox.removeAllItems();
+            return;
+        }
+
+
+        indexFilesModel.clear();
+        searchModelList.clear();
+        searchTrainComboBox.removeAllItems();
+        searchTFComboBox.removeAllItems();
+        File theCorpFolder = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+        File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
+        File indexFileFolder = new File (indexFileParent + File.separator + theCorpFolder.getName());
+        logger.debug("The CorpFolder: " + indexFileFolder);
+        File[] theIndexFiles = indexFileFolder.listFiles();
+        if (theIndexFiles != null) {
+
+            for (File aFile : theIndexFiles){
+                String ext = FilenameUtils.getExtension(aFile.toString());
+                String filename = FilenameUtils.getBaseName(aFile.toString());
+
+
+                if (ext.equals("bin")) {
+                    String indexType = filename.split("-")[0];
+                    String termDocType = filename.split("-")[1];
+                    String termWeightType = filename.split("-")[2];
+
+                    logger.debug("Index File Names: " + indexType + " " + termDocType + " " + termWeightType);
+
+                    indexFilesModel.put(filename, aFile);
+
+                    if(termDocType.equals("term")) {
+
+                        if (searchModelList.get(indexType) == null) {
+                            List<String> theTFList = new ArrayList<>();
+                            theTFList.add(termWeightType);
+                            searchModelList.put(indexType, theTFList);
+                        } else if (!searchModelList.get(indexType).contains(termWeightType)) {
+                            logger.debug("searchmodellist: " + searchModelList.get(indexType).toString());
+                            searchModelList.get(indexType).add(termWeightType);
+
+
+                        }
+                        logger.debug("The Map: " + searchModelList.toString());
+                        logger.debug("The List: " + searchModelList.get(indexType).toString());
+
+
+                    logger.debug("Put to indexFilesModel:" + indexFilesModel.get(filename));
+
+
+                    }
+
+
+                }
+
+
+
+            }
+            for (String theIndex : searchModelList.keySet()) {
+                searchTrainComboBox.addItem(theIndex);
+            }
+
+            logger.debug("The TF List: " + searchModelList.toString());
+            logger.debug(("The selected Object " + searchTrainComboBox.getSelectedItem().toString()));
+            List<String> theItem = searchModelList.get(searchTrainComboBox.getSelectedItem().toString());
+            logger.debug("The Selected List: " + searchModelList.get(searchTrainComboBox.getSelectedItem().toString()));
+            logger.debug("The Selected ListVariable: " + theItem.toString());
+
+            /*if (!theItem.isEmpty()) {
+                for (String aListItem : theItem) {
+                    searchTFComboBox.addItem(aListItem);
+                }
+            }*/
+
+
 
 
 
@@ -714,11 +1896,87 @@ public class MainGui {
 
 
 
+    }
+
+    public File[] getSelectedSearchModelFiles() {
+
+        String theIndexType;
+        String theTFType;
+        List<File> theFiles = new ArrayList<>();
+
+
+        if (searchTFComboBox.getSelectedItem() != null && searchTrainComboBox.getSelectedItem() != null) {
+
+            String theTermSearchString = new String(searchTrainComboBox.getSelectedItem() + "-term-" + searchTFComboBox.getSelectedItem());
+            String theDocSearchString = new String(searchTrainComboBox.getSelectedItem() + "-doc-" + searchTFComboBox.getSelectedItem());
+
+            if (!theTermSearchString.isEmpty() && !theDocSearchString.isEmpty()){
+
+
+                theFiles.add(indexFilesModel.get(theTermSearchString));
+                theFiles.add(indexFilesModel.get(theDocSearchString));
+                logger.debug("Return Files: " + theFiles.toString());
+                return theFiles.toArray(new File[theFiles.size()]);
+            }
+
+
+
+
+
+
+        }
+        return null;
+
 
     }
 
-    public boolean isSubDirectory(File base, File child)
-            throws IOException {
+    public void loadTopicCorp() throws IOException {
+
+        selectTrainCorp.removeAllItems();
+        trainCorp.clear();
+        File theFolder = new File(wDir + File.separator + topicFolder);
+        File[] theModels = theFolder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File current, String name) {
+                return new File(current, name).isDirectory();
+            }
+        });
+
+        if (theModels != null) {
+
+            for (File aFile : theModels) {
+
+                addRemoveItemToTopicBox(aFile, true, true);
+
+            }
+
+        }
+    }
+
+    public void loadSearchCorp() throws IOException {
+
+        searchCorpComboBox.removeAllItems();
+        searchCorpusModel.clear();
+        File theFolder = new File(wDir + File.separator + searchFolder);
+        File[] theModels = theFolder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File current, String name) {
+                return new File(current, name).isDirectory();
+            }
+        });
+
+        if (theModels != null) {
+
+            for (File aFile : theModels) {
+
+                addRemoveItemToTopicBox(aFile, true, false);
+
+            }
+
+        }
+    }
+
+    public boolean isSubDirectory(File base, File child) throws IOException {
         base = base.getCanonicalFile();
         child = child.getCanonicalFile();
 
@@ -732,110 +1990,672 @@ public class MainGui {
         return false;
     }
 
+    public void downloadModelTaskWithBar(ProgressBar bar) {
 
 
-/*
-    public void runTaskWithBar(ProgressBar bar) {
-
-
-        Task task = new Task();
-        task.addPropertyChangeListener(
-                new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        if ("progress".equals(evt.getPropertyName())) {
-                            bar.setProgressBarValue((Integer) evt.getNewValue());
-                        }
-                    }
-                }
-        );
-        System.out.println("Runs");
+        downloadModelTask task = new downloadModelTask(bar);
+        logger.debug("Runs");
         task.execute();
+
     }
 
-    class Task extends SwingWorker<Integer, Integer> {
+    class downloadModelTask extends SwingWorker<Integer, Integer> {
+        private ProgressBar bar;
+
+
+        public downloadModelTask(ProgressBar aBar) {
+            this.bar = aBar;
+
+
+        }
 
         @Override
         public Integer doInBackground() {
-            Random random = new Random();
-            int progress = 0;
-            // Initialize progress property.
-            setProgress(0);
-            while (progress < 100) {
-                // Sleep for up to one second.
+
+            logger.debug("Runs");
+
+            File modelFolder = new File(wDir + File.separator + trainModelFolder);
+
+            if (!modelFolder.exists()) {
+                modelFolder.mkdir();
+            }
+            bar.setProgressBarIndeterminate(true);
+
+            Document doc = null;
+            try {
                 try {
-                    Thread.sleep(random.nextInt(1000));
-                } catch (InterruptedException ignore) {
+                    doc = Jsoup.connect(modelUrl).timeout(10 * 1000).get();
+
+                    //logger.debug("The Doc" + doc.html().toString());
+                    Elements links = doc.select("a[href]");
+
+
+                    for (Element link : links) {
+
+                        String srcUrl = link.attr("abs:href");
+
+                        logger.debug("A File: " + srcUrl);
+
+                        String fileName = FilenameUtils.getName(srcUrl);
+                        String ext = FilenameUtils.getExtension(srcUrl);
+                        String langPre = fileName.split("-")[0];
+
+                        File outPath = new File(wDir + File.separator + trainModelFolder + File.separator + fileName);
+
+                        boolean exists = outPath.exists();
+
+                        logger.debug("Filename: " + fileName + " with ext: " + ext + " and exists?: " + exists + " and Lang: " + langPre);
+                        bar.setTextField(fileName);
+
+                        if (fileName != null && !fileName.isEmpty() && ext.equals("bin") && !exists) {
+                            URL down = new URL(srcUrl);
+                            InputStream in = down.openStream();
+                            OutputStream out = new BufferedOutputStream(new FileOutputStream(outPath));
+
+
+                            for (int b; (b = in.read()) != -1; ) {
+                                out.write(b);
+                            }
+                            out.close();
+                            in.close();
+
+                        }
+
+                        if (bar.getButtonCancel()) break;
+
+
+                    }
+                    addExistingSentModelsToMap();
+                } catch (SocketTimeoutException | SocketException e0) {
+                    JOptionPane.showMessageDialog(null, "Connection Timeout - check Internet connection");
                 }
-                // Make random progress.
-                progress += random.nextInt(10);
-                publish(progress);
-                setProgress(Math.min(progress, 100));
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
             return null;
         }
-
 
         /*
          * Executed in event dispatching thread
          */
-        /*@Override
+        @Override
         public void done() {
+            if (trainSentModels.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "There is an error with the page. Check http://opennlp.sourceforge.net/models-1.5/");
+            }
+            logger.debug("Done");
             Toolkit.getDefaultToolkit().beep();
-            //startButton.setEnabled(true);
-            //setCursor(null); // turn off the wait cursor
-            //taskOutput.append("Done!\n");
+            bar.dispose();
+            JOptionPane.showMessageDialog(null, "Import completed");
+
         }
     }
 
-    public void runNewTaskWithBar(ProgressBar bar) {
+    public boolean testURL(String aUrl) {
+        String strUrl = aUrl;
+
+        try {
+            URL url = new URL(strUrl);
+            HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+            urlConn.connect();
+
+            if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                return true;
+            }
 
 
-        TaskWithBar task = new TaskWithBar(bar);
+        } catch (IOException e) {
+            System.err.println("Error creating HTTP connection");
+            JOptionPane.showMessageDialog(null, "Bad Connection, check Internet");
 
-        task.execute();
+        }
+        return false;
+    }
+
+    public void trainTopicCorpTaskWithBar(ProgressBar bar, File aCorpDir, int aPosIndexRadius, int indexType, String termweightType, boolean onlylucene) {
+
+
+
+
+
+        trainTopicCorp task = new trainTopicCorp(bar, aCorpDir, aPosIndexRadius, indexType, termweightType, onlylucene);
+        logger.debug("Runs");
+
+           task.execute();
+
+
+
+
+
 
     }
 
-
-    class TaskWithBar extends SwingWorker<Integer, Integer> {
+    class trainTopicCorp extends SwingWorker<Integer, Integer> {
         private ProgressBar bar;
+        private File theCorpDir;
+        private int thePosIndexRadius;
+        private int theIndexType;
+        private String theTermweightType;
+        private boolean theOnlyLucene;
 
-        public TaskWithBar(ProgressBar aBar) {
+        public trainTopicCorp(ProgressBar aBar, File aCorpDir, int aPosIndexRadius, int indexType, String termweightType, boolean onlylucene) {
             this.bar = aBar;
+            this.theCorpDir = aCorpDir;
+            this.thePosIndexRadius = aPosIndexRadius;
+            this.theIndexType = indexType;
+            this.theTermweightType = termweightType;
+            this.theOnlyLucene = onlylucene;
 
         }
 
         @Override
         public Integer doInBackground() {
-            bar.setProgressBarMax(100);
-            Random random = new Random();
-            int progress = 0;
-            // Initialize progress property.
-            setProgress(0);
-            while (progress < 100 && !bar.getButtonCancel()) {
-                // Sleep for up to one second.
-                try {
-                    Thread.sleep(random.nextInt(1000));
-                } catch (InterruptedException ignore) {
+
+            SemanticParser sp = new SemanticParser(wDir,theCorpDir,thePosIndexRadius, bar);
+
+            bar.setProgressBarIndeterminate(true);
+
+            if (theOnlyLucene) {
+
+                    boolean success = sp.createLuceneIndexCorp();
+                    if (success) {
+                        logger.info("success lucene");
+
+                    }
+
+                } else {
+                    boolean success2 = sp.buildSemanticIndex(theIndexType,theTermweightType);
+
+                    if (success2) {
+                        logger.info("success semantic");
+
+                    }
+
                 }
-                // Make random progress.
-                progress += random.nextInt(10);
-                //publish(progress);
-                bar.setProgressBarValue(progress);
-                setProgress(Math.min(progress, 100));
-            }
+
+
+
             return null;
         }
-
-
-
+        /*
+         * Executed in event dispatching thread
+         */
         @Override
         public void done() {
-            System.out.println("Done");
+            try {
+                updateIndexFileFolder();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            logger.debug("Done");
             Toolkit.getDefaultToolkit().beep();
+            bar.dispose();
+            JOptionPane.showMessageDialog(null, "Training completed");
 
         }
-    }*/
+    }
+
+    public void clearSelections() {
+        trainCorp.clear();
+        trainSentModels.clear();
+        searchCorpusModel.clear();
+        indexFilesModel.clear();
+        searchCorpComboBox.removeAllItems();
+        searchTrainComboBox.removeAllItems();
+        searchTFComboBox.removeAllItems();
+
+    }
+
+     public void searchDocInTopicCorpTaskWithBar(ProgressBar bar) {
+        if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number of Search Results");
+            return;
+
+        }
+
+        searchDocInTopicCorpTask taskDoc = new searchDocInTopicCorpTask(bar);
+        logger.debug("Runs");
+        taskDoc.execute();
+
+
+    }
+
+    class searchDocInTopicCorpTask extends SwingWorker<Void, Void> {
+        private ProgressBar bar;
+
+
+
+        public searchDocInTopicCorpTask(ProgressBar aBar) {
+            this.bar = aBar;
+
+
+
+        }
+
+        @Override
+        public Void doInBackground() {
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            bar.setProgressBarIndeterminate(true);
+
+            if (docSearchResModel.getRowCount() != 0) {
+                docSearchResModel.resetModel();
+            }
+
+            File termvectorfile = getSelectedSearchModelFiles()[0];
+            File docvectorfile = getSelectedSearchModelFiles()[1];
+
+            String theContents = null;
+
+            if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
+                theContents = searchFileString;
+
+            } else if (selTextRadioButton.isSelected()) {
+                theContents = searchTextArea.getText();
+
+
+            }
+
+
+            File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
+            List<String> theWords = Utilities.getWords(theContents);
+
+            ArrayList<String> arguments = new ArrayList<String>();
+            arguments.add("-luceneindexpath");
+            arguments.add(theIndexFileFolder.toString());
+            arguments.add("-numsearchresults");
+            arguments.add(noOfSearchResultsText.getText());
+            //arguments.add("-vectortype");
+            //arguments.add("-dimension");
+            //arguments.add("-seedlength");
+            //arguments.add("-minfrequency");
+            //arguments.add("-maxnonalphabetchars");
+            //arguments.add("-termweight");
+            //arguments.add(termweight);
+            //arguments.add("-docindexing");
+            //arguments.add("incremental");
+            //arguments.add("-trainingcycles");
+            //arguments.add(Integer.toString(amTraining));
+            //arguments.add("-termtermvectorsfile");
+            //arguments.add(termtermvectorfile.toString());
+            arguments.add("-queryvectorfile");
+            arguments.add(termvectorfile.toString());
+            arguments.add("-searchvectorfile");
+            arguments.add(docvectorfile.toString());
+            //arguments.add("Abraham");
+            //arguments.add("Isaac");
+
+
+
+
+            for (String aWord : theWords) {
+                arguments.add(aWord);
+            }
+
+            String[] args = new String[arguments.size()];
+            args = arguments.toArray(args);
+
+            List<SearchResult> theResult;
+            FlagConfig flagConfig;
+            try {
+                flagConfig = FlagConfig.getFlagConfig(args);
+                theResult = Search.runSearch(flagConfig);
+            } catch (IllegalArgumentException e) {
+                throw e;
+            }
+
+
+
+
+            if (theResult.size() > 0) {
+                logger.info("Search output follows ...\n");
+                for (SearchResult result: theResult) {
+
+                    File theFile = new File(result.getObjectVector().getObject().toString());
+                    double percent = result.getScore() * 100;
+                    String theScore = new DecimalFormat("#.###").format(percent);
+
+                    DocSearchFile theEntry = new DocSearchFile(theScore, theFile, new File(wDir.toString() + File.separator + topicFolder));
+
+                    System.out.println(result.toSimpleString());
+                    logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
+                    logger.debug("Score: " + result.getScore());
+                    logger.debug("toString: " + result.toString());
+
+                    docSearchResModel.addDocFile(theEntry);
+                }
+
+
+            } else {
+                DocSearchFile theEntry = new DocSearchFile(" ",new File("No Search Results"), new File(""));
+                docSearchResModel.addDocFile(theEntry);
+                //JOptionPane.showMessageDialog(null, "No Results");
+            }
+
+
+            return null;
+
+        }
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+
+
+            logger.debug("Done");
+            //Toolkit.getDefaultToolkit().beep();
+            bar.dispose();
+            //JOptionPane.showMessageDialog(null, "Training completed");
+
+        }
+    }
+
+
+    public void searchTermInTopicCorpTaskWithBar(ProgressBar bar) {
+        if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number of Search Results");
+            return;
+
+        }
+        searchTermInTopicCorpTask taskTerm = new searchTermInTopicCorpTask(bar);
+        logger.debug("Runs");
+        taskTerm.execute();
+
+
+    }
+
+    class searchTermInTopicCorpTask extends SwingWorker<Void, Void> {
+        private ProgressBar bar;
+
+
+
+        public searchTermInTopicCorpTask(ProgressBar aBar) {
+            this.bar = aBar;
+
+
+
+        }
+
+        @Override
+        public Void doInBackground() {
+
+            bar.setProgressBarIndeterminate(true);
+
+            if (termSearchResModel.getRowCount() != 0) {
+                termSearchResModel.setRowCount(0);
+            }
+
+
+
+            File termvectorfile = getSelectedSearchModelFiles()[0];
+            File docvectorfile = getSelectedSearchModelFiles()[1];
+
+            String theContents = null;
+
+            if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
+                theContents = searchFileString;
+
+            } else if (selTextRadioButton.isSelected()) {
+                theContents = searchTextArea.getText();
+
+
+            }
+
+            File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
+            List<String> theWords = Utilities.getWords(theContents);
+
+            logger.debug("Numeric?: " + StringUtils.isNumeric(noOfSearchResultsText.getText()));
+
+
+            ArrayList<String> arguments = new ArrayList<String>();
+            arguments.add("-luceneindexpath");
+            arguments.add(theIndexFileFolder.toString());
+            arguments.add("-numsearchresults");
+            arguments.add(noOfSearchResultsText.getText());
+            arguments.add("-queryvectorfile");
+            arguments.add(termvectorfile.toString());
+            //arguments.add("-vectortype");
+            //arguments.add("-dimension");
+            //arguments.add("-seedlength");
+            //arguments.add("-minfrequency");
+            //arguments.add("-maxnonalphabetchars");
+            //arguments.add("-termweight");
+            //arguments.add(termweight);
+            //arguments.add("-docindexing");
+            //arguments.add("incremental");
+            //arguments.add("-trainingcycles");
+            //arguments.add(Integer.toString(amTraining));
+            //arguments.add("-termtermvectorsfile");
+            //arguments.add(termtermvectorfile.toString());
+
+            //arguments.add("-searchvectorfile");
+            //arguments.add(termvectorfile.toString());
+            //arguments.add(searchTextArea.getText().toString());
+
+            for (String aWord : theWords) {
+                arguments.add(aWord);
+            }
+
+
+            String[] args = new String[arguments.size()];
+            args = arguments.toArray(args);
+
+            List<SearchResult> theResult;
+            FlagConfig flagConfig;
+            try {
+                flagConfig = FlagConfig.getFlagConfig(args);
+                theResult = Search.runSearch(flagConfig);
+            } catch (IllegalArgumentException e) {
+                //System.err.println(usageMessage);
+                throw e;
+            }
+
+
+            if (theResult.size() > 0) {
+                logger.info("Search output follows ...\n");
+                for (SearchResult result: theResult) {
+
+                    System.out.println(result.toSimpleString());
+                    logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
+                    logger.debug("Score: " + result.getScore());
+                    logger.debug("toString: " + result.toString());
+                    double percent = result.getScore() * 100;
+                    String theScore = new DecimalFormat("#.###").format(percent);
+
+                    termSearchResModel.addRow(new Object[]{theScore, result.getObjectVector().getObject().toString()});
+                }
+
+            } else {
+                termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+            }
+
+            return null;
+        }
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+
+
+
+
+
+            logger.debug("Done");
+            //Toolkit.getDefaultToolkit().beep();
+            bar.dispose();
+            //JOptionPane.showMessageDialog(null, "Training completed");
+
+        }
+    }
+
+    public void compareCorpDocsWithSearchDocTaskWithBar(ProgressBar bar, File aCorpDir) {
+
+        if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number of Search Results");
+            return;
+
+        }
+        if (searchFileString.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please select Search Document first");
+        }
+
+        if (docSearchResModel.getRowCount() != 0) {
+            docSearchResModel.resetModel();
+        }
+
+        compareCorpDocsWithSearchDocTask task = new compareCorpDocsWithSearchDocTask(bar, aCorpDir);
+        logger.debug("Runs");
+        task.execute();
+
+    }
+
+    class compareCorpDocsWithSearchDocTask extends SwingWorker<Void, Void> {
+        private ProgressBar bar;
+        private File corpDir;
+
+
+        public compareCorpDocsWithSearchDocTask(ProgressBar aBar, File aCorpDir) {
+            this.bar = aBar;
+            this.corpDir = aCorpDir;
+
+
+        }
+
+        @Override
+        public Void doInBackground() {
+            bar.setProgressBarIndeterminate(true);
+
+            logger.debug("The Corpus Dir to compare: " + corpDir.toString());
+
+            File termvectorfile = getSelectedSearchModelFiles()[0];
+            //File docvectorfile = getSelectedSearchModelFiles()[1];
+
+            ArrayList<String> arguments = new ArrayList<String>();
+            arguments.add("-numsearchresults");
+            arguments.add(noOfSearchResultsText.getText());
+            arguments.add("-queryvectorfile");
+            arguments.add(termvectorfile.toString());
+            //arguments.add("-searchvectorfile");
+            //arguments.add(docvectorfile.toString());
+
+            String[] args = new String[arguments.size()];
+            args = arguments.toArray(args);
+
+            List<SearchResult> theResult;
+            FlagConfig flagConfig;
+            flagConfig = FlagConfig.getFlagConfig(args);
+
+
+
+            if (searchTopCorpRadio.isSelected() && !searchFileString.isEmpty()) {
+
+                logger.debug("Compare with Train Corpus");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            } else if (searchDocsRadio.isSelected() && !searchFileString.isEmpty()){
+                logger.debug("Compare with Search Corpus");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            return null;
+        }
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+            logger.debug("Done");
+            Toolkit.getDefaultToolkit().beep();
+            bar.dispose();
+            //JOptionPane.showMessageDialog(null, "Training completed");
+
+        }
+    }
+
+    public void fillMetaDataField(File aFile) {
+        File metaFile = new File(aFile.getParentFile().toString() + File.separator + ".metadata.txt");
+        String metadata;
+
+
+        if (!metaFile.exists()) {
+            return;
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(metaFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            try {
+                line = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                try {
+                    line = br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            metadata = sb.toString();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        logger.debug("Metadata: " + metadata);
+
+        selectedMetadataText.setText(metadata);
+        selectedMetadataText.setCaretPosition(0);
+
+    }
+
+
+    //TODO Implement OCR
+
+    //TODO set File Delet Task popup to prevent accidential closing of the App
+
+    //TODO Import Search Corpus
+
+    //TODO Search Input Selection (Textfield, File Select Doc)
+    //TODO Search Selection (Search Topic Corpus or Search Corpus with Topic Knowledge)
+    //TODO Search Selection Search for similar Terms or Docs
+
+    //TODO Output List of Terms or List of Docs. Browse List of Docs and read
+
+    //TODO Extract Names, different params in found docs, Jump to Offsets
+
+    //TODO Change open Folder debug constant
+
+
 
 }

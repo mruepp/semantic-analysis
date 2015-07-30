@@ -1,17 +1,30 @@
 package com.pianobakery.complsa;
 
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 public class ProgressBar extends JDialog {
     private JPanel contentPane;
     private JButton buttonCancel;
     private JProgressBar progressBar1;
-    private JTextField textField1;
+    private JLabel textField;
     private Boolean cancel;
+
+
+    final static Logger logger = Logger.getLogger(MainGui.class);
+
+
+
 
     public void setProgressBarValue(int value) {
         this.progressBar1.setValue(value);
+    }
+
+    public void setProgressBarIndeterminate(boolean value) {
+        this.progressBar1.setIndeterminate(value);
     }
 
     public void setProgressBarMax(int value) {
@@ -19,36 +32,38 @@ public class ProgressBar extends JDialog {
     }
 
     public void setTextField(String value) {
-        this.textField1.setEditable(false);
-        this.textField1.setText(value);
+        this.textField.setText(value);
     }
 
     public Boolean getButtonCancel() {
         return cancel;
     }
 
-    public ProgressBar() {
+    public ProgressBar(boolean withCancelButton) {
         cancel = false;
         progressBar1.setMinimum(0);
         progressBar1.setMaximum(100);
-        progressBar1.setValue(50);
-        setAlwaysOnTop(true);
-        //setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        progressBar1.setValue(100);
+        setAlwaysOnTop(false);
+        //contentPane.setSize(200,50);
         setContentPane(contentPane);
         setModal(true);
-        getRootPane().setDefaultButton(buttonCancel);
-        //pack();
-        //setVisible(true);
+
+        if(withCancelButton) {
+
+            getRootPane().setDefaultButton(buttonCancel);
+            buttonCancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    logger.debug("Action Cancel");
+                    onCancel();
+                }
+            });
+
+        } else {
+            buttonCancel.setVisible(false);
+        }
 
 
-
-
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Action Cancel");
-                onCancel();
-            }
-        });
 
 // call onCancel() when cross is clicked
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -68,17 +83,13 @@ public class ProgressBar extends JDialog {
 
 
     private void onCancel() {
-        System.out.println("Cancel");
+        logger.debug("Cancel");
         cancel = true;
-// add your code here if necessary
+
         dispose();
     }
 
-    /*public static void main(String[] args) {
 
-        ProgressBar dialog = new ProgressBar();
-        dialog.pack();
-        dialog.setVisible(true);
-        //System.exit(0);
-    }*/
+
+
 }
