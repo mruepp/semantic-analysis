@@ -855,7 +855,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Term Search Result"/>
+                  <text value="Term Search Result:"/>
                 </properties>
               </component>
               <component id="d7eca" class="javax.swing.JLabel" binding="searchDocValue">

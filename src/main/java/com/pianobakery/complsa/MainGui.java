@@ -98,6 +98,7 @@ public class MainGui {
     private JTable docSearchResTable;
     private JLabel searchDocValue;
     private JButton openSearchDocumentButton;
+    private JButton showsSelFileTerms;
 
     private String[] docSearchTitles;
     private DocSearchModel docSearchResModel;
@@ -875,8 +876,6 @@ public class MainGui {
                 }
 
 
-
-
                 if (searchCorpComboBox.getItemCount() != 0 && searchDocsRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
 
                     if (selDocRadioButton.isSelected()) {
@@ -891,8 +890,6 @@ public class MainGui {
                         compareCorpDocsWithSearchDocTaskWithBar(bar, corpDir);
 
                     }
-
-
 
 
                 } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
@@ -1055,6 +1052,7 @@ public class MainGui {
 
             }
         });
+
 
     }
 
@@ -2201,7 +2199,7 @@ public class MainGui {
 
     }
 
-     public void searchDocInTopicCorpTaskWithBar(ProgressBar bar) {
+    public void searchDocInTopicCorpTaskWithBar(ProgressBar bar) {
         if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
 
             JOptionPane.showMessageDialog(null, "Enter Number of Search Results");
@@ -2491,6 +2489,7 @@ public class MainGui {
         }
     }
 
+
     public void compareCorpDocsWithSearchDocTaskWithBar(ProgressBar bar, File aCorpDir) {
 
         if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
@@ -2586,6 +2585,10 @@ public class MainGui {
         }
     }
 
+
+
+
+
     public void fillMetaDataField(File aFile) {
         File metaFile = new File(aFile.getParentFile().toString() + File.separator + ".metadata.txt");
         String metadata;
@@ -2651,6 +2654,297 @@ public class MainGui {
     //TODO Extract Names, different params in found docs, Jump to Offsets
 
     //TODO Change open Folder debug constant
+
+
+
+
+    public void searchMatchTermOfSelDocTaskWithBar(ProgressBar bar) {
+
+        if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number of Search Results");
+            return;
+
+        }
+        searchMatchTermOfSelDocTask taskMatch = new searchMatchTermOfSelDocTask(bar);
+        logger.debug("Search Matches");
+        taskMatch.execute();
+
+
+    }
+
+    class searchMatchTermOfSelDocTask extends SwingWorker<Void, Void> {
+        private ProgressBar bar;
+
+
+
+        public searchMatchTermOfSelDocTask(ProgressBar aBar) {
+            this.bar = aBar;
+
+
+
+        }
+
+        @Override
+        public Void doInBackground() {
+
+            bar.setProgressBarIndeterminate(true);
+
+            if (termSearchResModel.getRowCount() != 0) {
+                termSearchResModel.setRowCount(0);
+            }
+
+
+
+            File termvectorfile = getSelectedSearchModelFiles()[0];
+            File docvectorfile = getSelectedSearchModelFiles()[1];
+            logger.debug("termfile: " + termvectorfile);
+            logger.debug("docfile: " + docvectorfile);
+
+            //String theContents = null;
+
+            /*if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
+                theContents = searchFileString;
+
+            } else if (selTextRadioButton.isSelected()) {
+                theContents = searchTextArea.getText();
+
+
+            }*/
+
+            //File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
+            //List<String> theWords = Utilities.getWords(theContents);
+
+            //logger.debug("Numeric?: " + StringUtils.isNumeric(noOfSearchResultsText.getText()));
+
+            int row = docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow());
+            logger.debug("The Matchterm row: " + row);
+            DocSearchModel theModel = (DocSearchModel)docSearchResTable.getModel();
+            File theFile = theModel.getDocFile(row).getFile();
+            logger.debug("The Matchterm File: " + theFile.toString());
+
+
+
+            ArrayList<String> arguments = new ArrayList<String>();
+            //arguments.add("-luceneindexpath");
+            //arguments.add(theIndexFileFolder.toString());
+            //arguments.add("-numsearchresults");
+            //arguments.add(noOfSearchResultsText.getText());
+            arguments.add("-queryvectorfile");
+            arguments.add(docvectorfile.toString());
+            arguments.add("-searchvectorfile");
+            arguments.add(termvectorfile.toString());
+            arguments.add("-matchcase");
+            arguments.add(theFile.toString());
+            //arguments.add("-vectortype");
+            //arguments.add("-dimension");
+            //arguments.add("-seedlength");
+            //arguments.add("-minfrequency");
+            //arguments.add("-maxnonalphabetchars");
+            //arguments.add("-termweight");
+            //arguments.add(termweight);
+            //arguments.add("-docindexing");
+            //arguments.add("incremental");
+            //arguments.add("-trainingcycles");
+            //arguments.add(Integer.toString(amTraining));
+            //arguments.add("-termtermvectorsfile");
+            //arguments.add(termtermvectorfile.toString());
+
+
+            //arguments.add(searchTextArea.getText().toString());
+
+            /*for (String aWord : theWords) {
+                arguments.add(aWord);
+            }*/
+
+
+            String[] args = new String[arguments.size()];
+            args = arguments.toArray(args);
+
+            //List<SearchResult> theResult;
+            FlagConfig flagConfig;
+            try {
+                flagConfig = FlagConfig.getFlagConfig(args);
+
+            } catch (IllegalArgumentException e) {
+                //System.err.println(usageMessage);
+                throw e;
+            }
+
+            try {
+                Search.main(args);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            /*
+            theResult = Search.runSearch(flagConfig);
+            logger.debug("The Match Result: " + theResult.size());
+
+            if (theResult.size() > 0) {
+                logger.info("Search output follows ...\n");
+                for (SearchResult result: theResult) {
+
+                    System.out.println(result.toSimpleString());
+                    logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
+                    logger.debug("Score: " + result.getScore());
+                    logger.debug("toString: " + result.toString());
+                    double percent = result.getScore() * 100;
+                    String theScore = new DecimalFormat("#.###").format(percent);
+
+                    termSearchResModel.addRow(new Object[]{theScore, result.getObjectVector().getObject().toString()});
+                }
+
+            } else {
+                termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+            }
+            */
+            return null;
+        }
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+
+            logger.debug("Done Term of selected File");
+            //Toolkit.getDefaultToolkit().beep();
+            bar.dispose();
+            //JOptionPane.showMessageDialog(null, "Training completed");
+
+        }
+    }
+
+    public void matchTerm() {
+
+        if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number of Search Results");
+            return;
+
+        }
+
+        //bar.setProgressBarIndeterminate(true);
+
+        if (termSearchResModel.getRowCount() != 0) {
+            termSearchResModel.setRowCount(0);
+        }
+
+
+
+        File termvectorfile = getSelectedSearchModelFiles()[0];
+        File docvectorfile = getSelectedSearchModelFiles()[1];
+        logger.debug("termfile: " + termvectorfile);
+        logger.debug("docfile: " + docvectorfile);
+
+        /*String theContents = null;
+
+            if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
+                theContents = searchFileString;
+
+            } else if (selTextRadioButton.isSelected()) {
+                theContents = searchTextArea.getText();
+
+
+            }
+        */
+        File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
+        //List<String> theWords = Utilities.getWords(theContents);
+
+        //logger.debug("Numeric?: " + StringUtils.isNumeric(noOfSearchResultsText.getText()));
+
+        int row = docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow());
+        logger.debug("The Matchterm row: " + row);
+        DocSearchModel theModel = (DocSearchModel)docSearchResTable.getModel();
+        File theFile = theModel.getDocFile(row).getFile();
+        logger.debug("The Matchterm File: " + theFile.toString());
+
+
+
+        ArrayList<String> arguments = new ArrayList<String>();
+        arguments.add("-luceneindexpath");
+        arguments.add(theIndexFileFolder.toString());
+        arguments.add("-numsearchresults");
+        arguments.add(noOfSearchResultsText.getText());
+        arguments.add("-queryvectorfile");
+        arguments.add(docvectorfile.toString());
+        arguments.add("-searchvectorfile");
+        arguments.add(termvectorfile.toString());
+        arguments.add("-matchcase");
+        arguments.add(theFile.toString());
+
+
+
+        //arguments.add("-vectortype");
+        //arguments.add("-dimension");
+        //arguments.add("-seedlength");
+        //arguments.add("-minfrequency");
+        //arguments.add("-maxnonalphabetchars");
+        //arguments.add("-termweight");
+        //arguments.add(termweight);
+        //arguments.add("-docindexing");
+        //arguments.add("incremental");
+        //arguments.add("-trainingcycles");
+        //arguments.add(Integer.toString(amTraining));
+        //arguments.add("-termtermvectorsfile");
+        //arguments.add(termtermvectorfile.toString());
+
+
+        //arguments.add(searchTextArea.getText().toString());
+
+            /*for (String aWord : theWords) {
+                arguments.add(aWord);
+            }*/
+
+
+        String[] args = new String[arguments.size()];
+        args = arguments.toArray(args);
+
+        for (String aarg : args) {
+            logger.debug("The Args: " + aarg);
+        }
+
+
+        List<SearchResult> theResult;
+        FlagConfig flagConfig;
+        try {
+            flagConfig = FlagConfig.getFlagConfig(args);
+            theResult = Search.runSearch(flagConfig);
+        } catch (IllegalArgumentException e) {
+            //System.err.println(usageMessage);
+            throw e;
+        }
+
+        try {
+            pitt.search.semanticvectors.Search.main(args);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        theResult = Search.runSearch(flagConfig);
+            logger.debug("The Match Result: " + theResult.size());
+
+            if (theResult.size() > 0) {
+                logger.info("Search output follows ...\n");
+                for (SearchResult result: theResult) {
+
+                    System.out.println(result.toSimpleString());
+                    logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
+                    logger.debug("Score: " + result.getScore());
+                    logger.debug("toString: " + result.toString());
+                    double percent = result.getScore() * 100;
+                    String theScore = new DecimalFormat("#.###").format(percent);
+
+                    termSearchResModel.addRow(new Object[]{theScore, result.getObjectVector().getObject().toString()});
+                }
+
+            } else {
+                termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+            }
+
+
+    }
+
 
 
 
