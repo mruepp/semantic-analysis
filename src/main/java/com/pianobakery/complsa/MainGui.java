@@ -898,24 +898,19 @@ public class MainGui {
                 } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
 
                     if (selDocRadioButton.isSelected()) {
+                        logger.debug("Run Doc search on Topic Corpus");
                         ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
                         searchDocInTopicCorpTaskWithBar(bar);
-
-                        //searchDocInTopicCorp();
 
                         ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
                         searchTermInTopicCorpTaskWithBar(bar2);
 
                         //searchTermInTopicCorp();
-                        logger.debug("run Doc search on Train Corpus");
+
                     } else if (selTextRadioButton.isSelected()) {
-                        logger.debug("run Text search on Topic Corp");
+                        logger.debug("Run Text search on Topic Corp");
                         ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
                         searchDocInTopicCorpTaskWithBar(bar);
-
-
-
-                        //searchDocInTopicCorp();
 
                         ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
                         searchTermInTopicCorpTaskWithBar(bar2);
@@ -2556,17 +2551,18 @@ public class MainGui {
 
 
 
-            if (searchTopCorpRadio.isSelected() && !searchFileString.isEmpty()) {
+            if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
 
-                logger.debug("Compare with Train Corpus");
+                logger.debug("Compare Doc with Search Corpus");
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-            } else if (searchDocsRadio.isSelected() && !searchFileString.isEmpty()){
-                logger.debug("Compare with Search Corpus");
+            } else if (selTextRadioButton.isSelected() && !searchFileString.isEmpty()){
+
+                logger.debug("Compare Text with Search Corpus");
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
