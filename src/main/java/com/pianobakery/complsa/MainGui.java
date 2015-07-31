@@ -463,7 +463,7 @@ public class MainGui {
 
                     //Run import
                     if (folder != null ) {
-                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(),Integer.parseInt(amountOfSentencesPerTextField.getText()));
+                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(),Integer.parseInt(amountOfSentencesPerTextField.getText()),createChunksCheckBox.isSelected());
                         try {
                             addRemoveItemToTopicBox(newDir,true,true);
                         } catch (IOException e1) {
@@ -719,7 +719,7 @@ public class MainGui {
 
                     //Run import
                     if (folder != null) {
-                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()));
+                        addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()),splitSearchCorpCheckBox.isSelected());
                         try {
                             addRemoveItemToTopicBox(newDir, true, false);
                         } catch (IOException e1) {
@@ -1389,9 +1389,9 @@ public class MainGui {
 
     }
 
-    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir,boolean sel, int amSent) {
+    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir,boolean sel, int amSent, boolean areChunks) {
 
-        addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel, amSent);
+        addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel, amSent, areChunks);
         logger.debug("Runs");
         task.execute();
     }
@@ -1403,13 +1403,15 @@ public class MainGui {
         private boolean sel;
         private int amSent;
         private Collection<File> files = null;
+        private boolean chunks;
 
-        public addTopicCorpTask(ProgressBar aBar, File aFolder, File aNewDir, boolean aSel, int amSent) {
+        public addTopicCorpTask(ProgressBar aBar, File aFolder, File aNewDir, boolean aSel, int amSent, boolean areChunks) {
             this.bar = aBar;
             this.folder = aFolder;
             this.newDir = aNewDir;
             this.sel = aSel;
             this.amSent = amSent;
+            this.chunks = areChunks;
 
         }
 
@@ -1420,7 +1422,9 @@ public class MainGui {
             logger.debug("Runs");
             //int amSent = Integer.parseInt(amountOfSentencesPerTextField.getText());
             logger.debug("amSent=" + amSent);
-            boolean chunks = createChunksCheckBox.isSelected();
+
+            //boolean chunks = createChunksCheckBox.isSelected();
+
 
             if (sel) {
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
@@ -2284,7 +2288,7 @@ public class MainGui {
             //arguments.add("-minfrequency");
             //arguments.add("-maxnonalphabetchars");
             arguments.add("-termweight");
-            arguments.add(String)searchTFComboBox.getSelectedItem());
+            arguments.add(((String)searchTFComboBox.getSelectedItem()));
             //arguments.add("-docindexing");
             //arguments.add("incremental");
             //arguments.add("-trainingcycles");
@@ -2550,10 +2554,12 @@ public class MainGui {
             File docvectorfile = getSelectedSearchModelFiles()[1];
 
             ArrayList<String> arguments = new ArrayList<String>();
+            arguments.add("-termweight");
+            arguments.add(((String)searchTFComboBox.getSelectedItem()));
             arguments.add("-numsearchresults");
             arguments.add(noOfSearchResultsText.getText());
             arguments.add("-termweight");
-            arguments.add(String)searchTFComboBox.getSelectedItem());
+            arguments.add(((String) searchTFComboBox.getSelectedItem()));
             arguments.add("-queryvectorfile");
             arguments.add(termvectorfile.toString());
             //arguments.add("-searchvectorfile");
@@ -2586,53 +2592,93 @@ public class MainGui {
 
                 logger.debug("Compare Doc with Search Corpus");
 
-                    Path searchCorpPath = searchCorpDir.toPath();
-                    if (Files.isDirectory(searchCorpPath)) {
-                        Files.walkFileTree(searchCorpPath, new SimpleFileVisitor<Path>() {
+
+  /*
+
+                File testfile = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData" + File.separator + "Testfile.pdf");
+                String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(testfile));
+                logger.debug("The File: " + testfile.toString());
+                arguments.add("\"" + theDocString + "\"");
+
+                arguments.add("\"" + searchFileString + "\"");
+
+                String[] args = new String[arguments.size()];
+                args = arguments.toArray(args);
+
+                FlagConfig flagConfig;
+                flagConfig = FlagConfig.getFlagConfig(args);
+
+                double theScore = 0;
+                try {
+                    theScore = runCompareTerms(flagConfig);
+                    logger.debug("The Score " + theScore);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (theScore != 0 || theScore != -1) {
+                    ObjectVector theObVec = new ObjectVector(testfile, null);
+                    SearchResult theSerRes = new SearchResult(theScore, theObVec);
+                    theCompResult.add(theSerRes);
+
+                }
+*/
+                Path searchCorpPath = searchCorpDir.toPath();
+                logger.debug("SearchcorpPath: " + searchCorpPath.toString());
+                Collection<File> theFiles = FileUtils.listFiles(searchCorpDir, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+
+                /*File[] theFiles = searchCorpDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File current, String name) {
+                        if (current.isFile() && current.exists() && !current.isHidden()) {
+                            logger.debug("Add File: " + current.toString());
+                            return true;
+                        }
+                        logger.debug("non added " + current.toString());
+                        return false;
+                    }
+                });*/
+
+                for (File aFile : theFiles) {
+
+                    String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(aFile));
+                    logger.debug("The File: " + aFile.toString());
 
 
-                            @Override
-                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 
-                                if (!file.toFile().isHidden()) {
+                    arguments.add("\"" + theDocString + "\"");
+                    arguments.add("\"" + searchFileString + "\"");
+                    String[] args = new String[arguments.size()];
+                    args = arguments.toArray(args);
 
-
-                                    arguments.add("\"" + searchFileString + "\"");
-
-                                    String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(file.toFile()));
-                                    arguments.add("\"" + theDocString + "\"");
-
-                                    String[] args = new String[arguments.size()];
-                                    args = arguments.toArray(args);
-
-                                    FlagConfig flagConfig;
-                                    flagConfig = FlagConfig.getFlagConfig(args);
+                    FlagConfig flagConfig;
+                    flagConfig = FlagConfig.getFlagConfig(args);
 
 
-                                    System.out.println(file.toString());
+                    System.out.println(aFile.toString());
 
-                                    double theScore = 0;
-                                    try {
-                                        theScore = runCompareTerms(flagConfig);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                    double theScore = 0;
+                    try {
+                        theScore = runCompareTerms(flagConfig);
+                        logger.debug("The Score " + theScore);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                                    if (theScore != 0 || theScore != -1) {
-                                        ObjectVector theObVec = new ObjectVector(file.toFile(), null);
-                                        SearchResult theSerRes = new SearchResult(theScore, theObVec);
-                                        theCompResult.add(theSerRes);
-
-                                    }
-
-
-                                    return FileVisitResult.CONTINUE;
-                                }
-                                return FileVisitResult.CONTINUE;
-                            }
-                        });
+                    if (theScore != 0 || theScore != -1) {
+                        ObjectVector theObVec = new ObjectVector(aFile, null);
+                        SearchResult theSerRes = new SearchResult(theScore, theObVec);
+                        theCompResult.add(theSerRes);
 
                     }
+
+
+
+                }
+
+
+
+
 
 
 
@@ -2704,10 +2750,6 @@ public class MainGui {
                 vecReader.initFromFile(VectorStoreUtils.getStoreFileName(flagConfig.queryvectorfile(), flagConfig));
                 logger.info(String.format(
                         "Using RAM cache of vectors from file: %s\n", flagConfig.queryvectorfile()));
-
-
-                vecReader = VectorStoreReader.openVectorStore(flagConfig.queryvectorfile(), flagConfig);
-                logger.info("Opened query vector store from file: " + flagConfig.queryvectorfile() + "\n");
             }
 
             if (!flagConfig.luceneindexpath().isEmpty()) {
@@ -2732,9 +2774,6 @@ public class MainGui {
                 vec2 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
 
-                elementalVecReader.close();
-                semanticVecReader.close();
-                predicateVecReader.close();
             } else  if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE))
             {
                 ArrayList<pitt.search.semanticvectors.vectors.Vector> vecs1 = CompoundVectorBuilder.getBoundProductQuerySubspaceFromString(
@@ -2742,9 +2781,7 @@ public class MainGui {
                 vec2 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
 
-                elementalVecReader.close();
-                semanticVecReader.close();
-                predicateVecReader.close();
+
 
                 return VectorUtils.compareWithProjection(vec2, vecs1);
 
@@ -2758,9 +2795,7 @@ public class MainGui {
                 vec2 = CompoundVectorBuilder.getBoundProductQueryIntersectionFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
 
-                elementalVecReader.close();
-                semanticVecReader.close();
-                predicateVecReader.close();
+
 
                 return vec1.measureOverlap(vec2);
 
@@ -2771,7 +2806,7 @@ public class MainGui {
                 vec2 = CompoundVectorBuilder.getQueryVectorFromString(
                         vecReader, luceneUtils, flagConfig, args[1]);
 
-                vecReader.close();
+
             }
 
 
