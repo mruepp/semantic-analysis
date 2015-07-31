@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import org.xml.sax.SAXException;
 import pitt.search.semanticvectors.Search;
 import pitt.search.semanticvectors.*;
+import pitt.search.semanticvectors.vectors.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -29,9 +30,15 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -134,7 +141,8 @@ public class MainGui {
     private static String[] termweights= {"None", "IDF", "LOGENTROPY", "SQRT"};
 
 
-    private static File openFolderDebug = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
+    private static File openFolder = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
+    //private static File openFolder = new File(System.getProperty("user.home"));
 
     final static Logger logger = Logger.getLogger(MainGui.class);
 
@@ -1135,7 +1143,7 @@ public class MainGui {
         try {
             JFrame frame = new JFrame();
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(openFolderDebug);
+            chooser.setCurrentDirectory(openFolder);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             //chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
             chooser.setDialogTitle("Create Working Folder");
@@ -1181,7 +1189,7 @@ public class MainGui {
         try {
 
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(openFolderDebug);
+            chooser.setCurrentDirectory(openFolder);
             //chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
             chooser.setDialogTitle("Create Working Folder");
             chooser.setFileHidingEnabled(Boolean.TRUE);
@@ -1527,8 +1535,11 @@ public class MainGui {
 
                 @Override
                 public boolean accept(File current, String name) {
+                    if (current.isFile() && !current.isHidden()) {
+                        return true;
+                    }
 
-                    return new File(current, name).isFile();
+                    return false;
                 }
 
             });
@@ -2054,7 +2065,11 @@ public class MainGui {
 
                         }
 
-                        if (bar.getButtonCancel()) break;
+                        if (bar.getButtonCancel()) {
+                            addExistingSentModelsToMap();
+                            break;
+                        }
+
 
 
                     }
@@ -2268,8 +2283,8 @@ public class MainGui {
             //arguments.add("-seedlength");
             //arguments.add("-minfrequency");
             //arguments.add("-maxnonalphabetchars");
-            //arguments.add("-termweight");
-            //arguments.add(termweight);
+            arguments.add("-termweight");
+            arguments.add(String)searchTFComboBox.getSelectedItem());
             //arguments.add("-docindexing");
             //arguments.add("incremental");
             //arguments.add("-trainingcycles");
@@ -2408,6 +2423,8 @@ public class MainGui {
 
 
             ArrayList<String> arguments = new ArrayList<String>();
+            arguments.add("-termweight");
+            arguments.add((String)searchTFComboBox.getSelectedItem());
             arguments.add("-luceneindexpath");
             arguments.add(theIndexFileFolder.toString());
             arguments.add("-numsearchresults");
@@ -2419,8 +2436,7 @@ public class MainGui {
             //arguments.add("-seedlength");
             //arguments.add("-minfrequency");
             //arguments.add("-maxnonalphabetchars");
-            //arguments.add("-termweight");
-            //arguments.add(termweight);
+
             //arguments.add("-docindexing");
             //arguments.add("incremental");
             //arguments.add("-trainingcycles");
@@ -2525,44 +2541,106 @@ public class MainGui {
         }
 
         @Override
-        public Void doInBackground() {
+        public Void doInBackground() throws IOException{
             bar.setProgressBarIndeterminate(true);
 
             logger.debug("The Corpus Dir to compare: " + corpDir.toString());
 
             File termvectorfile = getSelectedSearchModelFiles()[0];
-            //File docvectorfile = getSelectedSearchModelFiles()[1];
+            File docvectorfile = getSelectedSearchModelFiles()[1];
 
             ArrayList<String> arguments = new ArrayList<String>();
             arguments.add("-numsearchresults");
             arguments.add(noOfSearchResultsText.getText());
+            arguments.add("-termweight");
+            arguments.add(String)searchTFComboBox.getSelectedItem());
             arguments.add("-queryvectorfile");
             arguments.add(termvectorfile.toString());
             //arguments.add("-searchvectorfile");
             //arguments.add(docvectorfile.toString());
 
-            String[] args = new String[arguments.size()];
-            args = arguments.toArray(args);
-
-            List<SearchResult> theResult;
-            FlagConfig flagConfig;
-            flagConfig = FlagConfig.getFlagConfig(args);
+            if (docSearchResModel.getRowCount() != 0) {
+                docSearchResModel.resetModel();
+            }
 
 
+            //String[] args = new String[arguments.size()];
+            //args = arguments.toArray(args);
+
+            //List<SearchResult> theResult;
+            //FlagConfig flagConfig;
+            //flagConfig = FlagConfig.getFlagConfig(args);
+
+
+            //Get Selected Train Corpus
+
+
+            //Get Selected Search Corpus:
+            File searchCorpDir = searchCorpusModel.get(searchCorpComboBox.getSelectedItem().toString());
+            logger.debug("The selected SearchCorp Folder: " + searchCorpDir);
+
+
+            List<SearchResult> theCompResult = new ArrayList<>();
 
             if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
 
                 logger.debug("Compare Doc with Search Corpus");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+                    Path searchCorpPath = searchCorpDir.toPath();
+                    if (Files.isDirectory(searchCorpPath)) {
+                        Files.walkFileTree(searchCorpPath, new SimpleFileVisitor<Path>() {
+
+
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+
+                                if (!file.toFile().isHidden()) {
+
+
+                                    arguments.add("\"" + searchFileString + "\"");
+
+                                    String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(file.toFile()));
+                                    arguments.add("\"" + theDocString + "\"");
+
+                                    String[] args = new String[arguments.size()];
+                                    args = arguments.toArray(args);
+
+                                    FlagConfig flagConfig;
+                                    flagConfig = FlagConfig.getFlagConfig(args);
+
+
+                                    System.out.println(file.toString());
+
+                                    double theScore = 0;
+                                    try {
+                                        theScore = runCompareTerms(flagConfig);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    if (theScore != 0 || theScore != -1) {
+                                        ObjectVector theObVec = new ObjectVector(file.toFile(), null);
+                                        SearchResult theSerRes = new SearchResult(theScore, theObVec);
+                                        theCompResult.add(theSerRes);
+
+                                    }
+
+
+                                    return FileVisitResult.CONTINUE;
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+
+                    }
+
+
 
             } else if (selTextRadioButton.isSelected() && !searchFileString.isEmpty()){
 
                 logger.debug("Compare Text with Search Corpus");
                 try {
+
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -2570,8 +2648,140 @@ public class MainGui {
 
             }
 
+
+            if (theCompResult.size() > 0) {
+                logger.info("Search output follows ...\n");
+                for (SearchResult result: theCompResult) {
+
+                    File theFile = new File(result.getObjectVector().getObject().toString());
+                    double percent = result.getScore() * 100;
+                    String theScore = new DecimalFormat("#.###").format(percent);
+
+
+                    DocSearchFile theEntry = new DocSearchFile(theScore, theFile, new File(wDir.toString() + File.separator + searchFolder));
+
+
+
+                    System.out.println(result.toSimpleString());
+                    logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
+                    logger.debug("Score: " + result.getScore());
+                    logger.debug("toString: " + result.toString());
+
+                    docSearchResModel.addDocFile(theEntry);
+
+                }
+///TODO Sort the SearchModel and remove all Entries except the TOP noOfSearchResults
+
+            } else {
+                DocSearchFile theEntry = new DocSearchFile(" ",new File("No Search Results"), new File(""));
+                docSearchResModel.addDocFile(theEntry);
+                //JOptionPane.showMessageDialog(null, "No Results");
+            }
+
             return null;
         }
+
+        public double runCompareTerms(FlagConfig flagConfig) throws IOException {
+            String[] args = flagConfig.remainingArgs;
+            logger.debug("Remaining Args: " + args.length);
+
+            LuceneUtils luceneUtils = null;
+
+
+            VectorStoreRAM vecReader =null, elementalVecReader=null, semanticVecReader=null, predicateVecReader=null;
+            if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT) || flagConfig.searchtype().equals(Search.SearchType.BOUNDMINIMUM) || flagConfig.searchtype().equals(Search.SearchType.INTERSECTION) || flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE))
+            {
+                elementalVecReader = new VectorStoreRAM(flagConfig);
+                semanticVecReader = new VectorStoreRAM(flagConfig);
+                predicateVecReader = new VectorStoreRAM(flagConfig);
+                elementalVecReader.initFromFile(flagConfig.elementalvectorfile());
+                semanticVecReader.initFromFile(flagConfig.semanticvectorfile());
+                predicateVecReader.initFromFile(flagConfig.predicatevectorfile());
+
+            } else {
+
+                vecReader = new VectorStoreRAM(flagConfig);
+                vecReader.initFromFile(VectorStoreUtils.getStoreFileName(flagConfig.queryvectorfile(), flagConfig));
+                logger.info(String.format(
+                        "Using RAM cache of vectors from file: %s\n", flagConfig.queryvectorfile()));
+
+
+                vecReader = VectorStoreReader.openVectorStore(flagConfig.queryvectorfile(), flagConfig);
+                logger.info("Opened query vector store from file: " + flagConfig.queryvectorfile() + "\n");
+            }
+
+            if (!flagConfig.luceneindexpath().isEmpty()) {
+                try {
+                    luceneUtils = new LuceneUtils(flagConfig);
+                } catch (IOException e) {
+                    logger.info("Couldn't open Lucene index at " + flagConfig.luceneindexpath());
+                }
+            }
+            if (luceneUtils == null) {
+                logger.info("No Lucene index for query term weighting, "
+                        + "so all query terms will have same weight.\n");
+            }
+
+            pitt.search.semanticvectors.vectors.Vector vec1=null;
+            pitt.search.semanticvectors.vectors.Vector vec2=null;
+
+            if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT))
+            {
+                vec1 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
+                        flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[0]);
+                vec2 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
+                        flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
+
+                elementalVecReader.close();
+                semanticVecReader.close();
+                predicateVecReader.close();
+            } else  if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE))
+            {
+                ArrayList<pitt.search.semanticvectors.vectors.Vector> vecs1 = CompoundVectorBuilder.getBoundProductQuerySubspaceFromString(
+                        flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, args[0]);
+                vec2 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
+                        flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
+
+                elementalVecReader.close();
+                semanticVecReader.close();
+                predicateVecReader.close();
+
+                return VectorUtils.compareWithProjection(vec2, vecs1);
+
+            }
+            else  if (flagConfig.searchtype().equals(Search.SearchType.INTERSECTION))
+            {
+
+                vec1 = CompoundVectorBuilder.getBoundProductQueryIntersectionFromString(
+                        flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[0]);
+
+                vec2 = CompoundVectorBuilder.getBoundProductQueryIntersectionFromString(
+                        flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
+
+                elementalVecReader.close();
+                semanticVecReader.close();
+                predicateVecReader.close();
+
+                return vec1.measureOverlap(vec2);
+
+            }
+            else {
+                vec1 = CompoundVectorBuilder.getQueryVectorFromString(
+                        vecReader, luceneUtils, flagConfig, args[0]);
+                vec2 = CompoundVectorBuilder.getQueryVectorFromString(
+                        vecReader, luceneUtils, flagConfig, args[1]);
+
+                vecReader.close();
+            }
+
+
+
+            return vec1.measureOverlap(vec2);
+        }
+
+
+
+
         /*
          * Executed in event dispatching thread
          */
@@ -2584,9 +2794,6 @@ public class MainGui {
 
         }
     }
-
-
-
 
 
     public void fillMetaDataField(File aFile) {
