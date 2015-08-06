@@ -816,7 +816,7 @@ public class MainGui {
             public void actionPerformed(ActionEvent e) {
                 selectDocumentButton.setEnabled(false);
                 searchTextArea.setEnabled(true);
-                searchDocValue.setText("nothing selected");
+                //searchDocValue.setText("nothing selected");
 
             }
         });
@@ -3066,17 +3066,7 @@ public class MainGui {
 
     //TODO set File Delet Task popup to prevent accidential closing of the App
 
-    //TODO Import Search Corpus
-
-    //TODO Search Input Selection (Textfield, File Select Doc)
-    //TODO Search Selection (Search Topic Corpus or Search Corpus with Topic Knowledge)
-    //TODO Search Selection Search for similar Terms or Docs
-
-    //TODO Output List of Terms or List of Docs. Browse List of Docs and read
-
-    //TODO Extract Names, different params in found docs, Jump to Offsets
-
-    //TODO Change open Folder debug constant
+    //TODO Obfuscation and Packaging for Windows and OSX. Test with Windows.
 
 
 
