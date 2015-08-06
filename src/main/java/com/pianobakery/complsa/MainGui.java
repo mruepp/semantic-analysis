@@ -30,15 +30,9 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 
 /**
@@ -84,23 +78,23 @@ public class MainGui {
     private JComboBox indexTypeComboBox;
     private JComboBox searchCorpComboBox;
 
-    private JComboBox searchTrainComboBox;
-    private JComboBox searchTFComboBox;
+    private JComboBox selectIndexTypeComboBox;
+    private JComboBox selectTermweightComboBox;
     private Map<String, List<String>> searchModelList = new LinkedHashMap<String, List<String>>();
 
     private JLabel langModelsText;
 
     private JTextArea searchTextArea;
 
-    private JRadioButton searchDocsRadio;
-    private JRadioButton searchTopCorpRadio;
+    private JRadioButton searchSearchCorpRadioButton;
+    private JRadioButton searchTopCorpRadioButton;
 
     private JTextField noOfSearchResultsText;
     private JRadioButton selTextRadioButton;
     private JLabel algTextField;
     private JRadioButton selDocRadioButton;
     private JButton selectDocumentButton;
-    private JTextArea selectedMetadataText;
+    private JTextArea metadataTextField;
     private JTable termSearchResTable;
     private JTable docSearchResTable;
     private JLabel searchDocValue;
@@ -202,7 +196,11 @@ public class MainGui {
         }
         String[] theStringArr = new String[theStrings.size()];
         theStringArr = theStrings.toArray(theStringArr);
+
         return theStringArr;
+
+
+
 
     }
 
@@ -311,8 +309,8 @@ public class MainGui {
         enableUIElements(false);
 
         ButtonGroup selSearchGroup =new ButtonGroup();
-        selSearchGroup.add(searchDocsRadio);
-        selSearchGroup.add(searchTopCorpRadio);
+        selSearchGroup.add(searchSearchCorpRadioButton);
+        selSearchGroup.add(searchTopCorpRadioButton);
 
         ButtonGroup searchSelGroup = new ButtonGroup();
         searchSelGroup.add(selTextRadioButton);
@@ -771,7 +769,7 @@ public class MainGui {
 
         //Search Page
         //Choose Index Type
-        searchTrainComboBox.addActionListener(new ActionListener() {
+        selectIndexTypeComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -779,14 +777,14 @@ public class MainGui {
                     return;
                 }
 
-                if (searchModelList.get(searchTrainComboBox.getSelectedItem()) == null) {
+                if (searchModelList.get(selectIndexTypeComboBox.getSelectedItem()) == null) {
                     return;
                 }
 
-                List<String> theList = searchModelList.get(searchTrainComboBox.getSelectedItem().toString());
-                searchTFComboBox.removeAllItems();
+                List<String> theList = searchModelList.get(selectIndexTypeComboBox.getSelectedItem().toString());
+                selectTermweightComboBox.removeAllItems();
                 for (String aTFItem : theList) {
-                    searchTFComboBox.addItem(aTFItem);
+                    selectTermweightComboBox.addItem(aTFItem);
                 }
 
                 getSelectedSearchModelFiles();
@@ -795,7 +793,7 @@ public class MainGui {
             }
         });
 
-        searchTFComboBox.addActionListener(new ActionListener() {
+        selectTermweightComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -803,7 +801,7 @@ public class MainGui {
                     return;
                 }
 
-                if (searchModelList.get(searchTrainComboBox.getSelectedItem()) == null) {
+                if (searchModelList.get(selectIndexTypeComboBox.getSelectedItem()) == null) {
                     return;
                 }
                 getSelectedSearchModelFiles();
@@ -874,33 +872,33 @@ public class MainGui {
                     JOptionPane.showMessageDialog(null, "Import Search Document");
                     return;
                 }
-                if (searchTopCorpRadio.isSelected() && (searchTrainComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
+                if (searchTopCorpRadioButton.isSelected() && (selectIndexTypeComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
                     JOptionPane.showMessageDialog(null, "Import Training Corpus and train it");
                     return;
                 }
-                if (searchDocsRadio.isSelected() && searchCorpComboBox.getItemCount() == 0) {
+                if (searchSearchCorpRadioButton.isSelected() && searchCorpComboBox.getItemCount() == 0) {
                     JOptionPane.showMessageDialog(null, "Import Search Corpus first");
                     return;
                 }
 
 
-                if (searchCorpComboBox.getItemCount() != 0 && searchDocsRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
+                if (searchCorpComboBox.getItemCount() != 0 && searchSearchCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
 
                     if (selDocRadioButton.isSelected()) {
                         logger.debug("run Doc search on Search Corpus");
                         ProgressBar bar = getProgressBarWithTitleLater("Search Document Similarities...", false);
-                        File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                        compareCorpDocsWithSearchDocTaskWithBar(bar, corpDir);
+                        //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                        compareCorpDocsWithSearchDocTaskWithBar(bar);
                     } else if (selTextRadioButton.isSelected()) {
                         logger.debug("run Text search on Search Docs");
                         ProgressBar bar = getProgressBarWithTitleLater("Search Text Similarities...", false);
-                        File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                        compareCorpDocsWithSearchDocTaskWithBar(bar, corpDir);
+                        //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                        compareCorpDocsWithSearchDocTaskWithBar(bar);
 
                     }
 
 
-                } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadio.isSelected() && searchTrainComboBox.getItemCount() != 0) {
+                } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
 
                     if (selDocRadioButton.isSelected()) {
                         logger.debug("Run Doc search on Topic Corpus");
@@ -1310,17 +1308,17 @@ public class MainGui {
         indexTypeComboBox.setEnabled(enabled);
         removeIndexButton.setEnabled(enabled);
         searchTextArea.setEnabled(enabled);
-        searchTrainComboBox.setEnabled(enabled);
+        selectIndexTypeComboBox.setEnabled(enabled);
         impSearchCorpButton.setEnabled(enabled);
         impSearchCorpRecursiveCheckBox.setEnabled(enabled);
         splitSearchCorpCheckBox.setEnabled(enabled);
         amountSearchCorpSent.setEnabled(enabled);
         searchCorpComboBox.setEnabled(enabled);
         removeSearchCorpButton.setEnabled(enabled);
-        searchDocsRadio.setEnabled(enabled);
-        searchTopCorpRadio.setEnabled(enabled);
+        searchSearchCorpRadioButton.setEnabled(enabled);
+        searchTopCorpRadioButton.setEnabled(enabled);
         searchButton.setEnabled(enabled);
-        searchTFComboBox.setEnabled(enabled);
+        selectTermweightComboBox.setEnabled(enabled);
         noOfSearchResultsText.setEnabled(enabled);
         selTextRadioButton.setEnabled(enabled);
         selDocRadioButton.setEnabled(enabled);
@@ -1535,20 +1533,21 @@ public class MainGui {
             DocSearchModel theModel = (DocSearchModel) docSearchResTable.getModel();
             theSelFile = theModel.getDocSearchFile(row).getFile();
             theParentFolder = new File(theSelFile.getParent());
-            File[] dirContentArray = theParentFolder.listFiles(new FilenameFilter() {
 
-                @Override
-                public boolean accept(File current, String name) {
-                    if (current.isFile() && !current.isHidden()) {
-                        return true;
-                    }
 
-                    return false;
-                }
+           File[] dirContentArray = theParentFolder.listFiles(new FileFilter() {
+               @Override
+               public boolean accept(File pathname) {
+                   if (pathname.isFile()) {
+                       return true;
+                   } else {
+                   return false;
+               }
 
-            });
+           }});
+
             logger.debug("The Selected Doc File: " + theModel.getDocSearchFile(row).getFile());
-            logger.debug("File Array: " + dirContentArray.toString());
+            logger.debug("File Array: " + dirContentArray.length);
 
             selDocdirContent = new ArrayList<File>(Arrays.asList(dirContentArray));
 
@@ -1822,16 +1821,16 @@ public class MainGui {
         if (trainCorp.isEmpty()) {
             indexFilesModel.clear();
             searchModelList.clear();
-            searchTrainComboBox.removeAllItems();
-            searchTFComboBox.removeAllItems();
+            selectIndexTypeComboBox.removeAllItems();
+            selectTermweightComboBox.removeAllItems();
             return;
         }
 
 
         indexFilesModel.clear();
         searchModelList.clear();
-        searchTrainComboBox.removeAllItems();
-        searchTFComboBox.removeAllItems();
+        selectIndexTypeComboBox.removeAllItems();
+        selectTermweightComboBox.removeAllItems();
         File theCorpFolder = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
         File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
         File indexFileFolder = new File (indexFileParent + File.separator + theCorpFolder.getName());
@@ -1881,13 +1880,13 @@ public class MainGui {
 
             }
             for (String theIndex : searchModelList.keySet()) {
-                searchTrainComboBox.addItem(theIndex);
+                selectIndexTypeComboBox.addItem(theIndex);
             }
 
             logger.debug("The TF List: " + searchModelList.toString());
-            logger.debug(("The selected Object " + searchTrainComboBox.getSelectedItem().toString()));
-            List<String> theItem = searchModelList.get(searchTrainComboBox.getSelectedItem().toString());
-            logger.debug("The Selected List: " + searchModelList.get(searchTrainComboBox.getSelectedItem().toString()));
+            logger.debug(("The selected Object " + selectIndexTypeComboBox.getSelectedItem().toString()));
+            List<String> theItem = searchModelList.get(selectIndexTypeComboBox.getSelectedItem().toString());
+            logger.debug("The Selected List: " + searchModelList.get(selectIndexTypeComboBox.getSelectedItem().toString()));
             logger.debug("The Selected ListVariable: " + theItem.toString());
 
             /*if (!theItem.isEmpty()) {
@@ -1913,10 +1912,10 @@ public class MainGui {
         List<File> theFiles = new ArrayList<>();
 
 
-        if (searchTFComboBox.getSelectedItem() != null && searchTrainComboBox.getSelectedItem() != null) {
+        if (selectTermweightComboBox.getSelectedItem() != null && selectIndexTypeComboBox.getSelectedItem() != null) {
 
-            String theTermSearchString = new String(searchTrainComboBox.getSelectedItem() + "-term-" + searchTFComboBox.getSelectedItem());
-            String theDocSearchString = new String(searchTrainComboBox.getSelectedItem() + "-doc-" + searchTFComboBox.getSelectedItem());
+            String theTermSearchString = new String(selectIndexTypeComboBox.getSelectedItem() + "-term-" + selectTermweightComboBox.getSelectedItem());
+            String theDocSearchString = new String(selectIndexTypeComboBox.getSelectedItem() + "-doc-" + selectTermweightComboBox.getSelectedItem());
 
             if (!theTermSearchString.isEmpty() && !theDocSearchString.isEmpty()){
 
@@ -2213,8 +2212,8 @@ public class MainGui {
         searchCorpusModel.clear();
         indexFilesModel.clear();
         searchCorpComboBox.removeAllItems();
-        searchTrainComboBox.removeAllItems();
-        searchTFComboBox.removeAllItems();
+        selectIndexTypeComboBox.removeAllItems();
+        selectTermweightComboBox.removeAllItems();
 
     }
 
@@ -2288,7 +2287,7 @@ public class MainGui {
             //arguments.add("-minfrequency");
             //arguments.add("-maxnonalphabetchars");
             arguments.add("-termweight");
-            arguments.add(((String)searchTFComboBox.getSelectedItem()));
+            arguments.add(((String)selectTermweightComboBox.getSelectedItem()));
             //arguments.add("-docindexing");
             //arguments.add("incremental");
             //arguments.add("-trainingcycles");
@@ -2428,7 +2427,7 @@ public class MainGui {
 
             ArrayList<String> arguments = new ArrayList<String>();
             arguments.add("-termweight");
-            arguments.add((String)searchTFComboBox.getSelectedItem());
+            arguments.add((String)selectTermweightComboBox.getSelectedItem());
             arguments.add("-luceneindexpath");
             arguments.add(theIndexFileFolder.toString());
             arguments.add("-numsearchresults");
@@ -2510,7 +2509,7 @@ public class MainGui {
     }
 
 
-    public void compareCorpDocsWithSearchDocTaskWithBar(ProgressBar bar, File aCorpDir) {
+    public void compareCorpDocsWithSearchDocTaskWithBar(ProgressBar bar) {
 
         if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
 
@@ -2526,7 +2525,7 @@ public class MainGui {
             docSearchResModel.resetModel();
         }
 
-        compareCorpDocsWithSearchDocTask task = new compareCorpDocsWithSearchDocTask(bar, aCorpDir);
+        compareCorpDocsWithSearchDocTask task = new compareCorpDocsWithSearchDocTask(bar);
         logger.debug("Runs");
         task.execute();
 
@@ -2534,12 +2533,10 @@ public class MainGui {
 
     class compareCorpDocsWithSearchDocTask extends SwingWorker<Void, Void> {
         private ProgressBar bar;
-        private File corpDir;
 
 
-        public compareCorpDocsWithSearchDocTask(ProgressBar aBar, File aCorpDir) {
+        public compareCorpDocsWithSearchDocTask(ProgressBar aBar) {
             this.bar = aBar;
-            this.corpDir = aCorpDir;
 
 
         }
@@ -2548,18 +2545,15 @@ public class MainGui {
         public Void doInBackground() throws IOException{
             bar.setProgressBarIndeterminate(true);
 
-            logger.debug("The Corpus Dir to compare: " + corpDir.toString());
 
             File termvectorfile = getSelectedSearchModelFiles()[0];
-            File docvectorfile = getSelectedSearchModelFiles()[1];
+            //File docvectorfile = getSelectedSearchModelFiles()[1];
 
             ArrayList<String> arguments = new ArrayList<String>();
             arguments.add("-termweight");
-            arguments.add(((String)searchTFComboBox.getSelectedItem()));
+            arguments.add(((String)selectTermweightComboBox.getSelectedItem()));
             arguments.add("-numsearchresults");
             arguments.add(noOfSearchResultsText.getText());
-            arguments.add("-termweight");
-            arguments.add(((String) searchTFComboBox.getSelectedItem()));
             arguments.add("-queryvectorfile");
             arguments.add(termvectorfile.toString());
             //arguments.add("-searchvectorfile");
@@ -2583,76 +2577,58 @@ public class MainGui {
 
             //Get Selected Search Corpus:
             File searchCorpDir = searchCorpusModel.get(searchCorpComboBox.getSelectedItem().toString());
+
+           IOFileFilter filter = new IOFileFilter() {
+               @Override
+               public boolean accept(File file) {
+                   if (file.exists() && !file.isHidden()) {
+                       return true;
+                   } else {
+                       return false;
+                   }
+               }
+
+               @Override
+               public boolean accept(File file, String s) {
+                   if (s.equals(".metadata.txt")) {
+                       return false;
+                   }else {
+                       return true;
+                   }
+               }
+           };
+
+            Collection<File> theFiles = FileUtils.listFiles(searchCorpDir, filter, TrueFileFilter.INSTANCE);
+
             logger.debug("The selected SearchCorp Folder: " + searchCorpDir);
+            logger.debug("The Collection: " + theFiles.toString());
 
 
-            List<SearchResult> theCompResult = new ArrayList<>();
+            List<SearchResult> theCompResult = new ArrayList<SearchResult>();
 
             if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
 
                 logger.debug("Compare Doc with Search Corpus");
 
 
-  /*
-
-                File testfile = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData" + File.separator + "Testfile.pdf");
-                String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(testfile));
-                logger.debug("The File: " + testfile.toString());
-                arguments.add("\"" + theDocString + "\"");
-
-                arguments.add("\"" + searchFileString + "\"");
-
-                String[] args = new String[arguments.size()];
-                args = arguments.toArray(args);
-
-                FlagConfig flagConfig;
-                flagConfig = FlagConfig.getFlagConfig(args);
-
-                double theScore = 0;
-                try {
-                    theScore = runCompareTerms(flagConfig);
-                    logger.debug("The Score " + theScore);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if (theScore != 0 || theScore != -1) {
-                    ObjectVector theObVec = new ObjectVector(testfile, null);
-                    SearchResult theSerRes = new SearchResult(theScore, theObVec);
-                    theCompResult.add(theSerRes);
-
-                }
-*/
-                Path searchCorpPath = searchCorpDir.toPath();
-                logger.debug("SearchcorpPath: " + searchCorpPath.toString());
-                Collection<File> theFiles = FileUtils.listFiles(searchCorpDir, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
-
-                /*File[] theFiles = searchCorpDir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File current, String name) {
-                        if (current.isFile() && current.exists() && !current.isHidden()) {
-                            logger.debug("Add File: " + current.toString());
-                            return true;
-                        }
-                        logger.debug("non added " + current.toString());
-                        return false;
-                    }
-                });*/
-
                 for (File aFile : theFiles) {
 
                     String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(aFile));
                     logger.debug("The File: " + aFile.toString());
 
+                    ArrayList<String> allArgs = new ArrayList<String>(arguments);
+                    logger.debug("AllArgs " + allArgs.toString());
 
 
-                    arguments.add("\"" + theDocString + "\"");
-                    arguments.add("\"" + searchFileString + "\"");
-                    String[] args = new String[arguments.size()];
-                    args = arguments.toArray(args);
+                    allArgs.add("\"" + searchFileString + "\"");
+                    allArgs.add("\"" + theDocString + "\"");
+
+                    String[] args = new String[allArgs.size()];
+                    args = allArgs.toArray(args);
 
                     FlagConfig flagConfig;
                     flagConfig = FlagConfig.getFlagConfig(args);
+                    logger.debug("Remaining Args: " + flagConfig.remainingArgs[0]);
 
 
                     System.out.println(aFile.toString());
@@ -2677,12 +2653,7 @@ public class MainGui {
                 }
 
 
-
-
-
-
-
-            } else if (selTextRadioButton.isSelected() && !searchFileString.isEmpty()){
+            } else if (selTextRadioButton.isSelected() && !searchTextArea.getText().isEmpty()){
 
                 logger.debug("Compare Text with Search Corpus");
                 try {
@@ -2697,7 +2668,35 @@ public class MainGui {
 
             if (theCompResult.size() > 0) {
                 logger.info("Search output follows ...\n");
-                for (SearchResult result: theCompResult) {
+                Collections.sort(theCompResult, new Comparator<SearchResult>() {
+                    @Override
+                    public int compare(SearchResult result1, SearchResult result2) {
+
+                        return result1.compareTo(result2);
+                    }
+                });
+
+                logger.debug("The Sorted List: " + theCompResult.toString());
+
+                int numSearchRes = Integer.parseInt(noOfSearchResultsText.getText());
+                List<SearchResult> theTrimmedList = new ArrayList<SearchResult>();
+
+                if (theCompResult.size() > numSearchRes) {
+                    theTrimmedList = theCompResult.subList(0, numSearchRes - 1);
+
+                } else {
+                    theTrimmedList = theCompResult;
+                }
+
+
+
+
+                logger.debug("The Trimmed List: " + theTrimmedList.toString() + theTrimmedList.size());
+
+
+
+
+                for (SearchResult result : theTrimmedList) {
 
                     File theFile = new File(result.getObjectVector().getObject().toString());
                     double percent = result.getScore() * 100;
@@ -2875,8 +2874,8 @@ public class MainGui {
 
         logger.debug("Metadata: " + metadata);
 
-        selectedMetadataText.setText(metadata);
-        selectedMetadataText.setCaretPosition(0);
+        metadataTextField.setText(metadata);
+        metadataTextField.setCaretPosition(0);
 
     }
 

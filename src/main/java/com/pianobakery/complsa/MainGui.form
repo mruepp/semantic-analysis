@@ -649,7 +649,7 @@
                   <text value="Selection Metadata:"/>
                 </properties>
               </component>
-              <component id="da1f8" class="javax.swing.JComboBox" binding="searchTrainComboBox">
+              <component id="da1f8" class="javax.swing.JComboBox" binding="selectIndexTypeComboBox">
                 <constraints>
                   <grid row="9" column="6" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -674,7 +674,7 @@
                   <text value="Termweight:"/>
                 </properties>
               </component>
-              <component id="92631" class="javax.swing.JComboBox" binding="searchTFComboBox">
+              <component id="92631" class="javax.swing.JComboBox" binding="selectTermweightComboBox">
                 <constraints>
                   <grid row="13" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -766,7 +766,7 @@
                   <text value="Select Corpus to Search:"/>
                 </properties>
               </component>
-              <component id="41405" class="javax.swing.JRadioButton" binding="searchTopCorpRadio">
+              <component id="41405" class="javax.swing.JRadioButton" binding="searchTopCorpRadioButton">
                 <constraints>
                   <grid row="31" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
@@ -776,7 +776,7 @@
                   <text value="Topic Corpus"/>
                 </properties>
               </component>
-              <component id="bbe61" class="javax.swing.JRadioButton" binding="searchDocsRadio">
+              <component id="bbe61" class="javax.swing.JRadioButton" binding="searchSearchCorpRadioButton">
                 <constraints>
                   <grid row="33" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-vert="false"/>
@@ -803,7 +803,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="e81ab" class="javax.swing.JTextArea" binding="selectedMetadataText">
+                  <component id="e81ab" class="javax.swing.JTextArea" binding="metadataTextField">
                     <constraints/>
                     <properties>
                       <editable value="false"/>

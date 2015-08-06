@@ -51,6 +51,7 @@ public class ReaderGui {
     private JButton documentDownButton;
 
     private JCheckBox highlightSelectedTermsCheckBox;
+    private JTextField textField1;
     private static String[] viewTypeCombo = {"Result Splitscreen","Document Splitscreen","Document"};
     private MainGui theMainGui;
     private String[] searchTerms;
@@ -72,6 +73,8 @@ public class ReaderGui {
 
 
     public void setSearchTerms(String[] aTerms) {
+
+
         this.searchTerms = aTerms;
         setHighliter(highlightSelectedTermsCheckBox.isSelected());
 
@@ -290,6 +293,7 @@ public class ReaderGui {
     }
 
     public void setHighliter(boolean setIt) {
+
 
         for (JTextPane aPane : allTextPanes) {
             if(setIt) {
