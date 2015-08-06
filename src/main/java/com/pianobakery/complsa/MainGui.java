@@ -891,9 +891,9 @@ public class MainGui {
                         compareCorpDocsWithSearchDocTaskWithBar(bar);
                     } else if (selTextRadioButton.isSelected()) {
                         logger.debug("run Text search on Search Docs");
-                        ProgressBar bar = getProgressBarWithTitleLater("Search Text Similarities...", false);
+                        ProgressBar bar1 = getProgressBarWithTitleLater("Search Text Similarities...", false);
                         //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                        compareCorpDocsWithSearchDocTaskWithBar(bar);
+                        compareCorpDocsWithSearchDocTaskWithBar(bar1);
 
                     }
 
@@ -2517,9 +2517,7 @@ public class MainGui {
             return;
 
         }
-        if (searchFileString.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select Search Document first");
-        }
+
 
         if (docSearchResModel.getRowCount() != 0) {
             docSearchResModel.resetModel();
@@ -2544,6 +2542,8 @@ public class MainGui {
         @Override
         public Void doInBackground() throws IOException{
             bar.setProgressBarIndeterminate(true);
+
+
 
 
             File termvectorfile = getSelectedSearchModelFiles()[0];
@@ -2656,11 +2656,50 @@ public class MainGui {
             } else if (selTextRadioButton.isSelected() && !searchTextArea.getText().isEmpty()){
 
                 logger.debug("Compare Text with Search Corpus");
-                try {
+                logger.debug("Compare Doc with Search Corpus");
 
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                String theSearchString = Utilities.removeQuoteFromString(searchTextArea.getText());
+
+
+                for (File aFile : theFiles) {
+
+                    String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(aFile));
+                    logger.debug("The File: " + aFile.toString());
+
+                    ArrayList<String> allArgs = new ArrayList<String>(arguments);
+                    logger.debug("AllArgs " + allArgs.toString());
+
+
+                    allArgs.add("\"" + theSearchString + "\"");
+                    allArgs.add("\"" + theDocString + "\"");
+
+                    String[] args = new String[allArgs.size()];
+                    args = allArgs.toArray(args);
+
+                    FlagConfig flagConfig;
+                    flagConfig = FlagConfig.getFlagConfig(args);
+                    logger.debug("Remaining Args: " + flagConfig.remainingArgs[0]);
+
+
+                    System.out.println(aFile.toString());
+
+                    double theScore = 0;
+                    try {
+                        theScore = runCompareTerms(flagConfig);
+                        logger.debug("The Score " + theScore);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (theScore != 0 || theScore != -1) {
+                        ObjectVector theObVec = new ObjectVector(aFile, null);
+                        SearchResult theSerRes = new SearchResult(theScore, theObVec);
+                        theCompResult.add(theSerRes);
+
+                    }
+
+
+
                 }
 
             }
@@ -2679,10 +2718,10 @@ public class MainGui {
                 logger.debug("The Sorted List: " + theCompResult.toString());
 
                 int numSearchRes = Integer.parseInt(noOfSearchResultsText.getText());
-                List<SearchResult> theTrimmedList = new ArrayList<SearchResult>();
+                List<SearchResult> theTrimmedList = null;
 
                 if (theCompResult.size() > numSearchRes) {
-                    theTrimmedList = theCompResult.subList(0, numSearchRes - 1);
+                    theTrimmedList = theCompResult.subList(0, numSearchRes);
 
                 } else {
                     theTrimmedList = theCompResult;
@@ -2691,7 +2730,8 @@ public class MainGui {
 
 
 
-                logger.debug("The Trimmed List: " + theTrimmedList.toString() + theTrimmedList.size());
+                logger.debug("The Trimmed List: " + theTrimmedList.size());
+                logger.debug("The Comp List: " + theCompResult.size());
 
 
 
