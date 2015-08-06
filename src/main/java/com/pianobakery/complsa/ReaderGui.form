@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1137" height="990"/>
+      <xy x="20" y="20" width="1137" height="1017"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -155,13 +155,11 @@
         </children>
       </grid>
       <grid id="d43eb" binding="buttonPanel" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
-        <rowspec value="top:3dlu:noGrow"/>
+        <rowspec value="center:34px:noGrow"/>
+        <rowspec value="center:d:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:d:noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
@@ -169,86 +167,90 @@
         <colspec value="fill:max(d;4px):noGrow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="1d06a" class="javax.swing.JButton" binding="toggleViewButton">
+          <hspacer id="a616c">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <component id="5bc4f" class="javax.swing.JCheckBox" binding="highlightSelectedTermsCheckBox" default-binding="true">
+            <constraints>
+              <grid row="2" column="12" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <selected value="true"/>
+              <text value="Highlight selected Terms"/>
+            </properties>
+          </component>
+          <hspacer id="8f65f">
+            <constraints>
+              <grid row="0" column="12" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <component id="7ffca" class="javax.swing.JComboBox" binding="viewType" custom-create="true">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="a98f6" class="javax.swing.JButton" binding="toggleViewButton">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
               <text value="Toggle View"/>
             </properties>
           </component>
-          <component id="cdf03" class="javax.swing.JButton" binding="nextButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text value="Next Selected"/>
-            </properties>
-          </component>
-          <component id="2df19" class="javax.swing.JButton" binding="prevButton" default-binding="true">
+          <component id="b219e" class="javax.swing.JButton" binding="prevButton" default-binding="true">
             <constraints>
               <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
-              <text value="Prev Selected"/>
+              <text value="Selection Up"/>
             </properties>
           </component>
-          <hspacer id="a616c">
+          <component id="3df0d" class="javax.swing.JButton" binding="documentUpButton" default-binding="true">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false"/>
-            </constraints>
-          </hspacer>
-          <component id="41e1c" class="javax.swing.JButton" binding="documentUpButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
               <enabled value="false"/>
-              <text value="Chunk Up"/>
+              <text value="Prev Doc Chunk"/>
             </properties>
           </component>
-          <hspacer id="655b0">
+          <component id="cdf03" class="javax.swing.JButton" binding="nextButton" default-binding="true">
             <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false"/>
-            </constraints>
-          </hspacer>
-          <component id="26968" class="javax.swing.JComboBox" binding="viewType" custom-create="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
-            <properties/>
+            <properties>
+              <text value="Selection Down"/>
+            </properties>
           </component>
           <component id="4063" class="javax.swing.JButton" binding="documentDownButton" default-binding="true">
             <constraints>
-              <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
               <enabled value="false"/>
-              <text value="Chunk Down"/>
-            </properties>
-          </component>
-          <component id="be02" class="javax.swing.JCheckBox" binding="highlightSelectedTermsCheckBox" default-binding="true">
-            <constraints>
-              <grid row="2" column="8" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <selected value="true"/>
-              <text value="Highlight selected Terms"/>
+              <text value="Next Doc Chunk"/>
             </properties>
           </component>
         </children>

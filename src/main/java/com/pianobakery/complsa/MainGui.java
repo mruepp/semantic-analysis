@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import pitt.search.semanticvectors.Search;
 import pitt.search.semanticvectors.*;
 import pitt.search.semanticvectors.vectors.*;
+import pitt.search.semanticvectors.vectors.Vector;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -2803,8 +2804,8 @@ public class MainGui {
                         + "so all query terms will have same weight.\n");
             }
 
-            pitt.search.semanticvectors.vectors.Vector vec1=null;
-            pitt.search.semanticvectors.vectors.Vector vec2=null;
+            Vector vec1=null;
+            Vector vec2=null;
 
             if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT))
             {
