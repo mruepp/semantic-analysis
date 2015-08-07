@@ -136,8 +136,8 @@ public class MainGui {
     private static String[] termweights= {"None", "IDF", "LOGENTROPY", "SQRT"};
 
 
-    private static File openFolder = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
-    //private static File openFolder = new File(System.getProperty("user.home"));
+    //private static File openFolder = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
+    private static File openFolder = new File(System.getProperty("user.home"));
 
     final static Logger logger = Logger.getLogger(MainGui.class);
 
