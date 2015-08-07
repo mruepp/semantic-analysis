@@ -95,10 +95,11 @@
             <artifactId>lucene-demo</artifactId>
             <version>5.2.1</version>
         </dependency>
-
-
-
-
+        <dependency><!-- Use this dependency in your licensed application -->
+            <groupId>net.nicholaswilliams.java.licensing</groupId>
+            <artifactId>licensing-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
