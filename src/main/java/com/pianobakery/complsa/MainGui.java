@@ -116,7 +116,6 @@ public class MainGui {
 
 
 
-
     //private DefaultListModel listModel;
 
     private File[] files;
@@ -134,6 +133,25 @@ public class MainGui {
     private static String modelUrl = "http://opennlp.sourceforge.net/models-1.5";
     private static String[] indexType= {"Standard","LSA", "Positional"};
     private static String[] termweights= {"None", "IDF", "LOGENTROPY", "SQRT"};
+
+
+    private static JMenuItem newAction = new JMenuItem("New Folder");
+    private static JMenuItem openAction = new JMenuItem("Choose Folder");
+    private static JMenuItem downloadAction = new JMenuItem("Download Language Model");
+    private static JMenuItem exitAction = new JMenuItem("Exit");
+
+    private static JMenuItem cutAction = new JMenuItem("Cut");
+    private static JMenuItem copyAction = new JMenuItem("Copy");
+    private static JMenuItem pasteAction = new JMenuItem("Paste");
+
+    private static JMenuItem addCorpFolderAction = new JMenuItem("Add Folder");
+    private static JMenuItem remCorpFolderAction = new JMenuItem("Remove Folder");
+    private static JMenuItem updateIndexAction = new JMenuItem("Update Index");
+    private static JMenuItem remCorpIndexAction = new JMenuItem("Remove Corpus Index");
+    private static JMenuItem trainSemAction = new JMenuItem("Train Semantics");
+
+    private static JMenuItem addSearchCorpFolderAction = new JMenuItem("Add Folder");
+    private static JMenuItem remSearchCorpFolderAction = new JMenuItem("Remove Folder");
 
 
     //private static File openFolder = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
@@ -284,8 +302,8 @@ public class MainGui {
         frame.setMinimumSize(new Dimension(frameWidth,frameHeight));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
-        //JMenuBar menu = MenuExp();
-        //frame.setJMenuBar(menu);
+        JMenuBar menu = MenuExp();
+        frame.setJMenuBar(menu);
 
 
 
@@ -1076,42 +1094,62 @@ public class MainGui {
         // Define and add two drop down menu to the menubar
         JMenu fileMenu = new JMenu("Project");
         JMenu editMenu = new JMenu("Edit");
+        JMenu trainingMenu = new JMenu("Training Corpus");
+        JMenu searchMenu = new JMenu("Search Corpus");
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
+        menuBar.add(trainingMenu);
+        menuBar.add(searchMenu);
 
         // Create and add simple menu item to one of the drop down menu
-        JMenuItem newAction = new JMenuItem("New Folder");
-        JMenuItem openAction = new JMenuItem("Choose Folder");
-        JMenuItem exitAction = new JMenuItem("Exit");
-        JMenuItem cutAction = new JMenuItem("Cut");
-        JMenuItem copyAction = new JMenuItem("Copy");
-        JMenuItem pasteAction = new JMenuItem("Paste");
 
-        // Create and add CheckButton as a menu item to one of the drop down
-        // menu
-        JCheckBoxMenuItem checkAction = new JCheckBoxMenuItem("Check Action");
-        // Create and add Radio Buttons as simple menu items to one of the drop
-        // down menu
-        JRadioButtonMenuItem radioAction1 = new JRadioButtonMenuItem(
-                "Radio Button1");
-        JRadioButtonMenuItem radioAction2 = new JRadioButtonMenuItem(
-                "Radio Button2");
-        // Create a ButtonGroup and add both radio Button to it. Only one radio
-        // button in a ButtonGroup can be selected at a time.
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(radioAction1);
-        bg.add(radioAction2);
+
         fileMenu.add(newAction);
         fileMenu.add(openAction);
-        fileMenu.add(checkAction);
+        fileMenu.add(downloadAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
+
+
         editMenu.add(cutAction);
         editMenu.add(copyAction);
         editMenu.add(pasteAction);
-        editMenu.addSeparator();
-        editMenu.add(radioAction1);
-        editMenu.add(radioAction2);
+        //editMenu.addSeparator();
+
+
+        trainingMenu.add(addCorpFolderAction);
+        trainingMenu.add(remCorpFolderAction);
+        trainingMenu.addSeparator();
+        trainingMenu.add(updateIndexAction);
+        trainingMenu.add(remCorpIndexAction);
+        trainingMenu.addSeparator();
+        trainingMenu.add(trainSemAction);
+
+
+        searchMenu.add(addSearchCorpFolderAction);
+        searchMenu.add(remSearchCorpFolderAction);
+
+
+
+        // Create and add CheckButton as a menu item to one of the drop down
+        // menu
+        //JCheckBoxMenuItem checkAction = new JCheckBoxMenuItem("Check Action");
+        // Create and add Radio Buttons as simple menu items to one of the drop
+        // down menu
+        /*JRadioButtonMenuItem radioAction1 = new JRadioButtonMenuItem(
+                "Radio Button1");
+        JRadioButtonMenuItem radioAction2 = new JRadioButtonMenuItem(
+                "Radio Button2");
+                */
+        // Create a ButtonGroup and add both radio Button to it. Only one radio
+        // button in a ButtonGroup can be selected at a time.
+        //ButtonGroup bg = new ButtonGroup();
+        //bg.add(radioAction1);
+        //bg.add(radioAction2);
+        //editMenu.add(radioAction1);
+        //editMenu.add(radioAction2);
+
+
         // Add a listener to the New menu item. actionPerformed() method will
         // invoked, if user triggred this menu item
         newAction.addActionListener(new ActionListener() {
@@ -1323,7 +1361,21 @@ public class MainGui {
         noOfSearchResultsText.setEnabled(enabled);
         selTextRadioButton.setEnabled(enabled);
         selDocRadioButton.setEnabled(enabled);
-        //selectDocumentButton.setEnabled(enabled);
+
+        downloadAction.setEnabled(enabled);
+
+        cutAction.setEnabled(enabled);
+        copyAction.setEnabled(enabled);
+        pasteAction.setEnabled(enabled);
+
+        addCorpFolderAction.setEnabled(enabled);
+        remCorpFolderAction.setEnabled(enabled);
+        updateIndexAction.setEnabled(enabled);
+        remCorpIndexAction.setEnabled(enabled);
+        trainSemAction.setEnabled(enabled);
+
+        addSearchCorpFolderAction.setEnabled(enabled);
+        remSearchCorpFolderAction.setEnabled(enabled);
 
 
     }
