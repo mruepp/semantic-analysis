@@ -284,8 +284,8 @@ public class MainGui {
         frame.setMinimumSize(new Dimension(frameWidth,frameHeight));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
-        JMenuBar menu = MenuExp();
-        frame.setJMenuBar(menu);
+        //JMenuBar menu = MenuExp();
+        //frame.setJMenuBar(menu);
 
 
 
@@ -2568,6 +2568,9 @@ public class MainGui {
                 docSearchResModel.resetModel();
             }
 
+            if (termSearchResModel.getRowCount() != 0) {
+                termSearchResModel.setRowCount(0);
+            }
 
             //String[] args = new String[arguments.size()];
             //args = arguments.toArray(args);
@@ -2610,7 +2613,8 @@ public class MainGui {
 
 
             List<SearchResult> theCompResult = new ArrayList<SearchResult>();
-            List<String> theSearchInputWordlist = null;
+            List<String> theSearchInputWordlist = new ArrayList<String>();
+            List<SearchResult> theTermResult = new ArrayList<SearchResult>();
 
             if (selDocRadioButton.isSelected() && !searchFileString.isEmpty()) {
 
@@ -2651,7 +2655,7 @@ public class MainGui {
                         e.printStackTrace();
                     }
 
-                    if (theScore != 0 || theScore != -1) {
+                    if (!Double.isNaN(theScore)) {
                         ObjectVector theObVec = new ObjectVector(aFile, null);
                         SearchResult theSerRes = new SearchResult(theScore, theObVec);
                         theCompResult.add(theSerRes);
@@ -2699,12 +2703,13 @@ public class MainGui {
                     double theScore = 0;
                     try {
                         theScore = runCompareTerms(flagConfig);
-                        logger.debug("The Score " + theScore);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    if (theScore != 0 || theScore != -1) {
+                    if (!Double.isNaN(theScore)) {
+                        logger.debug("The Score " + theScore);
                         ObjectVector theObVec = new ObjectVector(aFile, null);
                         SearchResult theSerRes = new SearchResult(theScore, theObVec);
                         theCompResult.add(theSerRes);
@@ -2719,14 +2724,12 @@ public class MainGui {
 
 
             if (theCompResult.size() > 0) {
-                logger.info("Search output follows ...\n");
-                Collections.sort(theCompResult, new Comparator<SearchResult>() {
-                    @Override
-                    public int compare(SearchResult result1, SearchResult result2) {
+                logger.info("Search output follows ... " + theCompResult.size());
 
-                        return result1.compareTo(result2);
-                    }
-                });
+                Comparator<SearchResult> comp = (r1, r2) -> Double.compare(r1.getScore(),r2.getScore());
+                Collections.sort(theCompResult,Collections.reverseOrder(comp));
+
+                //theCompResult.stream().forEach(r -> logger.debug("the r:" + r.getScore()));
 
                 logger.debug("The Sorted List: " + theCompResult.toString());
 
@@ -2740,15 +2743,10 @@ public class MainGui {
                     theTrimmedList = theCompResult;
                 }
 
-
-
-
-
                 logger.debug("The Trimmed List: " + theTrimmedList.size());
                 logger.debug("The Comp List: " + theCompResult.size());
 
 
-                //List<SearchResult> theTermResult = new ArrayList<SearchResult>();
 
                 for (SearchResult result : theTrimmedList) {
 
@@ -2767,47 +2765,6 @@ public class MainGui {
 
 
 
-
-                    /*for (String aTerm : theSearchInputWordlist) {
-
-                        String theDocString = Utilities.removeQuoteFromString(Utilities.readFileToString(theFile));
-                        //List<String> theDocStringList = Utilities.getWords(theDocString);
-
-
-                        ArrayList<String> allTermArgs = new ArrayList<String>(arguments);
-                        logger.debug("AllTermArgs " + allTermArgs.toString());
-
-
-                        allTermArgs.add("\"" + aTerm + "\"");
-                        //allTermArgs.add("\"" + theDocString + "\"");
-
-                        String[] termArgs = new String[allTermArgs.size()];
-                        termArgs = allTermArgs.toArray(termArgs);
-
-                        FlagConfig flagConfig;
-                        flagConfig = FlagConfig.getFlagConfig(termArgs);
-                        logger.debug("Remaining Term Args: " + flagConfig.remainingArgs[0]);
-
-                        double theTermScore = 0;
-                        try {
-                            theTermScore = runCompareTerms(flagConfig);
-                            logger.debug("The Term Score " + theTermScore);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (theTermScore != 0 || theTermScore != -1) {
-                            ObjectVector theTermObVec = new ObjectVector(aTerm, null);
-                            SearchResult theTermSerRes = new SearchResult(theTermScore, theTermObVec);
-                            theTermResult.add(theTermSerRes);
-
-
-                        }
-
-
-                    }*/
-
-
                 }
 
                 ArrayList<String> allTermArgs = new ArrayList<String>(arguments);
@@ -2820,7 +2777,6 @@ public class MainGui {
                 String[] termArgs = new String[allTermArgs.size()];
                 termArgs = allTermArgs.toArray(termArgs);
 
-                List<SearchResult> theTermResult;
 
                 FlagConfig flagConfig;
                 flagConfig = FlagConfig.getFlagConfig(termArgs);
@@ -2835,13 +2791,13 @@ public class MainGui {
 
 
                 if (theTermResult.size() > 0) {
-                    logger.info("Search output follows ...\n");
+                    logger.info(" Term Search output follows ...\n");
                     for (SearchResult result: theTermResult) {
 
                         System.out.println(result.toSimpleString());
-                        logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
-                        logger.debug("Score: " + result.getScore());
-                        logger.debug("toString: " + result.toString());
+                        logger.debug("Term ObjectVector: " + result.getObjectVector().getObject().toString());
+                        logger.debug("Term Score: " + result.getScore());
+                        logger.debug("Term toString: " + result.toString());
                         double percent = result.getScore() * 100;
                         String theScore = new DecimalFormat("#.###").format(percent);
 
@@ -2851,51 +2807,6 @@ public class MainGui {
                 } else {
                     termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
                 }
-
-
-
-
-                /*if (theTermResult.size() > 0) {
-                    logger.info("Term search output follows ...\n");
-                    Collections.sort(theTermResult, new Comparator<SearchResult>() {
-                        @Override
-                        public int compare(SearchResult result1, SearchResult result2) {
-
-                            return result1.compareTo(result2);
-                        }
-                    });
-
-                    logger.debug("The Sorted List: " + theTermResult.toString());
-
-                    //int numSearchRes = Integer.parseInt(noOfSearchResultsText.getText());
-                    List<SearchResult> theTermTrimmedList = null;
-
-                    if (theTermResult.size() > numSearchRes) {
-                        theTermTrimmedList = theTermResult.subList(0, numSearchRes);
-
-                    } else {
-                        theTermTrimmedList = theTermResult;
-                    }
-
-                    for (SearchResult aTermRes : theTermTrimmedList) {
-
-
-                        double percent = aTermRes.getScore() * 100;
-                        String theTermScore = new DecimalFormat("#.###").format(percent);
-
-
-                        termSearchResModel.addRow(new Object[]{theTermScore, aTermRes.getObjectVector().getObject().toString()});
-
-                        logger.debug(aTermRes.toSimpleString());
-                        logger.debug("Term ObjectVector: " + aTermRes.getObjectVector().getObject().toString());
-                        logger.debug("Term Score: " + aTermRes.getScore());
-                        logger.debug("Term toString: " + aTermRes.toString());
-
-                    }
-                } else {
-                    termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
-                }*/
-
 
 
 
