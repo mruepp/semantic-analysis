@@ -136,6 +136,7 @@ public class MainGui {
     private static String modelUrl = "http://opennlp.sourceforge.net/models-1.5";
     private static String[] indexType= {"Standard","LSA", "Positional"};
     private static String[] termweights= {"None", "IDF", "LOGENTROPY", "SQRT"};
+    private static String emptyTable = "No Search Result...";
 
 
     private static JMenuItem newAction = new JMenuItem("New Folder");
@@ -155,6 +156,9 @@ public class MainGui {
 
     private static JMenuItem addSearchCorpFolderAction = new JMenuItem("Add Folder");
     private static JMenuItem remSearchCorpFolderAction = new JMenuItem("Remove Folder");
+
+    private static JMenuItem openReaderAction = new JMenuItem("Open Reader");
+    //private static JMenuItem closeReaderAction = new JMenuItem("Close Reader");
 
     private static JMenuItem licensesAction = new JMenuItem("Licenses");
 
@@ -283,14 +287,31 @@ public class MainGui {
         // Define and add two drop down menu to the menubar
         JMenu fileMenu = new JMenu("Project");
         JMenu editMenu = new JMenu("Edit");
-        JMenu trainingMenu = new JMenu("Training Corpus");
-        JMenu searchMenu = new JMenu("Search Corpus");
+        JMenu trainingMenu = new JMenu("Corpus");
+        JMenu searchMenu = new JMenu("Search");
         JMenu helpMenu = new JMenu("Help");
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(trainingMenu);
         menuBar.add(searchMenu);
         menuBar.add(helpMenu);
+
+        newAction.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        openAction.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        exitAction.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
+        cutAction.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        copyAction.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        pasteAction.setAccelerator(KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
+        addCorpFolderAction.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        updateIndexAction.setAccelerator(KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        trainSemAction.setAccelerator(KeyStroke.getKeyStroke('3', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+
+        addSearchCorpFolderAction.setAccelerator(KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
+        openReaderAction.setAccelerator(KeyStroke.getKeyStroke('R', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        //closeReaderAction.setAccelerator(KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         // Create and add simple menu item to one of the drop down menu
 
@@ -318,8 +339,11 @@ public class MainGui {
         trainingMenu.add(trainSemAction);
 
 
-        searchMenu.add(addSearchCorpFolderAction);
-        searchMenu.add(remSearchCorpFolderAction);
+        trainingMenu.add(addSearchCorpFolderAction);
+        trainingMenu.add(remSearchCorpFolderAction);
+
+        searchMenu.add(openReaderAction);
+        //searchMenu.add(closeReaderAction);
 
         helpMenu.add(licensesAction);
 
@@ -416,6 +440,20 @@ public class MainGui {
                 maingui.removeSearchCorpMethod();
             }
         });
+
+        openReaderAction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maingui.openReaderMethod();
+            }
+        });
+
+        /*closeReaderAction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maingui.closeReaderMethod();
+            }
+        });*/
 
         licensesAction.addActionListener(new ActionListener() {
             @Override
@@ -851,6 +889,50 @@ public class MainGui {
 
         InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
 
+    }
+
+    public void openReaderMethod() {
+
+
+        if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+            JOptionPane.showMessageDialog(null, "Unable to open Text - No Search Result");
+            return;
+        }
+
+        if (docSearchResTable.getSelectedRow() == -1){
+            docSearchResTable.setRowSelectionInterval(0, 0);
+        }
+
+
+
+        if (docSearchResTable.getRowCount() > 0) {
+
+
+            if (reader == null) {
+                reader = getReaderLater((DocSearchModel) docSearchResTable.getModel(), maingui);
+                reader.setSearchTerms(getSelectedTermTableWords());
+            } else if (!reader.getFrameVisible()) {
+                reader.setFrameVisible(true);
+                reader.setSearchTerms(getSelectedTermTableWords());
+            }
+            setSelReaderContent();
+            setDocReaderContent(0);
+            if (reader != null) {
+                reader.setSearchTerms(getSelectedTermTableWords());
+            }
+            if (searchDocReader != null) {
+                searchDocReader.setSearchTerms(getSelectedTermTableWords());
+            }
+        }
+
+
+
+    }
+
+    public void closeReaderMethod() {
+        if (reader != null && reader.getFrameVisible()) {
+            reader.setFrameVisible(false);
+        }
     }
 
     //Main Gui Constructor
@@ -1518,6 +1600,9 @@ public class MainGui {
 
         addSearchCorpFolderAction.setEnabled(enabled);
         remSearchCorpFolderAction.setEnabled(enabled);
+
+        openReaderAction.setEnabled(enabled);
+        //closeReaderAction.setEnabled(enabled);
 
 
     }
@@ -2557,7 +2642,7 @@ public class MainGui {
 
 
             } else {
-                DocSearchFile theEntry = new DocSearchFile(" ",new File("No Search Results"), new File(""));
+                DocSearchFile theEntry = new DocSearchFile(" ",new File(emptyTable), new File(""));
                 docSearchResModel.addDocFile(theEntry);
                 //JOptionPane.showMessageDialog(null, "No Results");
             }
@@ -2699,7 +2784,7 @@ public class MainGui {
                 }
 
             } else {
-                termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+                termSearchResModel.addRow(new Object[]{null, emptyTable});
             }
 
             return null;
@@ -3018,13 +3103,13 @@ public class MainGui {
                     }
 
                 } else {
-                    termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+                    termSearchResModel.addRow(new Object[]{null, emptyTable});
                 }
 
 
 
             } else {
-                DocSearchFile theEntry = new DocSearchFile(" ",new File("No Search Results"), new File(""));
+                DocSearchFile theEntry = new DocSearchFile(" ",new File(emptyTable), new File(""));
                 docSearchResModel.addDocFile(theEntry);
                 //JOptionPane.showMessageDialog(null, "No Results");
             }

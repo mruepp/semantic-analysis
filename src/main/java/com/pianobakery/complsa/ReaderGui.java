@@ -9,10 +9,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
@@ -103,6 +100,8 @@ public class ReaderGui {
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         frame.pack();
         frame.setVisible(true);
+        
+
         allTextPanes.add(beforeText);
         allTextPanes.add(selectedText);
         allTextPanes.add(afterText);
@@ -134,7 +133,6 @@ public class ReaderGui {
 
                 }
             });
-
 
 
         nextButton.addActionListener(new ActionListener() {
@@ -257,6 +255,8 @@ public class ReaderGui {
         if (searchTerms != null) {
             setHighliter(highlightSelectedTermsCheckBox.isSelected());
         }
+
+
 
 
     }
