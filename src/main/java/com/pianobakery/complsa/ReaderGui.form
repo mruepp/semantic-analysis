@@ -38,7 +38,9 @@
                 <children>
                   <component id="7cd6b" class="javax.swing.JTextPane" binding="beforeText">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -52,7 +54,9 @@
                 <children>
                   <component id="772a5" class="javax.swing.JTextPane" binding="selectedText">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -66,7 +70,9 @@
                 <children>
                   <component id="e3c57" class="javax.swing.JTextPane" binding="afterText">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -95,7 +101,9 @@
                 <children>
                   <component id="50285" class="javax.swing.JTextPane" binding="beforeDocText">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -109,7 +117,9 @@
                 <children>
                   <component id="af4c2" class="javax.swing.JTextPane" binding="selectedDocText">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -123,7 +133,9 @@
                 <children>
                   <component id="942d" class="javax.swing.JTextPane" binding="afterDocText">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
@@ -146,7 +158,9 @@
                 <children>
                   <component id="88a24" class="javax.swing.JTextPane" binding="fullTextPane">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>

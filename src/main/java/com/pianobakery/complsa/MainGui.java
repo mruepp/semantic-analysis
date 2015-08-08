@@ -103,6 +103,8 @@ public class MainGui {
     private JTable docSearchResTable;
     private JLabel searchDocValue;
     private JButton openSearchDocumentButton;
+    private JScrollPane docTablePane;
+    private JScrollPane termTablePane;
     private JButton showsSelFileTerms;
 
     private String[] docSearchTitles;
@@ -158,7 +160,8 @@ public class MainGui {
     private static JMenuItem remSearchCorpFolderAction = new JMenuItem("Remove Folder");
 
     private static JMenuItem openReaderAction = new JMenuItem("Open Reader");
-    //private static JMenuItem closeReaderAction = new JMenuItem("Close Reader");
+    private static JMenuItem closeReaderAction = new JMenuItem("Close Reader");
+    private static JMenuItem searchAction = new JMenuItem("Search");
 
     private static JMenuItem licensesAction = new JMenuItem("Licenses");
 
@@ -311,9 +314,8 @@ public class MainGui {
         addSearchCorpFolderAction.setAccelerator(KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         openReaderAction.setAccelerator(KeyStroke.getKeyStroke('R', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        //closeReaderAction.setAccelerator(KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
-        // Create and add simple menu item to one of the drop down menu
+        closeReaderAction.setAccelerator(KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        searchAction.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 
         fileMenu.add(newAction);
@@ -342,8 +344,9 @@ public class MainGui {
         trainingMenu.add(addSearchCorpFolderAction);
         trainingMenu.add(remSearchCorpFolderAction);
 
+        searchMenu.add(searchAction);
         searchMenu.add(openReaderAction);
-        //searchMenu.add(closeReaderAction);
+        searchMenu.add(closeReaderAction);
 
         helpMenu.add(licensesAction);
 
@@ -400,9 +403,6 @@ public class MainGui {
                 maingui.addTopicCorpusMethod();
             }
         });
-
-
-        //New
         remCorpFolderAction.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -441,19 +441,24 @@ public class MainGui {
             }
         });
 
+        searchAction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maingui.searchMethod();
+            }
+        });
         openReaderAction.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 maingui.openReaderMethod();
             }
         });
-
-        /*closeReaderAction.addActionListener(new ActionListener() {
+        closeReaderAction.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 maingui.closeReaderMethod();
             }
-        });*/
+        });
 
         licensesAction.addActionListener(new ActionListener() {
             @Override
@@ -502,14 +507,16 @@ public class MainGui {
         frame.setTitle("Semantic Text Search");
         int frameWidth = 1280;
         int frameHeight = 800;
-        frame.setMinimumSize(new Dimension(frameWidth,frameHeight));
+        frame.setMinimumSize(new Dimension(frameWidth, frameHeight));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         JMenuBar menu = MenuExp();
         frame.setJMenuBar(menu);
 
 
-
+        //Sets Button as always selected
+        //JRootPane rootPane = SwingUtilities.getRootPane(maingui.searchButton);
+        //rootPane.setDefaultButton(maingui.searchButton);
 
         frame.setVisible(true);
 
@@ -900,7 +907,8 @@ public class MainGui {
         }
 
         if (docSearchResTable.getSelectedRow() == -1){
-            docSearchResTable.setRowSelectionInterval(0, 0);
+            //docSearchResTable.setRowSelectionInterval(0, 0);
+            docSearchResTable.changeSelection(0,0,false,false);
         }
 
 
@@ -935,6 +943,74 @@ public class MainGui {
         }
     }
 
+    public void searchMethod() {
+
+        if (!searchAction.isEnabled()) {
+            return;
+        }
+
+        if (searchTextArea.getText().isEmpty() && selTextRadioButton.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Enter Search Terms");
+            return;
+        }
+
+        if ((searchFileString == null || searchFileString.isEmpty()) && selDocRadioButton.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Import Search Document");
+            return;
+        }
+        if (searchTopCorpRadioButton.isSelected() && (selectIndexTypeComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
+            JOptionPane.showMessageDialog(null, "Import Training Corpus and train it");
+            return;
+        }
+        if (searchSearchCorpRadioButton.isSelected() && searchCorpComboBox.getItemCount() == 0) {
+            JOptionPane.showMessageDialog(null, "Import Search Corpus first");
+            return;
+        }
+
+
+        if (searchCorpComboBox.getItemCount() != 0 && searchSearchCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
+
+            if (selDocRadioButton.isSelected()) {
+                logger.debug("run Doc search on Search Corpus");
+                ProgressBar bar = getProgressBarWithTitleLater("Search Document Similarities...", false);
+                //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                compareCorpDocsWithSearchDocTaskWithBar(bar);
+            } else if (selTextRadioButton.isSelected()) {
+                logger.debug("run Text search on Search Docs");
+                ProgressBar bar1 = getProgressBarWithTitleLater("Search Text Similarities...", false);
+                //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                compareCorpDocsWithSearchDocTaskWithBar(bar1);
+
+            }
+
+
+        } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
+
+            if (selDocRadioButton.isSelected()) {
+                logger.debug("Run Doc search on Topic Corpus");
+                ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchDocInTopicCorpTaskWithBar(bar);
+
+                ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchTermInTopicCorpTaskWithBar(bar2);
+
+                //searchTermInTopicCorp();
+
+            } else if (selTextRadioButton.isSelected()) {
+                logger.debug("Run Text search on Topic Corp");
+                ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchDocInTopicCorpTaskWithBar(bar);
+
+                ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchTermInTopicCorpTaskWithBar(bar2);
+                //searchTermInTopicCorp();
+            }
+
+        }
+
+
+    }
+
     //Main Gui Constructor
     public MainGui() {
 
@@ -956,6 +1032,18 @@ public class MainGui {
         ButtonGroup searchSelGroup = new ButtonGroup();
         searchSelGroup.add(selTextRadioButton);
         searchSelGroup.add(selDocRadioButton);
+
+        //Added to get the docSearchTable the focus when opening the Reader without selecting something so up down button will work
+        frame.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent e) {
+                docSearchResTable.requestFocusInWindow();
+            }
+        });
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + S");
+        frame.getRootPane().getActionMap().put("CTRL + S", runSearch());
+
 
 
         //Project Page
@@ -1195,66 +1283,9 @@ public class MainGui {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                searchMethod();
 
 
-                if (searchTextArea.getText().isEmpty() && selTextRadioButton.isSelected()) {
-                    JOptionPane.showMessageDialog(null, "Enter Search Terms");
-                    return;
-                }
-
-                if ((searchFileString == null || searchFileString.isEmpty()) && selDocRadioButton.isSelected()) {
-                    JOptionPane.showMessageDialog(null, "Import Search Document");
-                    return;
-                }
-                if (searchTopCorpRadioButton.isSelected() && (selectIndexTypeComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
-                    JOptionPane.showMessageDialog(null, "Import Training Corpus and train it");
-                    return;
-                }
-                if (searchSearchCorpRadioButton.isSelected() && searchCorpComboBox.getItemCount() == 0) {
-                    JOptionPane.showMessageDialog(null, "Import Search Corpus first");
-                    return;
-                }
-
-
-                if (searchCorpComboBox.getItemCount() != 0 && searchSearchCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
-
-                    if (selDocRadioButton.isSelected()) {
-                        logger.debug("run Doc search on Search Corpus");
-                        ProgressBar bar = getProgressBarWithTitleLater("Search Document Similarities...", false);
-                        //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                        compareCorpDocsWithSearchDocTaskWithBar(bar);
-                    } else if (selTextRadioButton.isSelected()) {
-                        logger.debug("run Text search on Search Docs");
-                        ProgressBar bar1 = getProgressBarWithTitleLater("Search Text Similarities...", false);
-                        //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                        compareCorpDocsWithSearchDocTaskWithBar(bar1);
-
-                    }
-
-
-                } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
-
-                    if (selDocRadioButton.isSelected()) {
-                        logger.debug("Run Doc search on Topic Corpus");
-                        ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
-                        searchDocInTopicCorpTaskWithBar(bar);
-
-                        ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
-                        searchTermInTopicCorpTaskWithBar(bar2);
-
-                        //searchTermInTopicCorp();
-
-                    } else if (selTextRadioButton.isSelected()) {
-                        logger.debug("Run Text search on Topic Corp");
-                        ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
-                        searchDocInTopicCorpTaskWithBar(bar);
-
-                        ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
-                        searchTermInTopicCorpTaskWithBar(bar2);
-                        //searchTermInTopicCorp();
-                    }
-
-                }
 
             }
 
@@ -1397,6 +1428,17 @@ public class MainGui {
     }
 
 
+    private Action runSearch() {
+        return new AbstractAction("The Search") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logger.debug("The Search");
+                searchMethod();
+            }
+        };
+    }
 
     //ProjectFolder
     public void createNewProjectFolder() {
@@ -1601,8 +1643,9 @@ public class MainGui {
         addSearchCorpFolderAction.setEnabled(enabled);
         remSearchCorpFolderAction.setEnabled(enabled);
 
+        searchAction.setEnabled(enabled);
         openReaderAction.setEnabled(enabled);
-        //closeReaderAction.setEnabled(enabled);
+        closeReaderAction.setEnabled(enabled);
 
 
     }

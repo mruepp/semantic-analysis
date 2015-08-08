@@ -811,7 +811,7 @@
                   </component>
                 </children>
               </scrollpane>
-              <scrollpane id="ccb0">
+              <scrollpane id="ccb0" binding="termTablePane">
                 <constraints>
                   <grid row="2" column="13" row-span="21" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -831,7 +831,7 @@
                   </component>
                 </children>
               </scrollpane>
-              <scrollpane id="13e4a">
+              <scrollpane id="13e4a" binding="docTablePane">
                 <constraints>
                   <grid row="2" column="9" row-span="21" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>

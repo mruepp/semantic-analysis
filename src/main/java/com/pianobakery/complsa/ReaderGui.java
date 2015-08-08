@@ -91,16 +91,65 @@ public class ReaderGui {
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setTitle("Semantic Text Reader");
-        Dimension thePanelDim = new Dimension(800,1024);
+        Dimension thePanelDim = new Dimension(900,1024);
         this.rootPanel.setPreferredSize(thePanelDim);
 
-        int frameWidth = 800;
+        int frameWidth = 900;
         int frameHeight = 1024;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         frame.pack();
         frame.setVisible(true);
-        
+
+
+        /*frame.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent e) {
+                logger.debug("Window gained focus");
+                buttonPanel.requestFocusInWindow();
+            }
+
+        });*/
+
+        frame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                logger.debug("Window gained focus");
+                buttonPanel.requestFocusInWindow();
+
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                logger.debug("Window lost focus");
+            }
+        });
+
+
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + W");
+        frame.getRootPane().getActionMap().put("CTRL + W", closeWindow());
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke('T', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),"CTRL + T");
+        frame.getRootPane().getActionMap().put("CTRL + T", toggleViewAction());
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(38, 0),"UP");
+        frame.getRootPane().getActionMap().put("UP", selUpAction());
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(40, 0),"DOWN");
+        frame.getRootPane().getActionMap().put("DOWN", selDownAction());
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(37, 0),"LEFT");
+        frame.getRootPane().getActionMap().put("LEFT", docUpAction());
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(39, 0),"RIGHT");
+        frame.getRootPane().getActionMap().put("RIGHT", docDownAction());
+
 
         allTextPanes.add(beforeText);
         allTextPanes.add(selectedText);
@@ -112,6 +161,9 @@ public class ReaderGui {
 
 
     }
+
+
+
 
     public ReaderGui(DocSearchModel theModel, MainGui theMainGui) {
             this.theModel = theModel;
@@ -125,11 +177,8 @@ public class ReaderGui {
             prevButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int outrow = theMainGui.getSelectedDocTableRow();
-                    logger.debug("The Row: " + outrow);
-                    if (outrow != -1 || outrow >= 1) {
-                        theMainGui.setSelectedDocTableRow(outrow - 1);
-                    }
+                    selectionUpMethod();
+
 
                 }
             });
@@ -138,11 +187,7 @@ public class ReaderGui {
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int inrow = theMainGui.getSelectedDocTableRow();
-
-                if (inrow != -1 || inrow > theModel.getRowCount() - 1) {
-                    theMainGui.setSelectedDocTableRow(inrow + 1);
-                }
+                selectionDownMethod();
 
             }
         });
@@ -188,8 +233,8 @@ public class ReaderGui {
         documentUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                theMainGui.setDocReaderContent(-1);
-                setHighliter(highlightSelectedTermsCheckBox.isSelected());
+                documentUpMethod();
+
 
 
             }
@@ -198,8 +243,7 @@ public class ReaderGui {
         documentDownButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                theMainGui.setDocReaderContent(1);
-                setHighliter(highlightSelectedTermsCheckBox.isSelected());
+                documentDownMethod();
 
             }
         });
@@ -208,39 +252,8 @@ public class ReaderGui {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                CardLayout c1 = new CardLayout();
-                c1 = (CardLayout) (cardPanel.getLayout());
-                int sel = viewType.getSelectedIndex();
-                logger.debug("Pane Index: " + sel);
-                logger.debug("C1 Class: " + c1.getClass().toString());
-                if (sel < 2) {
-                    sel = sel + 1;
-                } else {
-                    sel = 0;
-                }
-                switch (sel) {
+                toggleView();
 
-                    case 0:
-                        c1.show(cardPanel, "splitSelPanel");
-                        logger.debug("Case0");
-                        break;
-                    case 1:
-                        c1.show(cardPanel, "splitDocPanel");
-                        logger.debug("Case1");
-                        break;
-                    case 2:
-                        c1.show(cardPanel, "fullDocPanel");
-                        logger.debug("Case2");
-                        break;
-                    default:
-                        c1.show(cardPanel, "splitSelPanel");
-                        logger.debug("Casedef");
-                        break;
-
-                }
-                viewType.setSelectedIndex(sel);
-                logger.debug("reval");
-                cardPanel.revalidate();
 
             }
         });
@@ -257,10 +270,142 @@ public class ReaderGui {
         }
 
 
+    }
 
+    private Action closeWindow() {
+        return new AbstractAction("Closing Window") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logger.debug("Und tschüss");
+                setFrameVisible(false);
+            }
+        };
+    }
+
+    private Action toggleViewAction() {
+        return new AbstractAction("Toggle View") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toggleView();
+            }
+        };
+    }
+
+    private Action docUpAction() {
+        return new AbstractAction("Docup") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                documentUpMethod();
+            }
+        };
+    }
+
+    private Action docDownAction() {
+        return new AbstractAction("Docdown") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                documentDownMethod();
+            }
+        };
+    }
+
+    private Action selUpAction() {
+        return new AbstractAction("Selup") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionUpMethod();
+            }
+        };
+    }
+
+    private Action selDownAction() {
+        return new AbstractAction("Seldown") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionDownMethod();
+            }
+        };
+    }
+
+
+    public void selectionUpMethod() {
+        int outrow = theMainGui.getSelectedDocTableRow();
+        logger.debug("The Row: " + outrow);
+        if (outrow != -1 || outrow >= 1) {
+            theMainGui.setSelectedDocTableRow(outrow - 1);
+        }
 
     }
 
+    public void selectionDownMethod() {
+        int inrow = theMainGui.getSelectedDocTableRow();
+
+        if (inrow != -1 || inrow > theModel.getRowCount() - 1) {
+            theMainGui.setSelectedDocTableRow(inrow + 1);
+        }
+
+    }
+
+    public void documentUpMethod() {
+        theMainGui.setDocReaderContent(-1);
+        setHighliter(highlightSelectedTermsCheckBox.isSelected());
+    }
+
+    public void documentDownMethod() {
+        theMainGui.setDocReaderContent(1);
+        setHighliter(highlightSelectedTermsCheckBox.isSelected());
+
+    }
+
+    private void toggleView(){
+
+        CardLayout c1 = new CardLayout();
+        c1 = (CardLayout) (cardPanel.getLayout());
+        int sel = viewType.getSelectedIndex();
+        logger.debug("Pane Index: " + sel);
+        logger.debug("C1 Class: " + c1.getClass().toString());
+        if (sel < 2) {
+            sel = sel + 1;
+        } else {
+            sel = 0;
+        }
+        switch (sel) {
+
+            case 0:
+                c1.show(cardPanel, "splitSelPanel");
+                logger.debug("Case0");
+                break;
+            case 1:
+                c1.show(cardPanel, "splitDocPanel");
+                logger.debug("Case1");
+                break;
+            case 2:
+                c1.show(cardPanel, "fullDocPanel");
+                logger.debug("Case2");
+                break;
+            default:
+                c1.show(cardPanel, "splitSelPanel");
+                logger.debug("Casedef");
+                break;
+
+        }
+        viewType.setSelectedIndex(sel);
+        logger.debug("reval");
+        cardPanel.revalidate();
+
+    }
 
     public void setBeforeText(String beforeText) {
         this.beforeText.setText(beforeText);
