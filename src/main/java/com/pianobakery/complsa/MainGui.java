@@ -1044,6 +1044,7 @@ public class MainGui {
                 KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + S");
         frame.getRootPane().getActionMap().put("CTRL + S", runSearch());
 
+        //Needs to get a white background in the termtableview (only in windows)
         termTablePane.getViewport().setBackground(Color.WHITE);
 
         //Project Page
