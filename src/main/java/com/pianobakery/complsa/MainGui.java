@@ -1697,13 +1697,11 @@ public class MainGui {
         termSearchResTable = new JTable(termSearchResModel);
         termSearchResTable.setFillsViewportHeight(true);
         termSearchResTable.setShowVerticalLines(true);
-        termSearchResTable.setFillsViewportHeight(true);
         termSearchResTable.setShowHorizontalLines(false);
         termSearchResTable.setShowGrid(false);
         termSearchResTable.setGridColor(Color.DARK_GRAY);
         termSearchResTable.setAutoscrolls(true);
         termSearchResTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        termSearchResTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         termSearchResTable.getColumnModel().getColumn(0).setPreferredWidth(80);
         termSearchResTable.getColumnModel().getColumn(0).setWidth(80);
