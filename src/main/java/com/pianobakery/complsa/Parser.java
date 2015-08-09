@@ -343,10 +343,6 @@ public class Parser {
 
             } else {
 
-
-
-
-
                 if (newDocDir.exists()) {
 
                     logger.debug("Amount of Sentences: " + sentences);
