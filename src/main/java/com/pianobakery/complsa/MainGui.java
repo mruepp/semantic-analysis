@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -1298,6 +1299,10 @@ public class MainGui {
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = docSearchResTable.rowAtPoint(p);
+                if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+                    return;
+                }
+
                 switch (me.getClickCount()) {
                     case 1:
                         if (row == -1) {
@@ -1660,7 +1665,6 @@ public class MainGui {
 
         //docSearchTitles = new String[]{"%Similarity","Path","Show"};
         docSearchResModel = new DocSearchModel();
-
         docSearchResTable = new JTable(docSearchResModel);
         docSearchResTable.setShowHorizontalLines(false);
         docSearchResTable.setShowVerticalLines(true);
@@ -1680,6 +1684,9 @@ public class MainGui {
 
 
 
+
+
+
         termSearchTitles = new String[]{"%Similarity","Terms"};
         termSearchResModel = new DefaultTableModel(termSearchTitles, 0 ){
             @Override
@@ -1691,8 +1698,18 @@ public class MainGui {
         termSearchResTable.setFillsViewportHeight(true);
         termSearchResTable.setShowVerticalLines(true);
         termSearchResTable.setFillsViewportHeight(true);
+        termSearchResTable.setShowHorizontalLines(false);
+        termSearchResTable.setShowGrid(false);
+        termSearchResTable.setGridColor(Color.DARK_GRAY);
+        termSearchResTable.setAutoscrolls(true);
         termSearchResTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         termSearchResTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+        termSearchResTable.getColumnModel().getColumn(0).setPreferredWidth(80);
+        termSearchResTable.getColumnModel().getColumn(0).setWidth(80);
+        termSearchResTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
+        termSearchResTable.getColumnModel().getColumn(1).setPreferredWidth(120);
+        termSearchResTable.getColumnModel().getColumn(1).setWidth(120);
 
 
         //docSearchResTable.getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -1854,8 +1871,6 @@ public class MainGui {
         return infoPane;
 
     }
-
-
 
     public void setDocReaderContent(int addRem) {
 
@@ -3203,6 +3218,7 @@ public class MainGui {
             } else {
                 DocSearchFile theEntry = new DocSearchFile(" ",new File(emptyTable), new File(""));
                 docSearchResModel.addDocFile(theEntry);
+                termSearchResModel.addRow(new Object[]{null, emptyTable});
                 //JOptionPane.showMessageDialog(null, "No Results");
             }
 

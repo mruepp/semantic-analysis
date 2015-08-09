@@ -174,7 +174,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="The Project Folder contains the Project Data."/>
+                  <text value="The Project Folder contains all the Project Data."/>
                 </properties>
               </component>
               <component id="b19fc" class="javax.swing.JLabel">
@@ -502,7 +502,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Then select an Algorithm and train the Software. You can select the Algorithms you used on the Search Tab. Experiment with different Algorithms."/>
+                  <text value="Then select an Algorithm and train the Software. On the Search Tab you can select the Algorithms to run your semantic searches."/>
                 </properties>
               </component>
               <component id="92b09" class="javax.swing.JLabel">
@@ -604,7 +604,7 @@
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:max(m;400px):grow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:max(m;200px):noGrow"/>
+            <colspec value="fill:max(m;200px):grow"/>
             <constraints>
               <tabbedpane title="Search"/>
             </constraints>
