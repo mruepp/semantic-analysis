@@ -817,6 +817,7 @@
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties>
+                  <enabled value="true"/>
                   <foreground color="-1"/>
                   <verticalScrollBarPolicy value="22"/>
                 </properties>
@@ -828,7 +829,7 @@
                       <autoCreateRowSorter value="true"/>
                       <autoResizeMode value="2"/>
                       <fillsViewportHeight value="false"/>
-                      <foreground color="-1"/>
+                      <foreground color="-16777216"/>
                     </properties>
                   </component>
                 </children>
