@@ -1044,7 +1044,7 @@ public class MainGui {
                 KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + S");
         frame.getRootPane().getActionMap().put("CTRL + S", runSearch());
 
-
+        termTablePane.getViewport().setBackground(Color.WHITE);
 
         //Project Page
         //Project Folder
@@ -1709,6 +1709,8 @@ public class MainGui {
         termSearchResTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
         termSearchResTable.getColumnModel().getColumn(1).setPreferredWidth(120);
         termSearchResTable.getColumnModel().getColumn(1).setWidth(120);
+
+
 
 
 

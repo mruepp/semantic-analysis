@@ -818,7 +818,6 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <foreground color="-1"/>
                   <verticalScrollBarPolicy value="22"/>
                 </properties>
                 <border type="none"/>
