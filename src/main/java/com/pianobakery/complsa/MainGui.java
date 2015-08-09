@@ -1687,7 +1687,7 @@ public class MainGui {
 
 
 
-        termSearchTitles = new String[]{"%Similarity","Terms"};
+        termSearchTitles = new String[]{"%Similarities:","Terms:"};
         termSearchResModel = new DefaultTableModel(termSearchTitles, 0 ){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -1695,9 +1695,10 @@ public class MainGui {
             }
         };
         termSearchResTable = new JTable(termSearchResModel);
-        termSearchResTable.setFillsViewportHeight(true);
         termSearchResTable.setShowVerticalLines(true);
         termSearchResTable.setShowHorizontalLines(false);
+        termSearchResTable.setFillsViewportHeight(true);
+        termSearchResTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         termSearchResTable.setShowGrid(false);
         termSearchResTable.setGridColor(Color.DARK_GRAY);
         termSearchResTable.setAutoscrolls(true);
@@ -1708,6 +1709,7 @@ public class MainGui {
         termSearchResTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
         termSearchResTable.getColumnModel().getColumn(1).setPreferredWidth(120);
         termSearchResTable.getColumnModel().getColumn(1).setWidth(120);
+
 
 
         //docSearchResTable.getColumnModel().getColumn(0).setPreferredWidth(50);
