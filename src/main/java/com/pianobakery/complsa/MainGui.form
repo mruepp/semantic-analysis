@@ -827,6 +827,7 @@
                       <autoCreateRowSorter value="true"/>
                       <autoResizeMode value="2"/>
                       <fillsViewportHeight value="false"/>
+                      <foreground color="-1"/>
                     </properties>
                   </component>
                 </children>
