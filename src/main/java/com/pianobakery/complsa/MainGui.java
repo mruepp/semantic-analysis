@@ -1364,6 +1364,9 @@ public class MainGui {
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = docSearchResTable.rowAtPoint(p);
+                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(row,1).equals(emptyTable)){
+                    return;
+                }
                 switch (me.getClickCount()) {
                     case 1:
                         logger.debug("Single click Term: " + termSearchResTable.getModel().getValueAt(row, 1));
@@ -1394,6 +1397,9 @@ public class MainGui {
         docSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent event) {
+                if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+                    return;
+                }
                 if (docSearchResTable.getSelectedRow() > -1) {
                     // print first column value from selected row
                     logger.debug("KeyboardSelection: " + ((DocSearchModel) docSearchResTable.getModel()).getDocSearchFile(docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow())).getFile().toString());
@@ -1415,6 +1421,9 @@ public class MainGui {
         termSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(0,1).equals(emptyTable)){
+                    return;
+                }
                 if (termSearchResTable.getSelectedRow() > -1) {
                     // print first column value from selected row
                     if (reader != null) {
@@ -2954,8 +2963,7 @@ public class MainGui {
         @Override
         public Void doInBackground() throws IOException{
             bar.setProgressBarIndeterminate(true);
-
-
+            
             File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
             File termvectorfile = getSelectedSearchModelFiles()[0];
             //File docvectorfile = getSelectedSearchModelFiles()[1];
