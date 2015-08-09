@@ -817,6 +817,7 @@
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties>
+                  <foreground color="-1"/>
                   <verticalScrollBarPolicy value="22"/>
                 </properties>
                 <border type="none"/>
