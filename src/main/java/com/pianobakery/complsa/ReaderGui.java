@@ -3,20 +3,16 @@ package com.pianobakery.complsa;
 
 import org.apache.log4j.Logger;
 
-import javax.smartcardio.Card;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.pianobakery.complsa.IndexWrapper;
 
 /**
  * Created by michael on 27.07.15.
@@ -48,6 +44,13 @@ public class ReaderGui {
     private JButton documentDownButton;
 
     private JCheckBox highlightSelectedTermsCheckBox;
+    private JLabel beforeSelLabel;
+    private JLabel selLabel;
+    private JLabel afterSelLabel;
+    private JLabel selChunkLabel;
+    private JLabel afterChunkLabel;
+    private JLabel beforeChunkLabel;
+    private JLabel selFullDocLabel;
     private JTextField textField1;
     private static String[] viewTypeCombo = {"Result Splitscreen","Document Splitscreen","Document"};
     private MainGui theMainGui;
@@ -58,6 +61,34 @@ public class ReaderGui {
     private DocSearchModel theModel;
     private JFrame frame;
 
+
+    public void setBeforeSelLabel(String text) {
+        this.beforeSelLabel.setText(text);
+    }
+
+    public void setSelLabel(String text) {
+        this.selLabel.setText(text);
+    }
+
+    public void setAfterSelLabel(String text) {
+        this.afterSelLabel.setText(text);
+    }
+
+    public void setSelChunkLabel(String text) {
+        this.selChunkLabel.setText(text);
+    }
+
+    public void setAfterChunkLabel(String text) {
+        this.afterChunkLabel.setText(text);
+    }
+
+    public void setBeforeChunkLabel(String text) {
+        this.beforeChunkLabel.setText(text);
+    }
+
+    public void setSelFullDocLabel(String text) {
+        this.selFullDocLabel.setText(text);
+    }
 
     final static Logger logger = Logger.getLogger(MainGui.class);
 
@@ -91,11 +122,14 @@ public class ReaderGui {
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setTitle("Semantic Text Reader");
-        Dimension thePanelDim = new Dimension(900,1024);
-        this.rootPanel.setPreferredSize(thePanelDim);
 
-        int frameWidth = 900;
-        int frameHeight = 1024;
+        Dimension thePanelDim = new Dimension(870,940);
+        frame.setMinimumSize(thePanelDim);
+        this.rootPanel.setPreferredSize(thePanelDim);
+        this.rootPanel.setMinimumSize(thePanelDim);
+
+        int frameWidth = 870;
+        int frameHeight = 940;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         frame.pack();

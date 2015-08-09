@@ -31,12 +31,11 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
-import net.nicholaswilliams.java.licensing.*;
+
 
 
 /**
@@ -479,7 +478,7 @@ public class MainGui {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         // set the name of the application menu item
-        //System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Sementic Analysis");
+        //System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Semantic Analysis");
 
         // set the look and feel
         try {
@@ -1272,6 +1271,7 @@ public class MainGui {
                     searchDocReader.setSearchTerms(getSelectedTermTableWords());
                 }
                 searchDocReader.setDocumentText(searchFileString);
+                searchDocReader.setSelFullDocLabel(searchDocValue.toString());
                 searchDocReader.setViewPane(2);
                 searchDocReader.disableComponents();
                 searchDocReader.setSearchTerms(getSelectedTermTableWords());
@@ -1900,14 +1900,26 @@ public class MainGui {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+
+                reader.setBeforeChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter - 1), wDir));
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if (docSelCounter == 0 && reader != null) {
                 reader.setBeforeDocText("Reached Beginning of Text");;
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+
+                reader.setBeforeChunkLabel("None");
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if ((docSelCounter == (selDocdirContent.size() - 1)) && (reader != null)) {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText("Reached End of Text");
+
+                reader.setBeforeChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter - 1), wDir));
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel("None");
             }
 
         } else if(addRem == -1) {
@@ -1920,14 +1932,26 @@ public class MainGui {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+
+                reader.setBeforeChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter - 1), wDir));
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if (docSelCounter == 0 && reader != null) {
                 reader.setBeforeDocText("Reached Beginning of Text");;
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+
+                reader.setBeforeChunkLabel("None");
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if ((docSelCounter == (selDocdirContent.size() - 1)) && (reader != null)) {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText("Reached End of Text");
+
+                reader.setBeforeChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter - 1), wDir));
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel("None");
             }
 
 
@@ -1942,14 +1966,26 @@ public class MainGui {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+
+                reader.setBeforeChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter - 1), wDir));
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if (docSelCounter == 0 && reader != null) {
                 reader.setBeforeDocText("Reached Beginning of Text");;
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
+
+                reader.setBeforeChunkLabel("None");
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if ((docSelCounter == (selDocdirContent.size() - 1)) && (reader != null)) {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText("Reached End of Text");
+
+                reader.setBeforeChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter - 1), wDir));
+                reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
+                reader.setAfterChunkLabel("None");
             }
 
         }
@@ -1973,14 +2009,26 @@ public class MainGui {
             reader.setBeforeText(Utilities.readFileToString(theModel.getDocSearchFile(row - 1).getFile()));
             reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
             reader.setAfterText(Utilities.readFileToString(theModel.getDocSearchFile(row + 1).getFile()));
+
+            reader.setBeforeSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row - 1).getFile(), wDir));
+            reader.setSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row).getFile(), wDir));
+            reader.setAfterSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row + 1).getFile(), wDir));
         } else if (row == 0 && reader != null) {
             reader.setBeforeText("Reached Beginning of Text");
             reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
             reader.setAfterText(Utilities.readFileToString(theModel.getDocSearchFile(row + 1).getFile()));
+
+            reader.setBeforeSelLabel("None");
+            reader.setSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row).getFile(), wDir));
+            reader.setAfterSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row + 1).getFile(), wDir));
         } else if ((row == (docSearchResTable.getRowCount() - 1)) && (reader != null)) {
             reader.setBeforeText(Utilities.readFileToString(theModel.getDocSearchFile(row - 1).getFile()));
             reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
             reader.setAfterText("Reached End of Text");
+
+            reader.setBeforeSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row - 1).getFile(), wDir));
+            reader.setSelLabel(Utilities.getRelFileName(theModel.getDocSearchFile(row).getFile(), wDir));
+            reader.setAfterSelLabel("None");
         }
 
         if (reader != null) {
@@ -2011,6 +2059,7 @@ public class MainGui {
                 theComplete.append(aString + System.getProperty("line.separator"));
         }
             reader.setDocumentText(theComplete.toString());
+            reader.setSelFullDocLabel(Utilities.getRelFileName(theParentFolder, wDir));
         }
         if (reader != null) {
             reader.setSearchTerms(getSelectedTermTableWords());
@@ -3320,6 +3369,15 @@ public class MainGui {
 
     //TODO Obfuscation and Packaging for Windows and OSX. Test with Windows.
 
+    //TODO Improve Reader, selecting Text Format and Size, allow to mark and to export text as pdf
+
+    //TODO Export/Import search Results
+
+    //TODO Search History
+
+    //TODO Last Project
+
+    //TODO Implement Project File
 
 
 

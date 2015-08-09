@@ -1,0 +1,10 @@
+
+    <target name="complsa">
+        <exec executable="zip">
+            <arg value="-d"/>
+            <arg value="${artifact.output.path}/complsa.jar"/>
+            <arg value="*.RSA"/>
+            <arg value="*.SF"/>
+            <arg value="*.DSA"/>
+        </exec>
+    </target>

@@ -3,11 +3,6 @@ package com.pianobakery.complsa;
 import java.io.*;
 import java.util.*;
 
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.CoreMap;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import org.apache.commons.io.FileUtils;
@@ -357,7 +352,6 @@ public class Parser {
                     logger.debug("Amount of Sentences: " + sentences);
 
                     logger.debug("Parser is chunker: " + chunk);
-                    //String[] sent = getStanfordSentenceArray();
                     String[] sent = getSentenceArray();
 
                     if (sent == null) {
@@ -420,71 +414,6 @@ public class Parser {
 
         }
         return true;
-    }
-
-
-    public String[] getStanfordSentenceArray() throws FileNotFoundException {
-        if (theInfile == null) {
-            return null;
-        }
-
-//TODO Implement the Stanford Parser to Split Sentences
-        //http://nlp.stanford.edu/software/corenlp.shtml
-        //http://stackoverflow.com/questions/9492707/how-can-i-split-a-text-into-sentences-using-the-stanford-parser
-
-
-        // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
-        Properties props = new Properties();
-        props.put("annotators", "tokenize, ssplit");
-        props.put("ssplit.newlineIsSentenceBreak", "two");
-
-
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-
-
-
-        // read some text in the text variable
-        //String text = ... // Add your text here!
-
-        // create an empty Annotation just with the given text
-        Annotation document = new Annotation(plainText);
-
-        // run all Annotators on this text
-        pipeline.annotate(document);
-
-        // these are all the sentences in this document
-        // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
-        List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
-        List<String> sentString = new ArrayList<String>();
-
-
-        for(CoreMap sentence: sentences) {
-            logger.debug("##################################");
-            logger.debug("Stanford Sentence: " + sentence.toString());
-            String line = sentence.toString().replaceAll("\\r\\n|\\r|\\n", "");
-            String lineb = line.replaceAll("\\s+", " ").trim();
-            sentString.add(lineb);
-
-            // traversing the words in the current sentence
-            // a CoreLabel is a CoreMap with additional token-specific methods
-            /*for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                // this is the text of the token
-                String word = token.get(CoreAnnotations.TextAnnotation.class);
-                logger.debug("Stanford word: " + word);
-                // this is the POS tag of the token
-                String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-                logger.debug("Stanford pos: " + pos);
-                // this is the NER label of the token
-                String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-                logger.debug("Stanford NER: " + ne);
-            }*/
-
-        }
-
-        return sentString.toArray(new String[sentString.size()]);
-
-
-
     }
 
 

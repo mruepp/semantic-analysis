@@ -87,4 +87,12 @@ public class Utilities {
         return words;
     }
 
+    public static String getRelFileName(File aFile, File aCorpDir) {
+
+        String absPath = aFile.getAbsolutePath();
+
+        String relative = new File(aCorpDir.toString()).toURI().relativize(new File(absPath).toURI()).getPath();
+        return relative;
+    }
+
 }
