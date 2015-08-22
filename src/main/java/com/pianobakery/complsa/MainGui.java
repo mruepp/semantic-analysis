@@ -1,5 +1,7 @@
 package com.pianobakery.complsa;
 
+import com.license4j.License;
+import com.license4j.ValidationStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.*;
@@ -35,6 +37,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
+
 
 
 
@@ -163,13 +166,17 @@ public class MainGui {
     private static JMenuItem closeReaderAction = new JMenuItem("Close Reader");
     private static JMenuItem searchAction = new JMenuItem("Search");
 
-    private static JMenuItem licensesAction = new JMenuItem("Licenses");
+    private static JMenuItem helpAction = new JMenuItem("Help");
+    private static JMenuItem licenseAction = new JMenuItem("License");
+    private static JMenuItem aboutAction = new JMenuItem("About");
 
 
     //private static File openFolder = new File(System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "complsaTestData");
     private static File openFolder = new File(System.getProperty("user.home"));
 
     final static Logger logger = Logger.getLogger(MainGui.class);
+
+    private LicenseKeyGUI licenseKeyGUI;
 
 
 
@@ -348,7 +355,10 @@ public class MainGui {
         searchMenu.add(openReaderAction);
         searchMenu.add(closeReaderAction);
 
-        helpMenu.add(licensesAction);
+        helpMenu.add(helpAction);
+        helpMenu.add(licenseAction);
+        helpMenu.addSeparator();
+        helpMenu.add(aboutAction);
 
 
 
@@ -460,12 +470,27 @@ public class MainGui {
             }
         });
 
-        licensesAction.addActionListener(new ActionListener() {
+        helpAction.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                maingui.aboutLicensesMethod();
+                maingui.helpMethod();
             }
         });
+
+        licenseAction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maingui.licenseMethod();
+            }
+        });
+
+        aboutAction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maingui.aboutMethod();
+            }
+        });
+
 
 
 
@@ -520,7 +545,82 @@ public class MainGui {
 
         frame.setVisible(true);
 
+
     }
+
+
+
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        /**
+         * COPY THIS METHOD.
+         *
+         *
+         * We will check license here in "formWindowOpened" so that license
+         * window will be displayed after user will see main product window.
+         *
+         * Depending license status, we will display license window.
+         *
+         * If license on disk is not valid, display license window. ALSO it is
+         * good to disable some features or menu items like below; so that user
+         * will not be able to use product without a valid license. OR software
+         * may be directly closed with an error.
+         */
+        License license = licenseKeyGUI.checkLicense();
+
+        if (license != null) {
+            if (license.getValidationStatus() == ValidationStatus.LICENSE_VALID) {
+                /**
+                 * License is valid, so run your software product.
+                 */
+
+                /**
+                 * But If license require activation, check if license is
+                 * activated. If license is not activated check the activation
+                 * period. If allowed activation period is expired but user
+                 * still did not complete activation, display license GUI for
+                 * user to complete activation.
+                 */
+                if (license.isActivationRequired() && license.getLicenseActivationDaysRemaining(null) == 0) {
+                    JOptionPane.showMessageDialog(null, "Your license activation period is over, activate on the next window.", "License Activation", JOptionPane.INFORMATION_MESSAGE);
+
+                    // This is an example, and we just disable main file menu.
+                    newAction.setEnabled(false);
+                    openAction.setEnabled(false);
+                    newFolderButton.setEnabled(false);
+                    selectFolderButton.setEnabled(false);
+
+                    licenseKeyGUI.setVisible(true);
+                }
+            } else {
+                /**
+                 * If license status is not valid, display message to display
+                 * license status; and disable some software features etc.
+                 */
+                JOptionPane.showMessageDialog(null, "Your license is not valid (" + license.getValidationStatus() + ")", "License Error", JOptionPane.INFORMATION_MESSAGE);
+
+                // This is an example, and we just disable main file menu.
+                newAction.setEnabled(false);
+                openAction.setEnabled(false);
+                newFolderButton.setEnabled(false);
+                selectFolderButton.setEnabled(false);
+
+                licenseKeyGUI.setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "There is no valid license installed. Please buy one or activate Trial Mode.", "License Error", JOptionPane.INFORMATION_MESSAGE);
+
+            // This is an example, and we just disable main file menu.
+            newAction.setEnabled(false);
+            openAction.setEnabled(false);
+            newFolderButton.setEnabled(false);
+            selectFolderButton.setEnabled(false);
+
+            licenseKeyGUI.setVisible(true);
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+
 
 
     //ActionListener Methods
@@ -890,13 +990,6 @@ public class MainGui {
 
     }
 
-    public void aboutLicensesMethod() {
-
-        //Get file from resources folder
-
-        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
-
-    }
 
     public void openReaderMethod() {
 
@@ -1011,6 +1104,30 @@ public class MainGui {
 
     }
 
+    public void helpMethod() {
+
+        //Get file from resources folder
+
+        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
+
+    }
+
+    public void licenseMethod() {
+
+        //Get file from resources folder
+
+        licenseKeyGUI.setVisible(true);
+
+    }
+
+    public void aboutMethod() {
+
+        //Get file from resources folder
+
+        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
+
+    }
+
     //Main Gui Constructor
     public MainGui() {
 
@@ -1033,6 +1150,8 @@ public class MainGui {
         searchSelGroup.add(selTextRadioButton);
         searchSelGroup.add(selDocRadioButton);
 
+        licenseKeyGUI = new LicenseKeyGUI(frame, true);
+
         //Added to get the docSearchTable the focus when opening the Reader without selecting something so up down button will work
         frame.addWindowFocusListener(new WindowAdapter() {
             public void windowGainedFocus(WindowEvent e) {
@@ -1043,6 +1162,13 @@ public class MainGui {
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + S");
         frame.getRootPane().getActionMap().put("CTRL + S", runSearch());
+
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         //Needs to get a white background in the termtableview (only in windows)
         termTablePane.getViewport().setBackground(Color.WHITE);
@@ -3391,6 +3517,8 @@ public class MainGui {
 
 
     //TODO Implement OCR
+
+    //TODO Implement Buy button
 
     //TODO set File Delet Task popup to prevent accidential closing of the App
 

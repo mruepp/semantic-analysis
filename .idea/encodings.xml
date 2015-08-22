@@ -2,5 +2,10 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/License4J/LICENSE4J-Library-javadoc.jar" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/License4J/LICENSE4J-Runtime-Library.jar" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/License4J/README-Runtime-Library.txt" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/License4J/VERSION-Runtime-Library.txt" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/pianobakery/complsa/LicenseKeyGUI.java" charset="windows-1252" />
   </component>
 </project>
