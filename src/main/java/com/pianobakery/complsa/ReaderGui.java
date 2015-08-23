@@ -142,7 +142,7 @@ public class ReaderGui {
             logger.debug("Screen width is smaller");
             thePanelDim.setSize(screenSize.width,thePanelDim.height);
         }*/
-        thePanelDim.setSize(1024,screenSize.height/1.25);
+        thePanelDim.setSize(1024,screenSize.height/1.125);
 
         //frame.setMinimumSize(thePanelDim);
         frame.setLocationRelativeTo(null);
