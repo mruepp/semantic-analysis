@@ -134,15 +134,15 @@ public class ReaderGui {
         logger.debug("Screen height: " + screenSize.height);
         logger.debug("Screen width: " + screenSize.width);
 
-        if (screenSize.height < thePanelDim.height) {
+        /*if (screenSize.height < thePanelDim.height) {
             logger.debug("Screen height is smaller");
             thePanelDim.setSize(800, screenSize.height);
         }
         if (screenSize.width < thePanelDim.width) {
             logger.debug("Screen width is smaller");
             thePanelDim.setSize(screenSize.width,thePanelDim.height);
-        }
-        thePanelDim.setSize(1024,screenSize.height/1.5);
+        }*/
+        thePanelDim.setSize(1024,screenSize.height/1.25);
 
         //frame.setMinimumSize(thePanelDim);
         frame.setLocationRelativeTo(null);
@@ -153,7 +153,7 @@ public class ReaderGui {
         int frameWidth = 1024;
         int frameHeight = 700;
 
-        frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
+        frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 3, frameWidth, frameHeight);
         frame.pack();
         frame.setVisible(true);
 
