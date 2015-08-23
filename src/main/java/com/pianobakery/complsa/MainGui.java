@@ -2498,12 +2498,13 @@ public class MainGui {
          */
         @Override
         public void done() {
+            bar.dispose();
             try {
                 updateIndexFileFolder();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (bar != null) {bar.dispose();}
+
 
             logger.debug("Done");
             //Toolkit.getDefaultToolkit().beep();
