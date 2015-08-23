@@ -3268,7 +3268,7 @@ public class MainGui {
         @Override
         public Void doInBackground() throws IOException{
             bar.setProgressBarIndeterminate(true);
-            
+
             File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
             File termvectorfile = getSelectedSearchModelFiles()[0];
             //File docvectorfile = getSelectedSearchModelFiles()[1];

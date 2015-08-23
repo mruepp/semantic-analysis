@@ -128,23 +128,30 @@ public class ReaderGui {
         frame.setTitle("Semantic Text Reader");
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setMaximumSize(screenSize);
-        Dimension thePanelDim = new Dimension(800,940);
+
+        //frame.setMaximumSize(screenSize);
+        Dimension thePanelDim = new Dimension(1024,700);
+        logger.debug("Screen height: " + screenSize.height);
+        logger.debug("Screen width: " + screenSize.width);
 
         if (screenSize.height < thePanelDim.height) {
-            thePanelDim.setSize(thePanelDim.width, screenSize.height);
+            logger.debug("Screen height is smaller");
+            thePanelDim.setSize(800, screenSize.height);
         }
         if (screenSize.width < thePanelDim.width) {
+            logger.debug("Screen width is smaller");
             thePanelDim.setSize(screenSize.width,thePanelDim.height);
         }
+        thePanelDim.setSize(1024,screenSize.height);
 
-        frame.setMinimumSize(thePanelDim);
+        //frame.setMinimumSize(thePanelDim);
+        frame.setLocationRelativeTo(null);
         this.rootPanel.setMaximumSize(screenSize);
         this.rootPanel.setPreferredSize(thePanelDim);
         //this.rootPanel.setMinimumSize(thePanelDim);
 
-        int frameWidth = 870;
-        int frameHeight = 940;
+        int frameWidth = 1024;
+        int frameHeight = 700;
 
         frame.setBounds((int) screenSize.getWidth() / 2 - frameWidth / 2, (int) screenSize.getHeight() / 4 - frameHeight / 4, frameWidth, frameHeight);
         frame.pack();
