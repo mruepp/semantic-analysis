@@ -1616,13 +1616,19 @@ public class MainGui {
             int whatChoose = chooser.showSaveDialog(null);
             if (whatChoose == JFileChooser.APPROVE_OPTION) {
                 logger.debug("Chooser SelectedFile: " + chooser.getSelectedFile());
-                logger.debug ("CHooser parentdir: " + chooser.getCurrentDirectory().getParent());
-                String path = chooser.getSelectedFile().toString();
-                wDirText.setText(path);
-                wDir = chooser.getSelectedFile();
                 logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
-                logger.debug("WDir is: " + wDir.toString());
+                logger.debug("Chooser parentdir: " + chooser.getCurrentDirectory().getParent());
+
+                if (chooser.getSelectedFile().getName().equals(chooser.getCurrentDirectory().getParentFile().getName())) {
+                    logger.debug("Files the same");
+                    wDir = chooser.getCurrentDirectory();
+                    wDirText.setText(chooser.getCurrentDirectory().toString());
+                } else {
+                    wDir = chooser.getSelectedFile();
+                    wDirText.setText(chooser.getSelectedFile().toString());
+
+                }
+                 logger.debug("WDir is: " + wDir.toString());
                 enableUIElements(true);
             }
 
