@@ -1597,7 +1597,7 @@ public class MainGui {
             chooser.setMultiSelectionEnabled(false);
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-            chooser.setSelectedFile(new File("Workingfile"));
+            chooser.setSelectedFile(null);
             frame.getContentPane().add(chooser);
             chooser.setApproveButtonText("Choose");
 
@@ -1615,6 +1615,8 @@ public class MainGui {
 
             int whatChoose = chooser.showSaveDialog(null);
             if (whatChoose == JFileChooser.APPROVE_OPTION) {
+                logger.debug("Chooser SelectedFile: " + chooser.getSelectedFile());
+                logger.debug ("CHooser parentdir: " + chooser.getCurrentDirectory().getParent());
                 String path = chooser.getSelectedFile().toString();
                 wDirText.setText(path);
                 wDir = chooser.getSelectedFile();
