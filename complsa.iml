@@ -11,17 +11,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/License4J/LICENSE4J-Runtime-Library.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MODULE_DIR$/License4J/LICENSE4J-Library-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Maven: com.license4j:license4j-runtime-library:4.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tika:tika-example:1.9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tika:tika-app:1.9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tika:tika-xmp:1.9" level="project" />

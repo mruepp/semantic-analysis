@@ -49,7 +49,7 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
     /* REQUIRED. It is used in license key validation. */
     private final String internalString = "semanticanalyzer-string";
 
-    private final String trialLicKey = "JYFGI-9TEYU-YM3UN-W5LR2-AUPZL";
+    private final String trialLicKey = "4T9FR-FIAI5-S9RE6-VL7FK-APHEM";
 
     /**
      * OPTIONAL. If you are using name and company in license validation, you

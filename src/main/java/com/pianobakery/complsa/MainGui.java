@@ -548,586 +548,6 @@ public class MainGui {
 
     }
 
-
-
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        /**
-         * COPY THIS METHOD.
-         *
-         *
-         * We will check license here in "formWindowOpened" so that license
-         * window will be displayed after user will see main product window.
-         *
-         * Depending license status, we will display license window.
-         *
-         * If license on disk is not valid, display license window. ALSO it is
-         * good to disable some features or menu items like below; so that user
-         * will not be able to use product without a valid license. OR software
-         * may be directly closed with an error.
-         */
-        License license = licenseKeyGUI.checkLicense();
-
-        if (license != null) {
-            if (license.getValidationStatus() == ValidationStatus.LICENSE_VALID) {
-                /**
-                 * License is valid, so run your software product.
-                 */
-
-                /**
-                 * But If license require activation, check if license is
-                 * activated. If license is not activated check the activation
-                 * period. If allowed activation period is expired but user
-                 * still did not complete activation, display license GUI for
-                 * user to complete activation.
-                 */
-                if (license.isActivationRequired() && license.getLicenseActivationDaysRemaining(null) == 0) {
-                    JOptionPane.showMessageDialog(null, "Your license activation period is over, activate on the next window.", "License Activation", JOptionPane.INFORMATION_MESSAGE);
-
-                    // This is an example, and we just disable main file menu.
-                    newAction.setEnabled(false);
-                    openAction.setEnabled(false);
-                    newFolderButton.setEnabled(false);
-                    selectFolderButton.setEnabled(false);
-
-                    licenseKeyGUI.setVisible(true);
-                }
-            } else {
-                /**
-                 * If license status is not valid, display message to display
-                 * license status; and disable some software features etc.
-                 */
-                JOptionPane.showMessageDialog(null, "Your license is not valid (" + license.getValidationStatus() + ")", "License Error", JOptionPane.INFORMATION_MESSAGE);
-
-                // This is an example, and we just disable main file menu.
-                newAction.setEnabled(false);
-                openAction.setEnabled(false);
-                newFolderButton.setEnabled(false);
-                selectFolderButton.setEnabled(false);
-
-                licenseKeyGUI.setVisible(true);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "There is no valid license installed. Please buy one or activate Trial Mode.", "License Error", JOptionPane.INFORMATION_MESSAGE);
-
-            // This is an example, and we just disable main file menu.
-            newAction.setEnabled(false);
-            openAction.setEnabled(false);
-            newFolderButton.setEnabled(false);
-            selectFolderButton.setEnabled(false);
-
-            licenseKeyGUI.setVisible(true);
-        }
-    }//GEN-LAST:event_formWindowOpened
-
-
-
-
-    //ActionListener Methods
-    public void newFolderMethod(){
-        clearSelections();
-        createNewProjectFolder();
-        try {
-            addExistingSentModelsToMap();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            loadTopicCorp();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            loadSearchCorp();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            updateIndexFileFolder();
-
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-    }
-
-    public void selectFolderMethod() {
-        clearSelections();
-        chooseNewProjectFolder();
-        try {
-            addExistingSentModelsToMap();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            loadTopicCorp();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            loadSearchCorp();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            updateIndexFileFolder();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
-
-    public void downloadModelMethod() {
-        logger.debug("Download Models");
-
-        try {
-            if (testURL(modelUrl)) {
-                downloadModelTaskWithBar(getProgressBarWithTitleLater("Download Model Files...",true));
-            }
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Connection Timeout - check your Internet connection");
-        }
-    }
-
-    public void addTopicCorpusMethod() {
-
-        logger.debug("Numeric?: " + StringUtils.isNumeric(amountOfSentencesPerTextField.getText()));
-        logger.debug("Chunk selected: " + createChunksCheckBox.isSelected());
-
-
-        if (createChunksCheckBox.isSelected() && !StringUtils.isNumeric(amountOfSentencesPerTextField.getText())) {
-
-            JOptionPane.showMessageDialog(null, "Enter Number");
-            return;
-
-        }
-        if (trainSentModels.size() == 0) {
-            JOptionPane.showMessageDialog(null, "Download Sentence Models first");
-            return;
-        }
-
-
-        File folder = chooseAddCorpusFolder();
-
-        if (folder != null) {
-
-            File newDir = new File(wDir + File.separator + topicFolder + File.separator + folder.getName());
-            logger.debug("Corpus Folder: " + folder.toString());
-            logger.debug("Import Folder: " + newDir.toString());
-            logger.debug("Working Folder : " + wDir.toString());
-            logger.debug("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
-
-            //Create Corpus Folder
-            if (!newDir.exists()) {
-
-                logger.debug("Creating directory: " + newDir);
-                boolean result = false;
-
-                try {
-                    FileUtils.forceMkdir(newDir);
-                    result = true;
-                } catch (SecurityException se) {
-                    JOptionPane.showMessageDialog(null, "No permission or File Exists");
-
-                    //return Boolean.FALSE;
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                if (result) {
-                    logger.debug("DIR created");
-                }
-            } else {
-
-                int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Topic Corpus? You have to re-train!");
-                logger.debug("DIR not created");
-                if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
-                    return;
-                }
-
-
-            }
-
-            //Run import
-            if (folder != null) {
-                addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountOfSentencesPerTextField.getText()), createChunksCheckBox.isSelected());
-                try {
-                    addRemoveItemToTopicBox(newDir, true, true);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-
-        }
-
-    }
-
-    public void removeTopicCorpusMethod() {
-
-
-        File theFile = trainCorp.get(selectTrainCorp.getSelectedItem());
-
-        if (theFile != null) {
-
-            try {
-
-                addRemoveItemToTopicBox(theFile, false, true);
-                updateIndexFileFolder();
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-
-            }
-
-        } else if (theFile == null) {
-
-            try {
-                selectTrainCorp.removeItemAt(0);
-                System.out.printf("Items of selectTrainingCorp: " + selectTrainCorp.getItemAt(0));
-                try {
-                    updateIndexFileFolder();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-            } catch (ArrayIndexOutOfBoundsException e2) {
-                JOptionPane.showMessageDialog(null, "Keine Topic Corps mehr vorhanden");
-            }
-
-        }
-
-
-    }
-
-    public void updateIndexMethod() {
-        if (selectTrainCorp.getSelectedItem() == null) {
-            logger.debug("Corpus selection = null");
-            return;
-        }
-        int wordRadius = 0;
-        ProgressBar bar;
-        bar = getProgressBarWithTitleLater("Train on selected Corpus", false);
-        bar.setProgressBarIndeterminate(true);
-
-        logger.debug("Train the Selected Corpus");
-
-
-        logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
-        logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
-        File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
-
-
-        trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), true);
-
-    }
-
-    public void removeIndexMethod() {
-        if (selectTrainCorp.getSelectedItem() == null) {
-            logger.debug("Corpus selection = null");
-            return;
-        }
-        File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
-        File indexFolderParent = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName());
-        File indexFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + corpDir.getName());
-
-        logger.debug("The Indexfolder to be deleted: " + indexFolder);
-        boolean isChild = false;
-        try {
-            isChild = isSubDirectory(indexFolderParent, indexFolder);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-        if (isChild && indexFolder.exists()) {
-            try {
-                FileUtils.deleteDirectory(indexFolder);
-
-            } catch (IOException e1) {
-                JOptionPane.showMessageDialog(null, "Unable to delete Index Folder");
-                return;
-            }
-            JOptionPane.showMessageDialog(null, "Index deleted");
-        } else {
-            JOptionPane.showMessageDialog(null, "Unable to delete, no Index existing");
-        }
-
-
-    }
-
-    public void trainCorpMethod() {
-
-        File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
-        logger.debug("The Index File Folder Path: " + theIndexFileFolder);
-
-        if (!theIndexFileFolder.exists()) {
-            JOptionPane.showMessageDialog(null, "Update Index first");
-            return;
-        }
-
-
-        int wordRadius = 0;
-
-
-        if (indexTypeComboBox.getSelectedIndex() == 2 && (posIndRadiusTextField.getText().isEmpty() || !StringUtils.isNumeric(posIndRadiusTextField.getText()) || Integer.parseInt(posIndRadiusTextField.getText()) == 0)) {
-
-
-            JOptionPane.showMessageDialog(null, "Enter Number");
-            return;
-
-        } else if (indexTypeComboBox.getSelectedIndex() == 2 && StringUtils.isNumeric(posIndRadiusTextField.getText())) {
-            wordRadius = Integer.parseInt(posIndRadiusTextField.getText());
-            logger.debug("Position Radius Field is: " + posIndRadiusTextField.getText());
-        }
-
-        ProgressBar bar;
-        bar = getProgressBarWithTitleLater("Train on selected Corpus", false);
-        bar.setProgressBarIndeterminate(true);
-
-        logger.debug("Train the Selected Corpus");
-
-        if (selectTrainCorp.getSelectedItem() == null) {
-            logger.debug("Corpus selection = null");
-            return;
-        }
-        logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
-        logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
-        File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
-
-
-        trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), false);
-
-    }
-
-    public void impSearchCorpMethod() {
-
-        logger.debug("Numeric?: " + StringUtils.isNumeric(amountSearchCorpSent.getText()));
-        logger.debug("Chunk selected: " + splitSearchCorpCheckBox.isSelected());
-
-
-        if (splitSearchCorpCheckBox.isSelected() && !StringUtils.isNumeric(amountSearchCorpSent.getText())) {
-
-            JOptionPane.showMessageDialog(null, "Enter Number");
-            return;
-
-        }
-
-
-        File folder = chooseAddCorpusFolder();
-
-        if (folder != null) {
-
-            File newDir = new File(wDir + File.separator + searchFolder + File.separator + folder.getName());
-            logger.debug("Corpus Folder: " + folder.toString());
-            logger.debug("Import Folder: " + newDir.toString());
-            logger.debug("Working Folder : " + wDir.toString());
-            logger.debug("Corpus Folder recursive is: " + impSearchCorpRecursiveCheckBox.isSelected());
-
-            //Create Corpus Folder
-            if (!newDir.exists()) {
-
-                logger.debug("Creating directory: " + newDir);
-                boolean result = false;
-
-                try {
-                    FileUtils.forceMkdir(newDir);
-                    result = true;
-                } catch (SecurityException se) {
-                    JOptionPane.showMessageDialog(null, "No permission or File Exists");
-
-                    //return Boolean.FALSE;
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                if (result) {
-                    logger.debug("DIR created");
-                }
-            } else {
-
-                int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Search Corpus?");
-                logger.debug("DIR not created");
-                if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
-                    return;
-                }
-
-
-            }
-
-            //Run import
-            if (folder != null) {
-                addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()),splitSearchCorpCheckBox.isSelected());
-                try {
-                    addRemoveItemToTopicBox(newDir, true, false);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-
-        }
-
-    }
-
-    public void removeSearchCorpMethod() {
-        File theFile = searchCorpusModel.get(searchCorpComboBox.getSelectedItem());
-
-        if (theFile != null) {
-            try {
-                addRemoveItemToTopicBox(theFile, false, false);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        } else if (theFile == null) {
-
-            try {
-                searchCorpComboBox.removeItemAt(0);
-                System.out.printf("Items of select Search Corps: " + searchCorpComboBox.getItemAt(0));
-
-            } catch (ArrayIndexOutOfBoundsException e2) {
-                JOptionPane.showMessageDialog(null, "Keine Search Corps mehr vorhanden");
-            }
-
-        }
-
-    }
-
-
-    public void openReaderMethod() {
-
-
-        if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
-            JOptionPane.showMessageDialog(null, "Unable to open Text - No Search Result");
-            return;
-        }
-
-        if (docSearchResTable.getSelectedRow() == -1){
-            //docSearchResTable.setRowSelectionInterval(0, 0);
-            docSearchResTable.changeSelection(0,0,false,false);
-        }
-
-
-
-        if (docSearchResTable.getRowCount() > 0) {
-
-
-            if (reader == null) {
-                reader = getReaderLater((DocSearchModel) docSearchResTable.getModel(), maingui);
-                reader.setSearchTerms(getSelectedTermTableWords());
-            } else if (!reader.getFrameVisible()) {
-                reader.setFrameVisible(true);
-                reader.setSearchTerms(getSelectedTermTableWords());
-            }
-            setSelReaderContent();
-            setDocReaderContent(0);
-            if (reader != null) {
-                reader.setSearchTerms(getSelectedTermTableWords());
-            }
-            if (searchDocReader != null) {
-                searchDocReader.setSearchTerms(getSelectedTermTableWords());
-            }
-        }
-
-
-
-    }
-
-    public void closeReaderMethod() {
-        if (reader != null && reader.getFrameVisible()) {
-            reader.setFrameVisible(false);
-        }
-    }
-
-    public void searchMethod() {
-
-        if (!searchAction.isEnabled()) {
-            return;
-        }
-
-        if (searchTextArea.getText().isEmpty() && selTextRadioButton.isSelected()) {
-            JOptionPane.showMessageDialog(null, "Enter Search Terms");
-            return;
-        }
-
-        if ((searchFileString == null || searchFileString.isEmpty()) && selDocRadioButton.isSelected()) {
-            JOptionPane.showMessageDialog(null, "Import Search Document");
-            return;
-        }
-        if (searchTopCorpRadioButton.isSelected() && (selectIndexTypeComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
-            JOptionPane.showMessageDialog(null, "Import Training Corpus and train it");
-            return;
-        }
-        if (searchSearchCorpRadioButton.isSelected() && searchCorpComboBox.getItemCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Import Search Corpus first");
-            return;
-        }
-
-
-        if (searchCorpComboBox.getItemCount() != 0 && searchSearchCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
-
-            if (selDocRadioButton.isSelected()) {
-                logger.debug("run Doc search on Search Corpus");
-                ProgressBar bar = getProgressBarWithTitleLater("Search Document Similarities...", false);
-                //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                compareCorpDocsWithSearchDocTaskWithBar(bar);
-            } else if (selTextRadioButton.isSelected()) {
-                logger.debug("run Text search on Search Docs");
-                ProgressBar bar1 = getProgressBarWithTitleLater("Search Text Similarities...", false);
-                //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
-                compareCorpDocsWithSearchDocTaskWithBar(bar1);
-
-            }
-
-
-        } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
-
-            if (selDocRadioButton.isSelected()) {
-                logger.debug("Run Doc search on Topic Corpus");
-                ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
-                searchDocInTopicCorpTaskWithBar(bar);
-
-                ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
-                searchTermInTopicCorpTaskWithBar(bar2);
-
-                //searchTermInTopicCorp();
-
-            } else if (selTextRadioButton.isSelected()) {
-                logger.debug("Run Text search on Topic Corp");
-                ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
-                searchDocInTopicCorpTaskWithBar(bar);
-
-                ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
-                searchTermInTopicCorpTaskWithBar(bar2);
-                //searchTermInTopicCorp();
-            }
-
-        }
-
-
-    }
-
-    public void helpMethod() {
-
-        //Get file from resources folder
-
-        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
-
-    }
-
-    public void licenseMethod() {
-
-        //Get file from resources folder
-
-        licenseKeyGUI.setVisible(true);
-
-    }
-
-    public void aboutMethod() {
-
-        //Get file from resources folder
-
-        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
-
-    }
-
     //Main Gui Constructor
     public MainGui() {
 
@@ -1569,6 +989,577 @@ public class MainGui {
     }
 
 
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        /**
+         * COPY THIS METHOD.
+         *
+         *
+         * We will check license here in "formWindowOpened" so that license
+         * window will be displayed after user will see main product window.
+         *
+         * Depending license status, we will display license window.
+         *
+         * If license on disk is not valid, display license window. ALSO it is
+         * good to disable some features or menu items like below; so that user
+         * will not be able to use product without a valid license. OR software
+         * may be directly closed with an error.
+         */
+        License license = licenseKeyGUI.checkLicense();
+
+        if (license != null) {
+            if (license.getValidationStatus() == ValidationStatus.LICENSE_VALID) {
+                /**
+                 * License is valid, so run your software product.
+                 */
+
+                /**
+                 * But If license require activation, check if license is
+                 * activated. If license is not activated check the activation
+                 * period. If allowed activation period is expired but user
+                 * still did not complete activation, display license GUI for
+                 * user to complete activation.
+                 */
+                if (license.isActivationRequired() && license.getLicenseActivationDaysRemaining(null) == 0) {
+                    JOptionPane.showMessageDialog(null, "Your license activation period is over, activate on the next window.", "License Activation", JOptionPane.INFORMATION_MESSAGE);
+
+                    // This is an example, and we just disable main file menu.
+                    newAction.setEnabled(false);
+                    openAction.setEnabled(false);
+                    newFolderButton.setEnabled(false);
+                    selectFolderButton.setEnabled(false);
+
+                    licenseKeyGUI.setVisible(true);
+                }
+            } else {
+                /**
+                 * If license status is not valid, display message to display
+                 * license status; and disable some software features etc.
+                 */
+                JOptionPane.showMessageDialog(null, "Your license is not valid (" + license.getValidationStatus() + ")", "License Error", JOptionPane.INFORMATION_MESSAGE);
+
+                // This is an example, and we just disable main file menu.
+                newAction.setEnabled(false);
+                openAction.setEnabled(false);
+                newFolderButton.setEnabled(false);
+                selectFolderButton.setEnabled(false);
+
+                licenseKeyGUI.setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "There is no valid license installed. Please buy one or activate Trial Mode.", "License Error", JOptionPane.INFORMATION_MESSAGE);
+
+            // This is an example, and we just disable main file menu.
+            newAction.setEnabled(false);
+            openAction.setEnabled(false);
+            newFolderButton.setEnabled(false);
+            selectFolderButton.setEnabled(false);
+
+            licenseKeyGUI.setVisible(true);
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+
+
+
+    //ActionListener Methods
+    public void newFolderMethod(){
+        clearSelections();
+        createNewProjectFolder();
+        try {
+            addExistingSentModelsToMap();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            loadTopicCorp();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            loadSearchCorp();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            updateIndexFileFolder();
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+    }
+
+    public void selectFolderMethod() {
+        clearSelections();
+        chooseNewProjectFolder();
+        try {
+            addExistingSentModelsToMap();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            loadTopicCorp();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            loadSearchCorp();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            updateIndexFileFolder();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    public void downloadModelMethod() {
+        logger.debug("Download Models");
+
+        try {
+            if (testURL(modelUrl)) {
+                downloadModelTaskWithBar(getProgressBarWithTitleLater("Download Model Files...",true));
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Connection Timeout - check your Internet connection");
+        }
+    }
+
+    public void addTopicCorpusMethod() {
+
+        logger.debug("Numeric?: " + StringUtils.isNumeric(amountOfSentencesPerTextField.getText()));
+        logger.debug("Chunk selected: " + createChunksCheckBox.isSelected());
+
+
+        if (createChunksCheckBox.isSelected() && !StringUtils.isNumeric(amountOfSentencesPerTextField.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number");
+            return;
+
+        }
+        if (trainSentModels.size() == 0) {
+            JOptionPane.showMessageDialog(null, "Download Sentence Models first");
+            return;
+        }
+
+
+        File folder = chooseAddCorpusFolder();
+
+        if (folder != null) {
+
+            File newDir = new File(wDir + File.separator + topicFolder + File.separator + folder.getName());
+            logger.debug("Corpus Folder: " + folder.toString());
+            logger.debug("Import Folder: " + newDir.toString());
+            logger.debug("Working Folder : " + wDir.toString());
+            logger.debug("Corpus Folder recursive is: " + addCorpRecursiveCheckBox.isSelected());
+
+            //Create Corpus Folder
+            if (!newDir.exists()) {
+
+                logger.debug("Creating directory: " + newDir);
+                boolean result = false;
+
+                try {
+                    FileUtils.forceMkdir(newDir);
+                    addRemoveItemToTopicBox(newDir, true, true);
+                    result = true;
+                } catch (SecurityException se) {
+                    JOptionPane.showMessageDialog(null, "No permission or File Exists");
+
+                    //return Boolean.FALSE;
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                if (result) {
+                    logger.debug("DIR created");
+                }
+            } else {
+
+                int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Topic Corpus? You have to re-train!");
+                logger.debug("DIR not created");
+                if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
+                    return;
+                }
+
+
+            }
+
+            //Run import
+            if (folder != null) {
+                addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountOfSentencesPerTextField.getText()), createChunksCheckBox.isSelected());
+
+            }
+
+        }
+
+    }
+
+    public void removeTopicCorpusMethod() {
+
+
+        File theFile = trainCorp.get(selectTrainCorp.getSelectedItem());
+
+        if (theFile != null) {
+
+            try {
+
+                addRemoveItemToTopicBox(theFile, false, true);
+                updateIndexFileFolder();
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+
+            }
+
+        } else if (theFile == null) {
+
+            try {
+                selectTrainCorp.removeItemAt(0);
+                System.out.printf("Items of selectTrainingCorp: " + selectTrainCorp.getItemAt(0));
+                try {
+                    updateIndexFileFolder();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            } catch (ArrayIndexOutOfBoundsException e2) {
+                JOptionPane.showMessageDialog(null, "Keine Topic Corps mehr vorhanden");
+            }
+
+        }
+
+
+    }
+
+    public void updateIndexMethod() {
+        if (selectTrainCorp.getSelectedItem() == null) {
+            logger.debug("Corpus selection = null");
+            return;
+        }
+        int wordRadius = 0;
+        ProgressBar bar;
+        bar = getProgressBarWithTitleLater("Train on selected Corpus", false);
+        bar.setProgressBarIndeterminate(true);
+
+        logger.debug("Train the Selected Corpus");
+
+
+        logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
+        logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
+        File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+
+
+        trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), true);
+
+    }
+
+    public void removeIndexMethod() {
+        if (selectTrainCorp.getSelectedItem() == null) {
+            logger.debug("Corpus selection = null");
+            return;
+        }
+        File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+        File indexFolderParent = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+        File indexFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + corpDir.getName());
+
+        logger.debug("The Indexfolder to be deleted: " + indexFolder);
+        boolean isChild = false;
+        try {
+            isChild = isSubDirectory(indexFolderParent, indexFolder);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        if (isChild && indexFolder.exists()) {
+            try {
+                FileUtils.deleteDirectory(indexFolder);
+
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(null, "Unable to delete Index Folder");
+                return;
+            }
+            JOptionPane.showMessageDialog(null, "Index deleted");
+        } else {
+            JOptionPane.showMessageDialog(null, "Unable to delete, no Index existing");
+        }
+
+
+    }
+
+    public void trainCorpMethod() {
+
+        File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
+        logger.debug("The Index File Folder Path: " + theIndexFileFolder);
+
+        if (!theIndexFileFolder.exists()) {
+            JOptionPane.showMessageDialog(null, "Update Index first");
+            return;
+        }
+
+
+        int wordRadius = 0;
+
+
+        if (indexTypeComboBox.getSelectedIndex() == 2 && (posIndRadiusTextField.getText().isEmpty() || !StringUtils.isNumeric(posIndRadiusTextField.getText()) || Integer.parseInt(posIndRadiusTextField.getText()) == 0)) {
+
+
+            JOptionPane.showMessageDialog(null, "Enter Number");
+            return;
+
+        } else if (indexTypeComboBox.getSelectedIndex() == 2 && StringUtils.isNumeric(posIndRadiusTextField.getText())) {
+            wordRadius = Integer.parseInt(posIndRadiusTextField.getText());
+            logger.debug("Position Radius Field is: " + posIndRadiusTextField.getText());
+        }
+
+        ProgressBar bar;
+        bar = getProgressBarWithTitleLater("Train on selected Corpus", false);
+        bar.setProgressBarIndeterminate(true);
+
+        logger.debug("Train the Selected Corpus");
+
+        if (selectTrainCorp.getSelectedItem() == null) {
+            logger.debug("Corpus selection = null");
+            return;
+        }
+        logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
+        logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
+        File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
+
+
+        trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), false);
+
+    }
+
+    public void impSearchCorpMethod() {
+
+        logger.debug("Numeric?: " + StringUtils.isNumeric(amountSearchCorpSent.getText()));
+        logger.debug("Chunk selected: " + splitSearchCorpCheckBox.isSelected());
+
+
+        if (splitSearchCorpCheckBox.isSelected() && !StringUtils.isNumeric(amountSearchCorpSent.getText())) {
+
+            JOptionPane.showMessageDialog(null, "Enter Number");
+            return;
+
+        }
+
+
+        File folder = chooseAddCorpusFolder();
+
+        if (folder != null) {
+
+            File newDir = new File(wDir + File.separator + searchFolder + File.separator + folder.getName());
+            logger.debug("Corpus Folder: " + folder.toString());
+            logger.debug("Import Folder: " + newDir.toString());
+            logger.debug("Working Folder : " + wDir.toString());
+            logger.debug("Corpus Folder recursive is: " + impSearchCorpRecursiveCheckBox.isSelected());
+
+            //Create Corpus Folder
+            if (!newDir.exists()) {
+
+                logger.debug("Creating directory: " + newDir);
+                boolean result = false;
+
+                try {
+                    FileUtils.forceMkdir(newDir);
+                    addRemoveItemToTopicBox(newDir, true, false);
+                    result = true;
+                } catch (SecurityException se) {
+                    JOptionPane.showMessageDialog(null, "No permission or File Exists");
+
+                    //return Boolean.FALSE;
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                if (result) {
+                    logger.debug("DIR created");
+                }
+            } else {
+
+                int result = JOptionPane.showConfirmDialog(new JFrame(), "Folder exists, add to your Search Corpus?");
+                logger.debug("DIR not created");
+                if (result == JOptionPane.NO_OPTION | result == JOptionPane.CANCEL_OPTION) {
+                    return;
+                }
+
+
+            }
+
+            //Run import
+            if (folder != null) {
+                addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()),splitSearchCorpCheckBox.isSelected());
+
+            }
+
+        }
+
+    }
+
+    public void removeSearchCorpMethod() {
+        File theFile = searchCorpusModel.get(searchCorpComboBox.getSelectedItem());
+
+        if (theFile != null) {
+            try {
+                addRemoveItemToTopicBox(theFile, false, false);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } else if (theFile == null) {
+
+            try {
+                searchCorpComboBox.removeItemAt(0);
+                System.out.printf("Items of select Search Corps: " + searchCorpComboBox.getItemAt(0));
+
+            } catch (ArrayIndexOutOfBoundsException e2) {
+                JOptionPane.showMessageDialog(null, "Keine Search Corps mehr vorhanden");
+            }
+
+        }
+
+    }
+
+    public void openReaderMethod() {
+
+
+        if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+            JOptionPane.showMessageDialog(null, "Unable to open Text - No Search Result");
+            return;
+        }
+
+        if (docSearchResTable.getSelectedRow() == -1){
+            //docSearchResTable.setRowSelectionInterval(0, 0);
+            docSearchResTable.changeSelection(0,0,false,false);
+        }
+
+
+
+        if (docSearchResTable.getRowCount() > 0) {
+
+
+            if (reader == null) {
+                reader = getReaderLater((DocSearchModel) docSearchResTable.getModel(), maingui);
+                reader.setSearchTerms(getSelectedTermTableWords());
+            } else if (!reader.getFrameVisible()) {
+                reader.setFrameVisible(true);
+                reader.setSearchTerms(getSelectedTermTableWords());
+            }
+            setSelReaderContent();
+            setDocReaderContent(0);
+            if (reader != null) {
+                reader.setSearchTerms(getSelectedTermTableWords());
+            }
+            if (searchDocReader != null) {
+                searchDocReader.setSearchTerms(getSelectedTermTableWords());
+            }
+        }
+
+
+
+    }
+
+    public void closeReaderMethod() {
+        if (reader != null && reader.getFrameVisible()) {
+            reader.setFrameVisible(false);
+        }
+    }
+
+    public void searchMethod() {
+
+        if (!searchAction.isEnabled()) {
+            return;
+        }
+
+        if (searchTextArea.getText().isEmpty() && selTextRadioButton.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Enter Search Terms");
+            return;
+        }
+
+        if ((searchFileString == null || searchFileString.isEmpty()) && selDocRadioButton.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Import Search Document");
+            return;
+        }
+        if (searchTopCorpRadioButton.isSelected() && (selectIndexTypeComboBox.getItemCount() == 0 || selectTrainCorp.getItemCount() == 0)) {
+            JOptionPane.showMessageDialog(null, "Import Training Corpus and train it");
+            return;
+        }
+        if (searchSearchCorpRadioButton.isSelected() && searchCorpComboBox.getItemCount() == 0) {
+            JOptionPane.showMessageDialog(null, "Import Search Corpus first");
+            return;
+        }
+
+
+        if (searchCorpComboBox.getItemCount() != 0 && searchSearchCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
+
+            if (selDocRadioButton.isSelected()) {
+                logger.debug("run Doc search on Search Corpus");
+                ProgressBar bar = getProgressBarWithTitleLater("Search Document Similarities...", false);
+                //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                compareCorpDocsWithSearchDocTaskWithBar(bar);
+            } else if (selTextRadioButton.isSelected()) {
+                logger.debug("run Text search on Search Docs");
+                ProgressBar bar1 = getProgressBarWithTitleLater("Search Text Similarities...", false);
+                //File corpDir = new File(wDir + File.separator + searchFolder + File.separator + selectTrainCorp.getSelectedItem());
+                compareCorpDocsWithSearchDocTaskWithBar(bar1);
+
+            }
+
+
+        } else if ((selectTrainCorp.getItemCount() != 0) && searchTopCorpRadioButton.isSelected() && selectIndexTypeComboBox.getItemCount() != 0) {
+
+            if (selDocRadioButton.isSelected()) {
+                logger.debug("Run Doc search on Topic Corpus");
+                ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchDocInTopicCorpTaskWithBar(bar);
+
+                ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchTermInTopicCorpTaskWithBar(bar2);
+
+                //searchTermInTopicCorp();
+
+            } else if (selTextRadioButton.isSelected()) {
+                logger.debug("Run Text search on Topic Corp");
+                ProgressBar bar = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchDocInTopicCorpTaskWithBar(bar);
+
+                ProgressBar bar2 = getProgressBarWithTitleLater("Calculate Terms...", false);
+                searchTermInTopicCorpTaskWithBar(bar2);
+                //searchTermInTopicCorp();
+            }
+
+        }
+
+
+    }
+
+    public void helpMethod() {
+
+        //Get file from resources folder
+
+        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
+
+    }
+
+    public void licenseMethod() {
+
+        //Get file from resources folder
+
+        licenseKeyGUI.setVisible(true);
+
+    }
+
+    public void aboutMethod() {
+
+        //Get file from resources folder
+
+        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
+
+    }
+
+
+
     private Action runSearch() {
         return new AbstractAction("The Search") {
             private static final long serialVersionUID = 1L;
@@ -1909,11 +1900,11 @@ public class MainGui {
             }
 
 
-            for (File aFile : files) {
+            /*for (File aFile : files) {
                 logger.debug("A Filda: " + aFile.toString());
             }
             logger.debug("Create Chunks: " + chunks + " and how much: " + amSent);
-
+            */
 
             Integer amount = files.size();
             bar.setProgressBarMax(amount);
@@ -3533,6 +3524,10 @@ public class MainGui {
     //TODO Last Project
 
     //TODO Implement Project File
+
+    //TODO When print cancel topic corp imp, the the folder is not in the seleciton list. (Should it be deleted?)
+
+    //TODO new Project folder Window 10 Dialog is not working properly
 
 
 
