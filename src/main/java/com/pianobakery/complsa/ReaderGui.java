@@ -4,9 +4,12 @@ package com.pianobakery.complsa;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
+import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -51,6 +54,7 @@ public class ReaderGui {
     private JLabel afterChunkLabel;
     private JLabel beforeChunkLabel;
     private JLabel selFullDocLabel;
+    private JButton formatTextButton;
     private JTextField textField1;
     private static String[] viewTypeCombo = {"Result Splitscreen","Document Splitscreen","Document"};
     private MainGui theMainGui;
@@ -270,7 +274,6 @@ public class ReaderGui {
                 documentUpMethod();
 
 
-
             }
         });
 
@@ -298,6 +301,17 @@ public class ReaderGui {
                 setHighliter(highlightSelectedTermsCheckBox.isSelected());
             }
         });
+
+        formatTextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFontChooser fontChooser = new JFontChooser();
+                int result = fontChooser.showDialog(null);
+                if (result == JFontChooser.OK_OPTION) {
+                    Font font = fontChooser.getSelectedFont();
+                    logger.debug("Selected Font : " + font);
+                }
+            }});
 
         if (searchTerms != null) {
             setHighliter(highlightSelectedTermsCheckBox.isSelected());
@@ -588,4 +602,6 @@ public class ReaderGui {
 
         // TODO: place custom component creation code here
     }
+
+
 }

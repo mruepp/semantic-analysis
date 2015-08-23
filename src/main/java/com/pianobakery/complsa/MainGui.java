@@ -546,6 +546,7 @@ public class MainGui {
         frame.setVisible(true);
 
 
+
     }
 
     //Main Gui Constructor
@@ -910,7 +911,7 @@ public class MainGui {
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = docSearchResTable.rowAtPoint(p);
-                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(row,1).equals(emptyTable)){
+                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(row, 1).equals(emptyTable)){
                     return;
                 }
                 switch (me.getClickCount()) {
@@ -943,7 +944,7 @@ public class MainGui {
         docSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent event) {
-                if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+                if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)) {
                     return;
                 }
                 if (docSearchResTable.getSelectedRow() > -1) {
@@ -967,7 +968,7 @@ public class MainGui {
         termSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(0,1).equals(emptyTable)){
+                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(0, 1).equals(emptyTable)){
                     return;
                 }
                 if (termSearchResTable.getSelectedRow() > -1) {
@@ -984,7 +985,6 @@ public class MainGui {
 
             }
         });
-
 
     }
 
@@ -1082,7 +1082,7 @@ public class MainGui {
             e1.printStackTrace();
         }
         try {
-            updateIndexFileFolder();
+           updateIndexFileFolder();
 
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -1164,7 +1164,8 @@ public class MainGui {
 
                 try {
                     FileUtils.forceMkdir(newDir);
-                    addRemoveItemToTopicBox(newDir, true, true);
+                    addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), newDir, true, true);
+                    //addRemoveItemToTopicBox(newDir, true, true);
                     result = true;
                 } catch (SecurityException se) {
                     JOptionPane.showMessageDialog(null, "No permission or File Exists");
@@ -1202,11 +1203,19 @@ public class MainGui {
 
         File theFile = trainCorp.get(selectTrainCorp.getSelectedItem());
 
+        int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (result == JOptionPane.NO_OPTION || result == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+
         if (theFile != null) {
+
+
 
             try {
 
-                addRemoveItemToTopicBox(theFile, false, true);
+                addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), theFile, false, true);
+               //addRemoveItemToTopicBox(theFile, false, true);
                 updateIndexFileFolder();
 
             } catch (IOException e1) {
@@ -1365,7 +1374,8 @@ public class MainGui {
 
                 try {
                     FileUtils.forceMkdir(newDir);
-                    addRemoveItemToTopicBox(newDir, true, false);
+                    addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), newDir, true, false);
+                    //addRemoveItemToTopicBox(newDir, true, false);
                     result = true;
                 } catch (SecurityException se) {
                     JOptionPane.showMessageDialog(null, "No permission or File Exists");
@@ -1401,12 +1411,14 @@ public class MainGui {
     public void removeSearchCorpMethod() {
         File theFile = searchCorpusModel.get(searchCorpComboBox.getSelectedItem());
 
+        int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (result == JOptionPane.NO_OPTION || result == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+
         if (theFile != null) {
-            try {
-                addRemoveItemToTopicBox(theFile, false, false);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), theFile, false, false);
+            //addRemoveItemToTopicBox(theFile, false, false);
         } else if (theFile == null) {
 
             try {
@@ -1559,7 +1571,6 @@ public class MainGui {
     }
 
 
-
     private Action runSearch() {
         return new AbstractAction("The Search") {
             private static final long serialVersionUID = 1L;
@@ -1581,7 +1592,7 @@ public class MainGui {
             chooser.setCurrentDirectory(openFolder);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             //chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
-            chooser.setDialogTitle("Create Working Folder");
+            chooser.setDialogTitle("Create Folder");
             chooser.setFileHidingEnabled(Boolean.TRUE);
             chooser.setMultiSelectionEnabled(false);
             chooser.setAcceptAllFileFilterUsed(false);
@@ -1604,9 +1615,9 @@ public class MainGui {
 
             int whatChoose = chooser.showSaveDialog(null);
             if (whatChoose == JFileChooser.APPROVE_OPTION) {
-                String path = chooser.getCurrentDirectory().toString();
+                String path = chooser.getSelectedFile().toString();
                 wDirText.setText(path);
-                wDir = chooser.getCurrentDirectory();
+                wDir = chooser.getSelectedFile();
                 logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
                 logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
                 logger.debug("WDir is: " + wDir.toString());
@@ -1626,11 +1637,12 @@ public class MainGui {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(openFolder);
             //chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
-            chooser.setDialogTitle("Create Working Folder");
+            chooser.setDialogTitle("Choose Folder");
             chooser.setFileHidingEnabled(Boolean.TRUE);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setMultiSelectionEnabled(false);
             chooser.setAcceptAllFileFilterUsed(false);
+            chooser.setApproveButtonText("Choose");
             int whatChoose = chooser.showOpenDialog(null);
 
             if (whatChoose == JFileChooser.APPROVE_OPTION) {
@@ -2211,7 +2223,7 @@ public class MainGui {
 
     }
 
-
+    /*
     public void addRemoveItemToTopicBox(File aFile, Boolean add, boolean isTopicCorp) throws IOException {
 
         if (isTopicCorp) {
@@ -2322,6 +2334,166 @@ public class MainGui {
 
 
     }
+    */
+
+    public void addRemoveItemToTopicSearchBoxTaskWithBar(ProgressBar bar,File aFile, Boolean add, boolean isTopicCorp) {
+
+
+        addRemoveItemToTopicSearchBoxTask task = new addRemoveItemToTopicSearchBoxTask(bar,aFile,add,isTopicCorp);
+        logger.debug("Runs");
+        task.execute();
+
+    }
+
+    class addRemoveItemToTopicSearchBoxTask extends SwingWorker<Integer, Integer> {
+        private ProgressBar bar;
+        private File aFile;
+        private Boolean add;
+        private boolean isTopicCorp;
+
+
+        public addRemoveItemToTopicSearchBoxTask(ProgressBar aBar, File aFile, Boolean add, boolean isTopicCorp) {
+            this.bar = aBar;
+            this.aFile = aFile;
+            this.add = add;
+            this.isTopicCorp = isTopicCorp;
+        }
+
+        @Override
+        public Integer doInBackground() {
+            boolean isIt = false;
+            boolean isIndexIt = false;
+            boolean isIndexFileIt = false;
+            bar.setProgressBarIndeterminate(true);
+
+            if (isTopicCorp) {
+                File theFile = trainCorp.get(aFile.getName());
+
+
+                if (add && theFile == null) {
+                    trainCorp.put(aFile.getName(), aFile);
+                    selectTrainCorp.addItem(aFile.getName());
+                    logger.debug("Added Item to Map: " + trainCorp.get(aFile.getName()).toString());
+                    logger.debug("Added Item to Map - Mapsize: " + trainCorp.size());
+                } else if (!add && theFile != null){
+
+                    logger.debug("Removed Item from Map: " + aFile.toString());
+                    logger.debug("Removed Item from Map - Mapsize: " + trainCorp.size());
+
+                    File parent = new File(wDir + File.separator + topicFolder);
+                    File indexParent = new File (wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                    File indexFolder = new File (indexParent + File.separator + aFile.getName());
+                    File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
+                    File indexFileFolder = new File (indexFileParent + File.separator + aFile.getName());
+
+                    logger.debug("Parentfolder: " + parent.toString());
+                    logger.debug("Lucene Index Parent Folder: " + indexParent.toString() + " and Index Folder Path: " + indexFolder.toString());
+                    logger.debug("Lucene Index File Parent Folder: " + indexFileParent.toString() + " and Index File Folder Path: " + indexFileFolder.toString());
+
+
+                    try {
+                        isIt = isSubDirectory(parent, aFile);
+                        isIndexIt = isSubDirectory(indexParent, indexFolder);
+                        isIndexFileIt = isSubDirectory(indexFileParent, indexFileFolder);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    //int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                    //if (isIt && result == JOptionPane.YES_OPTION && isIndexIt && isIndexFileIt)
+                    if (isIt && isIndexIt && isIndexFileIt){
+
+                        System.out.printf("Delete this Path: " + aFile.toString());
+
+                        try {
+                            FileUtils.deleteDirectory(aFile);
+                            FileUtils.deleteDirectory(indexFolder);
+                            FileUtils.deleteDirectory(indexFileFolder);
+
+                        }catch (IOException e1) {
+                            JOptionPane.showMessageDialog(null, "Unable to delete Folder");
+                        }
+
+                        trainCorp.remove(aFile.getName());
+                        selectTrainCorp.removeItem(aFile.getName());
+                        bar.dispose();
+                        JOptionPane.showMessageDialog(null, "Deleted...");
+                    }
+                }
+
+            } else if (!isTopicCorp) {
+                File theFile = searchCorpusModel.get(aFile.getName());
+                if (add && theFile == null) {
+                    searchCorpusModel.put(aFile.getName(), aFile);
+                    searchCorpComboBox.addItem(aFile.getName());
+                    logger.debug("Added Item to Map: " + searchCorpusModel.get(aFile.getName()).toString());
+                    logger.debug("Added Item to Map - Mapsize: " + searchCorpusModel.size());
+                } else if (!add && theFile != null){
+
+                    logger.debug("Removed Item from Map: " + aFile.toString());
+                    logger.debug("Removed Item from Map - Mapsize: " + searchCorpusModel.size());
+
+                    File parent = new File(wDir + File.separator + searchFolder);
+                    File indexParent = new File (wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                    File indexFolder = new File (indexParent + File.separator + aFile.getName());
+                    File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
+                    File indexFileFolder = new File (indexFileParent + File.separator + aFile.getName());
+
+                    logger.debug("Parentfolder: " + parent.toString());
+                    logger.debug("Lucene Index Parent Folder: " + indexParent.toString() + " and Index Folder Path: " + indexFolder.toString());
+                    logger.debug("Lucene Index File Parent Folder: " + indexFileParent.toString() + " and Index File Folder Path: " + indexFileFolder.toString());
+
+                    try {
+                        isIt = isSubDirectory(parent, aFile);
+                        isIndexIt = isSubDirectory(indexParent, indexFolder);
+                        isIndexFileIt = isSubDirectory(indexFileParent, indexFileFolder);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    //int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    //if (isIt && result == JOptionPane.YES_OPTION && isIndexIt && isIndexFileIt)
+                    if (isIt && isIndexIt && isIndexFileIt) {
+
+                        System.out.printf("Delete this Path: " + aFile.toString());
+
+                        try {
+                            FileUtils.deleteDirectory(aFile);
+                        }catch (IOException e1) {
+                            JOptionPane.showMessageDialog(null, "Unable to delete Folder");
+                        }
+
+                        searchCorpusModel.remove(aFile.getName());
+                        searchCorpComboBox.removeItem(aFile.getName());
+                        bar.dispose();
+                        JOptionPane.showMessageDialog(null, "Deleted...");
+
+                    }
+                }
+
+            }
+
+           return null;
+
+        }
+
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+            if (bar != null) {bar.dispose();}
+
+            logger.debug("Done");
+            //Toolkit.getDefaultToolkit().beep();
+
+            //JOptionPane.showMessageDialog(null, "Import completed");
+
+        }
+    }
 
     public void addExistingSentModelsToMap() throws IOException {
 
@@ -2375,16 +2547,20 @@ public class MainGui {
         searchModelList.clear();
         selectIndexTypeComboBox.removeAllItems();
         selectTermweightComboBox.removeAllItems();
+
         File theCorpFolder = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
         File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
         File indexFileFolder = new File (indexFileParent + File.separator + theCorpFolder.getName());
         logger.debug("The CorpFolder: " + indexFileFolder);
-        File[] theIndexFiles = indexFileFolder.listFiles();
+        File[] theIndexFiles = null;
+        theIndexFiles = indexFileFolder.listFiles();
+
         if (theIndexFiles != null) {
 
             for (File aFile : theIndexFiles){
                 String ext = FilenameUtils.getExtension(aFile.toString());
                 String filename = FilenameUtils.getBaseName(aFile.toString());
+
 
 
                 if (ext.equals("bin")) {
@@ -2397,6 +2573,7 @@ public class MainGui {
                     indexFilesModel.put(filename, aFile);
 
                     if(termDocType.equals("term")) {
+                        //logger.debug("Get Index in Searchmodellist: " + searchModelList.get(indexType).toString());
 
                         if (searchModelList.get(indexType) == null) {
                             List<String> theTFList = new ArrayList<>();
@@ -2488,7 +2665,8 @@ public class MainGui {
 
             for (File aFile : theModels) {
 
-                addRemoveItemToTopicBox(aFile, true, true);
+                addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), aFile, true, true);
+                //addRemoveItemToTopicBox(aFile, true, true);
 
             }
 
@@ -2511,7 +2689,8 @@ public class MainGui {
 
             for (File aFile : theModels) {
 
-                addRemoveItemToTopicBox(aFile, true, false);
+                addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), aFile, true, false);
+                //addRemoveItemToTopicBox(aFile, true, false);
 
             }
 

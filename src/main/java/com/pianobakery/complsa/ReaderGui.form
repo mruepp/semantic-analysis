@@ -286,12 +286,6 @@
               <text value="Highlight selected Terms"/>
             </properties>
           </component>
-          <hspacer id="8f65f">
-            <constraints>
-              <grid row="0" column="12" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false"/>
-            </constraints>
-          </hspacer>
           <component id="7ffca" class="javax.swing.JComboBox" binding="viewType" custom-create="true">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -344,6 +338,21 @@
             <properties>
               <enabled value="false"/>
               <text value="Next Doc Chunk"/>
+            </properties>
+          </component>
+          <hspacer id="6a8b9">
+            <constraints>
+              <grid row="1" column="12" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <component id="c2288" class="javax.swing.JButton" binding="formatTextButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="12" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <text value="Format Text"/>
             </properties>
           </component>
         </children>
