@@ -1619,22 +1619,18 @@ public class MainGui {
                 logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
                 logger.debug("Chooser parentdir: " + chooser.getCurrentDirectory().getParent());
 
-                if (chooser.getSelectedFile().getName().equals(chooser.getCurrentDirectory().getParentFile().getName())) {
-                    logger.debug("Files the same");
-                    wDir = chooser.getCurrentDirectory();
-                    wDirText.setText(chooser.getCurrentDirectory().toString());
-                } else {
-                    wDir = chooser.getSelectedFile();
-                    wDirText.setText(chooser.getSelectedFile().toString());
-
-                }
+                wDir = chooser.getSelectedFile();
+                wDirText.setText(chooser.getSelectedFile().toString());
+                File currentDir = chooser.getCurrentDirectory();
+                String parentDir = currentDir.getName();
                  logger.debug("WDir is: " + wDir.toString());
-                enableUIElements(true);
+                 enableUIElements(true);
             }
 
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Falsche Eingabe");
+            logger.debug("Exeption: " + ex.toString());
         }
     }
 
