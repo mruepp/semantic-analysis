@@ -50,8 +50,8 @@ public class JFontChooser extends JComponent
      * @see #showDialog
      **/
     public static final int ERROR_OPTION = -1;
-    private static final Font DEFAULT_SELECTED_FONT = new Font("Serif", Font.PLAIN, 12);
-    private static final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 10);
+    private static final Font DEFAULT_SELECTED_FONT = new Font("Arial", Font.PLAIN, 12);
+    private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
     private static final int[] FONT_STYLE_CODES =
             {
                     Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD | Font.ITALIC

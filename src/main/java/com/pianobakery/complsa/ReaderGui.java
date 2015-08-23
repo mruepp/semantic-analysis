@@ -169,8 +169,13 @@ public class ReaderGui {
         frame.getRootPane().getActionMap().put("CTRL + W", closeWindow());
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),"CTRL + S");
+        frame.getRootPane().getActionMap().put("CTRL + S", toggleViewAction());
+
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke('T', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),"CTRL + T");
-        frame.getRootPane().getActionMap().put("CTRL + T", toggleViewAction());
+        frame.getRootPane().getActionMap().put("CTRL + T", formatFontAction());
+
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(38, 0),"UP");
@@ -187,6 +192,8 @@ public class ReaderGui {
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(39, 0),"RIGHT");
         frame.getRootPane().getActionMap().put("RIGHT", docDownAction());
+
+
 
 
         allTextPanes.add(beforeText);
@@ -305,19 +312,39 @@ public class ReaderGui {
         formatTextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFontChooser fontChooser = new JFontChooser();
-                int result = fontChooser.showDialog(null);
-                if (result == JFontChooser.OK_OPTION) {
-                    Font font = fontChooser.getSelectedFont();
-                    logger.debug("Selected Font : " + font);
-                }
+
+                formatFontMethod();
+
             }});
 
         if (searchTerms != null) {
             setHighliter(highlightSelectedTermsCheckBox.isSelected());
         }
 
+        Font font = new Font("Arial",Font.PLAIN, 12);
+        logger.debug("Default Font : " + font);
+        beforeText.setFont(font);
+        selectedText.setFont(font);
+        afterText.setFont(font);
 
+        beforeDocText.setFont(font);
+        selectedDocText.setFont(font);
+        afterDocText.setFont(font);
+
+        fullTextPane.setFont(font);
+
+
+    }
+
+    private Action formatFontAction() {
+        return new AbstractAction("formatFont") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                formatFontMethod();
+            }
+        };
     }
 
     private Action closeWindow() {
@@ -387,6 +414,28 @@ public class ReaderGui {
         };
     }
 
+
+    private void formatFontMethod() {
+        JFontChooser fontChooser = new JFontChooser();
+        int result = fontChooser.showDialog(null);
+        if (result == JFontChooser.OK_OPTION) {
+            Font font = fontChooser.getSelectedFont();
+            logger.debug("Selected Font : " + font);
+            beforeText.setFont(font);
+            selectedText.setFont(font);
+            afterText.setFont(font);
+
+            beforeDocText.setFont(font);
+            selectedDocText.setFont(font);
+            afterDocText.setFont(font);
+
+            fullTextPane.setFont(font);
+
+
+        }
+
+
+    }
 
     public void selectionUpMethod() {
         int outrow = theMainGui.getSelectedDocTableRow();
@@ -602,6 +651,5 @@ public class ReaderGui {
 
         // TODO: place custom component creation code here
     }
-
 
 }

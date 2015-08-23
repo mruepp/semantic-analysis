@@ -301,11 +301,13 @@ public class MainGui {
         JMenu editMenu = new JMenu("Edit");
         JMenu trainingMenu = new JMenu("Corpus");
         JMenu searchMenu = new JMenu("Search");
+        JMenu viewMenu = new JMenu("View");
         JMenu helpMenu = new JMenu("Help");
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(trainingMenu);
         menuBar.add(searchMenu);
+
         menuBar.add(helpMenu);
 
         newAction.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -356,6 +358,7 @@ public class MainGui {
         searchMenu.add(searchAction);
         searchMenu.add(openReaderAction);
         searchMenu.add(closeReaderAction);
+
 
         helpMenu.add(helpAction);
         helpMenu.add(licenseAction);
@@ -1083,12 +1086,12 @@ public class MainGui {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        try {
+       /* try {
            updateIndexFileFolder();
 
         } catch (IOException e1) {
             e1.printStackTrace();
-        }
+        }*/
 
     }
 
@@ -1110,11 +1113,11 @@ public class MainGui {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        try {
+        /*try {
             updateIndexFileFolder();
         } catch (IOException e1) {
             e1.printStackTrace();
-        }
+        }*/
     }
 
     public void downloadModelMethod() {
@@ -1214,16 +1217,13 @@ public class MainGui {
 
 
 
-            try {
+
 
                 addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), theFile, false, true);
                //addRemoveItemToTopicBox(theFile, false, true);
-                updateIndexFileFolder();
+                //updateIndexFileFolder();
 
-            } catch (IOException e1) {
-                e1.printStackTrace();
 
-            }
 
         } else if (theFile == null) {
 
@@ -1261,8 +1261,6 @@ public class MainGui {
         logger.debug("Selected Corpus: " + selectTrainCorp.getSelectedItem().toString());
         logger.debug("Selected Corpus Path: " + trainCorp.get(selectTrainCorp.getSelectedItem().toString()));
         File corpDir = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
-
-
         trainTopicCorpTaskWithBar(bar, corpDir, wordRadius, indexTypeComboBox.getSelectedIndex(), termComboBox.getSelectedItem().toString(), true);
 
     }
@@ -2500,6 +2498,11 @@ public class MainGui {
          */
         @Override
         public void done() {
+            try {
+                updateIndexFileFolder();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (bar != null) {bar.dispose();}
 
             logger.debug("Done");
@@ -2854,20 +2857,10 @@ public class MainGui {
 
     public void trainTopicCorpTaskWithBar(ProgressBar bar, File aCorpDir, int aPosIndexRadius, int indexType, String termweightType, boolean onlylucene) {
 
-
-
-
-
         trainTopicCorp task = new trainTopicCorp(bar, aCorpDir, aPosIndexRadius, indexType, termweightType, onlylucene);
         logger.debug("Runs");
 
            task.execute();
-
-
-
-
-
-
     }
 
     class trainTopicCorp extends SwingWorker<Integer, Integer> {
@@ -3705,23 +3698,19 @@ public class MainGui {
 
     //TODO Implement Buy button
 
-    //TODO set File Delet Task popup to prevent accidential closing of the App
 
     //TODO Obfuscation and Packaging for Windows and OSX. Test with Windows.
 
-    //TODO Improve Reader, selecting Text Format and Size, allow to mark and to export text as pdf
+    //TODO Improve Reader, save default Text Format and Size, allow to mark and to export text as pdf
 
     //TODO Export/Import search Results
 
     //TODO Search History
 
-    //TODO Last Project
+    //TODO open recent Project
 
-    //TODO Implement Project File
+    //TODO Implement Project File and Defaults
 
-    //TODO When print cancel topic corp imp, the the folder is not in the seleciton list. (Should it be deleted?)
-
-    //TODO new Project folder Window 10 Dialog is not working properly
 
 
 
