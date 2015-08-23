@@ -296,6 +296,7 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
         changeProductKeyjButton = new javax.swing.JButton();
         activatejButton = new javax.swing.JButton();
         useTrialButton = new javax.swing.JButton();
+        buyButton = new javax.swing.JButton();
         progressjLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -411,6 +412,14 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
             }
         });
 
+        buyButton.setText("Buy License");
+        buyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                buyButtonActionPerformed(e);
+            }
+        });
+
         activatejButton.setText("Activate");
         activatejButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -433,6 +442,8 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
 
                                     .addComponent(progressjLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
                                     .addGap(18, 18, 18)
+                                    .addComponent(buyButton)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(useTrialButton)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(activatejButton)
@@ -456,7 +467,8 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
                                         .addComponent(changeProductKeyjButton)
                                         .addComponent(activatejButton)
                                         .addComponent(progressjLabel)
-                                        .addComponent(useTrialButton))
+                                        .addComponent(useTrialButton)
+                                        .addComponent(buyButton))
                                 .addContainerGap())
         );
 
@@ -520,6 +532,10 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_changeProductKeyjButtonActionPerformed
+
+    private void buyButtonActionPerformed(ActionEvent evt) {
+        System.out.println("Buying");
+    }
 
     private void  useTrialKeyButtonActionPerformed(ActionEvent evt){
 
@@ -756,6 +772,7 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activatejButton;
+    private javax.swing.JButton buyButton;
     private javax.swing.JButton useTrialButton;
     private javax.swing.JButton changeProductKeyjButton;
     private javax.swing.JButton closejButton;
