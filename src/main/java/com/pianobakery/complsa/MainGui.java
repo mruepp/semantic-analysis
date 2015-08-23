@@ -1632,6 +1632,8 @@ public class MainGui {
                 } else {
                     wDir = chooser.getSelectedFile();
                 }
+
+                logger.debug("WDIR is: " + wDir.toString());
                 wDirText.setText(wDir.toString());
                 enableUIElements(true);
             }
