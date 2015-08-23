@@ -130,6 +130,14 @@ public class ReaderGui {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setMaximumSize(screenSize);
         Dimension thePanelDim = new Dimension(800,940);
+
+        if (screenSize.height < thePanelDim.height) {
+            thePanelDim.setSize(thePanelDim.width, screenSize.height);
+        }
+        if (screenSize.width < thePanelDim.width) {
+            thePanelDim.setSize(screenSize.width,thePanelDim.height);
+        }
+
         frame.setMinimumSize(thePanelDim);
         this.rootPanel.setMaximumSize(screenSize);
         this.rootPanel.setPreferredSize(thePanelDim);
