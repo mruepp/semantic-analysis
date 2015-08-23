@@ -34,6 +34,8 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
@@ -1597,7 +1599,7 @@ public class MainGui {
             chooser.setMultiSelectionEnabled(false);
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-            chooser.setSelectedFile(null);
+            chooser.setSelectedFile(new File("Workingfile"));
             frame.getContentPane().add(chooser);
             chooser.setApproveButtonText("Choose");
 
@@ -1615,16 +1617,23 @@ public class MainGui {
 
             int whatChoose = chooser.showSaveDialog(null);
             if (whatChoose == JFileChooser.APPROVE_OPTION) {
-                logger.debug("Chooser SelectedFile: " + chooser.getSelectedFile());
-                logger.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-                logger.debug("Chooser parentdir: " + chooser.getCurrentDirectory().getParent());
+                File selFile = chooser.getSelectedFile();
+                File currDir = chooser.getCurrentDirectory();
+                Path parentDir = Paths.get(chooser.getCurrentDirectory().getParent());
+                String parentDirName = parentDir.getFileName().toString();
 
-                wDir = chooser.getSelectedFile();
-                wDirText.setText(chooser.getSelectedFile().toString());
-                File currentDir = chooser.getCurrentDirectory();
-                String parentDir = currentDir.getName();
-                 logger.debug("WDir is: " + wDir.toString());
-                 enableUIElements(true);
+                logger.debug("Chooser SelectedFile: " + selFile.toString());
+                logger.debug("getCurrentDirectory(): " + currDir.toString());
+                logger.debug("Chooser parentdir: " + parentDir);
+                logger.debug("Parentdirname: " + parentDirName);
+
+                if (selFile.getName().equals(parentDirName)) {
+                    wDir = currDir;
+                } else {
+                    wDir = chooser.getSelectedFile();
+                }
+                wDirText.setText(wDir.toString());
+                enableUIElements(true);
             }
 
 
