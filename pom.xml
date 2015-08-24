@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
      <groupId>org.pianobakery.complsa</groupId>
     <artifactId>complsa</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <repositories>
         <repository>
             <releases>
@@ -111,6 +111,8 @@
         <outputDirectory>target/classes</outputDirectory>
         <finalName>${artifactId}-${version}</finalName>
         <plugins>
+
+
             <!-- any other plugins -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -157,6 +159,31 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>proguard</goal></goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+                    <options>
+                        <option>-allowaccessmodification</option>
+                        <option>-keep public class * extends java.applet.Applet { *; }</option>
+                    </options>
+                    <libs>
+                        <lib>${java.home}/lib/rt.jar</lib>
+                        <lib>${java.home}/lib/jsse.jar</lib>
+                    </libs>
+                </configuration>
+            </plugin>
+
+
+
+
         </plugins>
     </build>
 </project>
