@@ -180,10 +180,6 @@
                     </libs>
                 </configuration>
             </plugin>
-
-
-
-
         </plugins>
     </build>
 </project>
