@@ -534,7 +534,7 @@ public class MainGui {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setTitle("Semantic Text Search");
+        frame.setTitle("Oyonoko - Semantic Search");
         int frameWidth = 1280;
         int frameHeight = 800;
         frame.setMinimumSize(new Dimension(frameWidth, frameHeight));
