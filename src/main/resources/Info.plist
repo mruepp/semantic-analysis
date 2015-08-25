@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>JavaAppLauncher</string>
     <key>CFBundleIconFile</key>
-    <string>Icon.icns</string>
+    <string>Frontrail_Front.icns</string>
     <key>CFBundleIdentifier</key>
     <string>com.pianobakery.complsa.MainGui</string>
     <key>CFBundleDisplayName</key>
