@@ -1,0 +1,100 @@
+<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.pianobakery.complsa.MainGui</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <exec executable="zip">
+                                    <arg value="-d"/>
+                                    <arg value="${project.basedir}/${artifactId}-${version}-jar-with-dependencies"/>
+                                    <arg value="*.RSA"/>
+                                    <arg value="*.SF"/>
+                                    <arg value="*.DSA"/>
+                                </exec>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                            <groupId>com.github.wvengen</groupId>
+                            <artifactId>proguard-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <phase>package</phase>
+                                    <goals><goal>proguard</goal></goals>
+                                </execution>
+                            </executions>
+                            <configuration>
+                                <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+                                <options>
+                                    <option>-allowaccessmodification</option>
+                                    <option>-keep public class * extends java.applet.Applet { *; }</option>
+                                </options>
+                                <libs>
+                                    <lib>${java.home}/lib/rt.jar</lib>
+                                    <lib>${java.home}/lib/jsse.jar</lib>
+                                </libs>
+                            </configuration>
+                        </plugin>
+
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-dependency-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>copy-dependencies</id>
+                                    <phase>prepare-package</phase>
+                                    <goals>
+                                        <goal>copy-dependencies</goal>
+                                    </goals>
+                                    <configuration>
+                                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                        <overWriteReleases>false</overWriteReleases>
+                                        <overWriteSnapshots>false</overWriteSnapshots>
+                                        <overWriteIfNewer>true</overWriteIfNewer>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-jar-plugin</artifactId>
+                            <configuration>
+                                <archive>
+                                    <manifest>
+                                        <addClasspath>true</addClasspath>
+                                        <classpathPrefix>lib/</classpathPrefix>
+                                        <mainClass>theMainClass</mainClass>
+                                    </manifest>
+                                </archive>
+                            </configuration>
+                        </plugin>

@@ -534,7 +534,7 @@ public class MainGui {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setTitle("Oyonoko - Semantic Search");
+        frame.setTitle("Semantic Search");
         int frameWidth = 1280;
         int frameHeight = 800;
         frame.setMinimumSize(new Dimension(frameWidth, frameHeight));
@@ -2570,6 +2570,9 @@ public class MainGui {
         File theCorpFolder = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
         File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
         File indexFileFolder = new File (indexFileParent + File.separator + theCorpFolder.getName());
+
+
+
         logger.debug("The CorpFolder: " + indexFileFolder);
         File[] theIndexFiles = null;
         theIndexFiles = indexFileFolder.listFiles();

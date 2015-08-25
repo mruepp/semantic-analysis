@@ -59,6 +59,20 @@
             <groupId>pitt.search</groupId>
             <artifactId>semanticvectors</artifactId>
             <version>5.8</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-analyzers-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-demo</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.intellij</groupId>
@@ -116,69 +130,54 @@
             <!-- any other plugins -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
                         <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>com.pianobakery.complsa.MainGui</mainClass>
                         </manifest>
                     </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <exec executable="zip">
-                                    <arg value="-d"/>
-                                    <arg value="${project.basedir}/${artifactId}-${version}-jar-with-dependencies"/>
-                                    <arg value="*.RSA"/>
-                                    <arg value="*.SF"/>
-                                    <arg value="*.DSA"/>
-                                </exec>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.wvengen</groupId>
-                <artifactId>proguard-maven-plugin</artifactId>
+                <groupId>sh.tak.appbundler</groupId>
+                <artifactId>appbundle-maven-plugin</artifactId>
+                <version>1.0.4</version>
+                <configuration>
+                    <mainClass>com.pianobakery.complsa.MainGui</mainClass>
+                    <dictionaryFile>Info.plist</dictionaryFile>
+                    <iconFile>Icon.icns</iconFile>
+                    <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk</jrePath>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>proguard</goal></goals>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <proguardInclude>${basedir}/proguard.conf</proguardInclude>
-                    <options>
-                        <option>-allowaccessmodification</option>
-                        <option>-keep public class * extends java.applet.Applet { *; }</option>
-                    </options>
-                    <libs>
-                        <lib>${java.home}/lib/rt.jar</lib>
-                        <lib>${java.home}/lib/jsse.jar</lib>
-                    </libs>
-                </configuration>
             </plugin>
         </plugins>
     </build>
