@@ -220,6 +220,30 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+                                    <tasks>
+                                        <exec executable="hdiutil">
+                                            <arg value="create"/>
+                                            <arg value="-srcfolder"/>
+                                            <arg value="${project.build.directory}/${artifactId}-${version}"/>
+                                            <arg value="${project.build.directory}/Semantic Search.dmg"/>
+                                        </exec>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>
@@ -264,6 +288,7 @@
                     <finalName>Semantic Search</finalName>
                 </configuration>
             </plugin>
+
        </plugins>
     </build>
 </project>
