@@ -20,7 +20,7 @@
 
 
     <resources>
-        <res id="shortcutSpec.xml" src="../../shortcutSpec.xml" />
+        <res id="shortcutSpec.xml" src="../../src/main/izpack/shortcutSpec.xml" />
     </resources>
 
     <natives>
