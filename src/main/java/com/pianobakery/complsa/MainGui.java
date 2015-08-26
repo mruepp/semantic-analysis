@@ -3702,8 +3702,9 @@ public class MainGui {
 
     //TODO Implement Buy button
 
+    //TODO Implement Help and Buy Open Internet Browser
 
-    //TODO Obfuscation and Packaging for Windows and OSX. Test with Windows.
+    //TODO Implement update check
 
     //TODO Improve Reader, save default Text Format and Size, allow to mark and to export text as pdf
 

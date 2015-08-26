@@ -148,6 +148,28 @@
         <build>
             <plugins>
                 <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                    <executions>
+                        <execution>
+                            <id>copy-resources</id>
+                            <!-- here the phase you need -->
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${basedir}/target/jre</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${java.home}</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>com.akathist.maven.plugins.launch4j</groupId>
                     <artifactId>launch4j-maven-plugin</artifactId>
                     <version>1.7.7</version>
@@ -161,29 +183,48 @@
                             <configuration>
                                 <headerType>gui</headerType>
                                 <jar>${project.build.directory}/Semantic Search.jar</jar>
-                                <outfile>${project.build.directory}/hasCode.exe</outfile>
+                                <outfile>${project.build.directory}/Semantic Search.exe</outfile>
                                 <downloadUrl>http://java.com/download</downloadUrl>
                                 <classPath>
-                                    <mainClass>com.hascode.tutorial.Main</mainClass>
+                                    <mainClass>com.pianobakery.complsa.MainGui</mainClass>
                                     <preCp>anything</preCp>
                                 </classPath>
-                                <icon>src/main/resources/Icon.icns</icon>
+                                <icon>src/main/resources/Frontrail_Front.ico</icon>
                                 <jre>
                                     <minVersion>1.8.0</minVersion>
+                                    <path>../jre</path>
+                                    <bundledJre64Bit>true</bundledJre64Bit>
                                     <jdkPreference>preferJre</jdkPreference>
+                                    <maxHeapPercent>80</maxHeapPercent>
                                 </jre>
                                 <versionInfo>
                                     <fileVersion>1.0.0.0</fileVersion>
                                     <txtFileVersion>${project.version}</txtFileVersion>
                                     <fileDescription>${project.name}</fileDescription>
-                                    <copyright>2012 hasCode.com</copyright>
+                                    <copyright>2015 Proconsult AG</copyright>
                                     <productVersion>1.0.0.0</productVersion>
                                     <txtProductVersion>1.0.0.0</txtProductVersion>
                                     <productName>${project.name}</productName>
-                                    <companyName>hasCode.com</companyName>
-                                    <internalName>hasCode</internalName>
-                                    <originalFilename>hasCode.exe</originalFilename>
+                                    <companyName>Proconsult AG</companyName>
+                                    <internalName>Proconsultag</internalName>
+                                    <originalFilename>Semantic Search.exe</originalFilename>
                                 </versionInfo>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.izpack</groupId>
+                    <artifactId>izpack-maven-plugin</artifactId>
+                    <version>5.0.3</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>izpack</goal>
+                            </goals>
+                            <configuration>
+                                <output>${project.build.directory}/Semantic Search-installer.jar</output>
                             </configuration>
                         </execution>
                     </executions>

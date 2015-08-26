@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/proguard.conf" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/pianobakery/complsa/LicenseKeyGUI.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Frontrail_Front.ico" charset="windows-1252" />
   </component>
 </project>

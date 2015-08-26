@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<installation version="5.0">
+    <info>
+        <appname>Semantic Search</appname>
+        <appversion>1.0</appversion>
+        <authors>
+            <author name="Michael Ruepp" email="michael@ruepp.at" />
+        </authors>
+        <url>http://www.oyonoko.com</url>
+        <javaversion>1.8</javaversion>
+        <requiresjdk>no</requiresjdk>
+        <run-privileged condition="izpack.windowsinstall"/>
+    </info>
+
+    <guiprefs width="640" height="480" resizable="yes" />
+
+    <locale>
+        <langpack iso3="eng" />
+    </locale>
+
+
+    <resources>
+        <res id="shortcutSpec.xml" src="../../shortcutSpec.xml" />
+    </resources>
+
+    <natives>
+        <native type="izpack" name="ShellLink.dll"/>
+        <native type="izpack" name="ShellLink_x64.dll"/>
+    </natives>
+
+    <variables>
+        <variable name="DesktopShortcutCheckboxEnabled" value="true" />
+    </variables>
+
+    <panels>
+        <panel classname="HelloPanel" />
+        <panel classname="TargetPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="FinishPanel" />
+    </panels>
+
+    <conditions>
+
+    </conditions>
+
+    <packs>
+        <pack name="Core" required="yes">
+            <description>Core installation files</description>
+            <file src="../Semantic Search.exe" targetdir="$INSTALL_PATH" />
+            <file src="../../src/main/resources/Frontrail_Front.ico" targetdir="$INSTALL_PATH" />
+            <fileset dir="../lib/" targetdir="$INSTALL_PATH/lib" includes="**/*"/>
+            <fileset dir="../jre/" targetdir="$INSTALL_PATH/jre" includes="**/*"/>
+        </pack>
+    </packs>
+
+</installation>
