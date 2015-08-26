@@ -164,5 +164,6 @@
     <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.5" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:4.1" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-commons:4.1" level="project" />
+    <orderEntry type="library" name="Maven: net.java.openjfx.backport:openjfx-78-backport-compat:1.8.0.1" level="project" />
   </component>
 </module>

@@ -2,7 +2,7 @@
 
 <shortcuts>
     <!--skipIfNotSupported/-->
-    <programGroup defaultName="Oyonoko Semantic Search"
+    <programGroup defaultName="Semantic Search"
                   location="startMenu"/>
 
     <shortcut name="Semantic Search" target="C:\Program Files\Semantic Search\Semantic Search.exe" description="Creating Gui Icon on the Desktop"

@@ -130,6 +130,11 @@
             <artifactId>lucene-demo</artifactId>
             <version>5.3.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.java.openjfx.backport</groupId>
+            <artifactId>openjfx-78-backport-compat</artifactId>
+            <version>1.8.0.1</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -147,6 +152,24 @@
         </activation>
         <build>
             <plugins>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <inherited>false</inherited>
+                    <version>1.7</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <configuration>
+                                <tasks>
+                                    <mkdir dir="target/staging"/>
+                                </tasks>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.7</version>
