@@ -17,15 +17,15 @@ public class Disclaimer {
 
         public static String getProconsult(){
 
-                return  "Copyright 2015 Proconsult AG All rights reserved.\n" +
-                        "                     Version 1.0, August 2015\n" +
-                        "                        http://www.oyonoko.com/semanticsearch/license\n" +
+                return  "       Copyright 2015 Proconsult AG All rights reserved.\n" +
+                        "       Version 1.0, August 2015\n" +
+                        "       http://www.oyonoko.com/semanticsearch/license\n" +
                         "\n" +
-                        "   We thank the Semantic Vectors Project at the University of Pittburgh\n" +
-                        "   and the Apache Project for their Frameworks!\n"+
-                        "-------------------------------------------------------------------------\n" +
-                        "-------------------------------------------------------------------------\n" +
-                        "-------------------------------------------------------------------------\n" +
+                        "       We thank the Semantic Vectors Project at the University of Pittburgh\n" +
+                        "       and the Apache Project!\n"+
+                        "-------------------------------------------------------------------\n" +
+                        "-------------------------------------------------------------------\n" +
+                        "-------------------------------------------------------------------\n" +
                         "\n" +
                         "\n" +
                         "\n" +
@@ -241,31 +241,31 @@ public class Disclaimer {
     }
 
     public static String getSvlic() {
-        return "Copyright (c) 2007, University of Pittsburgh\n" +
-                " All rights reserved.\n" +
-                " Redistribution and use in source and binary forms, with or without\n" +
-                " modification, are permitted provided that the following conditions are\n" +
-                " met:\n" +
-                " * Redistributions of source code must retain the above copyright\n" +
-                " notice, this list of conditions and the following disclaimer.\n" +
-                " * Redistributions in binary form must reproduce the above\n" +
-                " copyright notice, this list of conditions and the following\n" +
-                " disclaimer in the documentation and/or other materials provided\n" +
-                " with the distribution.\n" +
-                " * Neither the name of the University of Pittsburgh nor the names\n" +
-                " of its contributors may be used to endorse or promote products\n" +
-                " derived from this software without specific prior written\n" +
-                " permission.\n" +
-                " THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n" +
-                " \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n" +
-                " LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n" +
-                " A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR\n" +
-                " CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n" +
-                " EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n" +
-                " PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n" +
-                " PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n" +
-                " LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n" +
-                " NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n" +
-                " SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
+        return "     Copyright (c) 2007, University of Pittsburgh\n" +
+                "    All rights reserved.\n" +
+                "       Redistribution and use in source and binary forms, with or without\n" +
+                "       modification, are permitted provided that the following conditions are\n" +
+                "       met:\n" +
+                "       * Redistributions of source code must retain the above copyright\n" +
+                "       notice, this list of conditions and the following disclaimer.\n" +
+                "       * Redistributions in binary form must reproduce the above\n" +
+                "       copyright notice, this list of conditions and the following\n" +
+                "       disclaimer in the documentation and/or other materials provided\n" +
+                "       with the distribution.\n" +
+                "       * Neither the name of the University of Pittsburgh nor the names\n" +
+                "       of its contributors may be used to endorse or promote products\n" +
+                "       derived from this software without specific prior written\n" +
+                "       permission.\n" +
+                "       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n" +
+                "       \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n" +
+                "       LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n" +
+                "       A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\n" +
+                "       OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\n" +
+                "       SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED\n" +
+                "       TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n" +
+                "       PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n" +
+                "       LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n" +
+                "       NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n" +
+                "       SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
     }
 }

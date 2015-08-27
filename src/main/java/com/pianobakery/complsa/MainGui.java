@@ -164,6 +164,7 @@ public class MainGui {
     private static JMenuItem searchAction = new JMenuItem("Search");
 
     private static JMenuItem helpAction = new JMenuItem("Help");
+    private static JMenuItem updateAction = new JMenuItem("Check for Updates");
     private static JMenuItem licenseAction = new JMenuItem("License");
     private static JMenuItem aboutAction = new JMenuItem("About");
 
@@ -350,6 +351,8 @@ public class MainGui {
 
 
         helpMenu.add(helpAction);
+        helpMenu.addSeparator();
+        helpMenu.add(updateAction);
         helpMenu.add(licenseAction);
         helpMenu.addSeparator();
         helpMenu.add(aboutAction);
@@ -467,6 +470,13 @@ public class MainGui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 maingui.helpMethod();
+            }
+        });
+
+        updateAction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maingui.updateMethod();
             }
         });
 
@@ -1524,6 +1534,18 @@ public class MainGui {
 
         try {
             openWebpage(new URI("http://www.oyonoko.com/semanticsearch/help"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void updateMethod() {
+
+        //Get file from resources folder
+
+        try {
+            openWebpage(new URI("http://www.oyonoko.com/semanticsearch/software"));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
