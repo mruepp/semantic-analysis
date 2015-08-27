@@ -10,10 +10,30 @@ public class Disclaimer {
 
     public static String allLicenses() {
 
-        return new StringBuilder().append(getSvlic()).append(System.getProperty("line.separator")).append(System.getProperty("line.separator")).append(getApacheLic()).toString();
+        return new StringBuilder().append(getProconsult()).append(System.getProperty("line.separator")).append(System.getProperty("line.separator")).append(getSvlic()).append(System.getProperty("line.separator")).append(System.getProperty("line.separator")).append(getApacheLic()).toString();
 
 
     }
+
+        public static String getProconsult(){
+
+                return  "Copyright 2015 Proconsult AG All rights reserved.\n" +
+                        "                     Version 1.0, August 2015\n" +
+                        "                        http://www.oyonoko.com/semanticsearch/license\n" +
+                        "\n" +
+                        "   We thank the Semantic Vectors Project at the University of Pittburgh\n" +
+                        "   and the Apache Project for their Frameworks!\n"+
+                        "-------------------------------------------------------------------------\n" +
+                        "-------------------------------------------------------------------------\n" +
+                        "-------------------------------------------------------------------------\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n";
+
+
+        }
 
 
     public static String getApacheLic() {

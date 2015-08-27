@@ -81,9 +81,19 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>jgoodies</groupId>
+            <artifactId>forms</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
             <version>7.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>ideauidesigner-maven-plugin</artifactId>
+            <version>1.0-beta-1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -239,7 +249,7 @@
                 <plugin>
                     <groupId>org.codehaus.izpack</groupId>
                     <artifactId>izpack-maven-plugin</artifactId>
-                    <version>5.0.3</version>
+                    <version>LATEST</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -270,10 +280,14 @@
                         <version>1.0.4</version>
                         <configuration>
                             <mainClass>com.pianobakery.complsa.MainGui</mainClass>
-                            <dictionaryFile>Info.plist</dictionaryFile>
+                            <!--<dictionaryFile>Info.plist</dictionaryFile> -->
                             <iconFile>Frontrail_Front.icns</iconFile>
                             <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk</jrePath>
                             <bundleName>Semantic Search</bundleName>
+                            <jvmVersion>1.8+</jvmVersion>
+                            <jvmOptions>
+                                <jvmOption>-XX:MaxRAMFraction=2</jvmOption>
+                            </jvmOptions>
                         </configuration>
                         <executions>
                             <execution>
@@ -296,7 +310,7 @@
                                         <exec executable="hdiutil">
                                             <arg value="create"/>
                                             <arg value="-srcfolder"/>
-                                            <arg value="${project.build.directory}/${artifactId}-${version}"/>
+                                            <arg value="${project.build.directory}/${project.artifactId}-${project.version}"/>
                                             <arg value="${project.build.directory}/Semantic Search.dmg"/>
                                         </exec>
                                     </tasks>
@@ -316,8 +330,17 @@
     <build>
         <directory>target</directory>
         <outputDirectory>target/classes</outputDirectory>
-        <finalName>${artifactId}-${version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
             <!-- any other plugins -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -341,6 +364,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifest>

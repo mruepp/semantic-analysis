@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleExecutable</key>
+    <string>JavaAppLauncher</string>
+    <key>CFBundleIconFile</key>
+    <string>Frontrail_Front.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.pianobakery.complsa.MainGui</string>
+    <key>CFBundleDisplayName</key>
+    <string>Semantic Search</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Semantic Search</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>NSHumanReadableCopyright</key>
+    <string></string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>JVMRuntime</key>
+    <string>JRE</string>
+    <key>JVMMainClassName</key>
+    <string>com.pianobakery.complsa.MainGui</string>
+    <key>JVMVersion</key>
+    <string>1.8+</string>
+    <key>JVMOptions</key>
+    <array>
+      <string>-Xmx64G</string>
+      <string>-Dapple.laf.useScreenMenuBar=true</string>
+      <string>-Xdock:name="Semantic Search"</string>
+    </array>
+    <key>JVMArguments</key>
+    <array/>
+    <key>LauncherWorkingDirectory</key>
+    <string>$APP_ROOT</string>
+  </dict>
+</plist>

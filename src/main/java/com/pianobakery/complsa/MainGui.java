@@ -1,5 +1,7 @@
 package com.pianobakery.complsa;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.license4j.License;
 import com.license4j.ValidationStatus;
 import org.apache.commons.io.FileUtils;
@@ -30,18 +32,12 @@ import java.awt.event.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.net.HttpURLConnection;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
-
-
-
 
 
 /**
@@ -125,7 +121,6 @@ public class MainGui {
     private String searchFileString;
 
 
-
     //private DefaultListModel listModel;
 
     private File[] files;
@@ -141,8 +136,8 @@ public class MainGui {
     private static String searchFolder = "SearchCorp";
     private static String trainModelFolder = "TrainModels";
     private static String modelUrl = "http://opennlp.sourceforge.net/models-1.5";
-    private static String[] indexType= {"Standard","LSA", "Positional"};
-    private static String[] termweights= {"None", "IDF", "LOGENTROPY", "SQRT"};
+    private static String[] indexType = {"Standard", "LSA", "Positional"};
+    private static String[] termweights = {"None", "IDF", "LOGENTROPY", "SQRT"};
     private static String emptyTable = "No Search Result...";
 
 
@@ -181,7 +176,6 @@ public class MainGui {
     private LicenseKeyGUI licenseKeyGUI;
 
 
-
     //Getter and Setter
     public JTabbedPane getTabbedPane1() {
         return tabbedPane1;
@@ -193,7 +187,6 @@ public class MainGui {
 
 
     public int getSelectedDocTableRow() {
-
 
 
         int row = docSearchResTable.getSelectedRow();
@@ -216,12 +209,12 @@ public class MainGui {
         }
 
         if (docSearchResTable.getRowCount() != 0) {
-            docSearchResTable.setRowSelectionInterval(theRow,theRow);
+            docSearchResTable.setRowSelectionInterval(theRow, theRow);
         }
 
     }
 
-    public String[]getSelectedTermTableWords() {
+    public String[] getSelectedTermTableWords() {
         List<String> theStrings = new ArrayList<String>();
 
         int[] theRows = termSearchResTable.getSelectedRows();
@@ -229,7 +222,7 @@ public class MainGui {
             for (int aRow : theRows) {
                 //String aString = (String)termSearchResTable.getValueAt(aRow,1);
                 int modelRow = termSearchResTable.convertRowIndexToModel(aRow);
-                String aString = (String)termSearchResTable.getModel().getValueAt(modelRow,1);
+                String aString = (String) termSearchResTable.getModel().getValueAt(modelRow, 1);
                 theStrings.add(aString);
             }
 
@@ -238,8 +231,6 @@ public class MainGui {
         theStringArr = theStrings.toArray(theStringArr);
 
         return theStringArr;
-
-
 
 
     }
@@ -268,8 +259,6 @@ public class MainGui {
     public void setwDir(File wDir) {
         this.wDir = wDir;
     }
-
-
 
 
     //Runtime Parameter
@@ -312,15 +301,15 @@ public class MainGui {
 
         newAction.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         openAction.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        exitAction.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        exitAction.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
-        cutAction.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-        copyAction.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-        pasteAction.setAccelerator(KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        cutAction.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        copyAction.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        pasteAction.setAccelerator(KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
-        addCorpFolderAction.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-        updateIndexAction.setAccelerator(KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-        trainSemAction.setAccelerator(KeyStroke.getKeyStroke('3', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+        addCorpFolderAction.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        updateIndexAction.setAccelerator(KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        trainSemAction.setAccelerator(KeyStroke.getKeyStroke('3', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         addSearchCorpFolderAction.setAccelerator(KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
@@ -364,7 +353,6 @@ public class MainGui {
         helpMenu.add(licenseAction);
         helpMenu.addSeparator();
         helpMenu.add(aboutAction);
-
 
 
         // Create and add CheckButton as a menu item to one of the drop down
@@ -497,9 +485,6 @@ public class MainGui {
         });
 
 
-
-
-
         return menuBar;
     }
 
@@ -551,12 +536,12 @@ public class MainGui {
         frame.setVisible(true);
 
 
-
     }
 
     //Main Gui Constructor
     public MainGui() {
 
+        $$$setupUI$$$();
         runtimeParameters();
         trainCorp = new HashMap<String, File>();
         trainSentModels = new HashMap<String, File>();
@@ -568,7 +553,7 @@ public class MainGui {
         //Disable all Components as long as wDir is not set.
         enableUIElements(false);
 
-        ButtonGroup selSearchGroup =new ButtonGroup();
+        ButtonGroup selSearchGroup = new ButtonGroup();
         selSearchGroup.add(searchSearchCorpRadioButton);
         selSearchGroup.add(searchTopCorpRadioButton);
 
@@ -590,8 +575,8 @@ public class MainGui {
         frame.getRootPane().getActionMap().put("CTRL + S", runSearch());
 
 
-        frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowOpened(java.awt.event.WindowEvent evt) {
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent evt) {
                 formWindowOpened(evt);
             }
         });
@@ -636,7 +621,6 @@ public class MainGui {
         addTopicCorpusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addTopicCorpusMethod();
-
 
 
             }
@@ -740,8 +724,6 @@ public class MainGui {
         });
 
 
-
-
         //Search Page
         //Choose Index Type
         selectIndexTypeComboBox.addActionListener(new ActionListener() {
@@ -840,7 +822,6 @@ public class MainGui {
                 searchMethod();
 
 
-
             }
 
 
@@ -852,7 +833,7 @@ public class MainGui {
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = docSearchResTable.rowAtPoint(p);
-                if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+                if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)) {
                     return;
                 }
 
@@ -916,7 +897,7 @@ public class MainGui {
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = docSearchResTable.rowAtPoint(p);
-                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(row, 1).equals(emptyTable)){
+                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(row, 1).equals(emptyTable)) {
                     return;
                 }
                 switch (me.getClickCount()) {
@@ -973,7 +954,7 @@ public class MainGui {
         termSearchResTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(0, 1).equals(emptyTable)){
+                if (termSearchResTable.getModel() == null || termSearchResTable.getRowCount() == 0 || termSearchResTable.getModel().getValueAt(0, 1).equals(emptyTable)) {
                     return;
                 }
                 if (termSearchResTable.getSelectedRow() > -1) {
@@ -994,8 +975,7 @@ public class MainGui {
     }
 
 
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+    private void formWindowOpened(WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         /**
          * COPY THIS METHOD.
          *
@@ -1065,10 +1045,8 @@ public class MainGui {
     }//GEN-LAST:event_formWindowOpened
 
 
-
-
     //ActionListener Methods
-    public void newFolderMethod(){
+    public void newFolderMethod() {
         clearSelections();
         createNewProjectFolder();
         try {
@@ -1125,7 +1103,7 @@ public class MainGui {
 
         try {
             if (testURL(modelUrl)) {
-                downloadModelTaskWithBar(getProgressBarWithTitleLater("Download Model Files...",true));
+                downloadModelTaskWithBar(getProgressBarWithTitleLater("Download Model Files...", true));
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -1216,13 +1194,9 @@ public class MainGui {
         if (theFile != null) {
 
 
-
-
-
-                addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), theFile, false, true);
-               //addRemoveItemToTopicBox(theFile, false, true);
-                //updateIndexFileFolder();
-
+            addRemoveItemToTopicSearchBoxTaskWithBar(getProgressBarWithTitleLater("Please wait...", false), theFile, false, true);
+            //addRemoveItemToTopicBox(theFile, false, true);
+            //updateIndexFileFolder();
 
 
         } else if (theFile == null) {
@@ -1400,7 +1374,7 @@ public class MainGui {
 
             //Run import
             if (folder != null) {
-                addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()),splitSearchCorpCheckBox.isSelected());
+                addTopicCorpTaskWithBar(getProgressBarWithTitleLater("Add Topic Corpus", true), folder, newDir, addCorpRecursiveCheckBox.isSelected(), Integer.parseInt(amountSearchCorpSent.getText()), splitSearchCorpCheckBox.isSelected());
 
             }
 
@@ -1436,16 +1410,15 @@ public class MainGui {
     public void openReaderMethod() {
 
 
-        if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)){
+        if (docSearchResModel == null || docSearchResModel.getRowCount() == 0 || docSearchResModel.getDocFile(0).getFileName().equals(emptyTable)) {
             JOptionPane.showMessageDialog(null, "Unable to open Text - No Search Result");
             return;
         }
 
-        if (docSearchResTable.getSelectedRow() == -1){
+        if (docSearchResTable.getSelectedRow() == -1) {
             //docSearchResTable.setRowSelectionInterval(0, 0);
-            docSearchResTable.changeSelection(0,0,false,false);
+            docSearchResTable.changeSelection(0, 0, false, false);
         }
-
 
 
         if (docSearchResTable.getRowCount() > 0) {
@@ -1467,7 +1440,6 @@ public class MainGui {
                 searchDocReader.setSearchTerms(getSelectedTermTableWords());
             }
         }
-
 
 
     }
@@ -1550,7 +1522,11 @@ public class MainGui {
 
         //Get file from resources folder
 
-        InfoPane thePane = getInfoPaneLater("Licenses", Disclaimer.allLicenses());
+        try {
+            openWebpage(new URI("http://www.oyonoko.com/semanticsearch/help"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -1681,7 +1657,7 @@ public class MainGui {
             File selected;
             searchFileString = "";
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+            chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             chooser.setDialogTitle("Choose Search File");
             chooser.setFileHidingEnabled(Boolean.TRUE);
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -1726,7 +1702,7 @@ public class MainGui {
         try {
 
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+            chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             chooser.setDialogTitle("Create Working Folder");
             chooser.setFileHidingEnabled(Boolean.TRUE);
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1741,7 +1717,7 @@ public class MainGui {
                 logger.debug("getSelectedFile() : " + chooser.getSelectedFile());
                 enableUIElements(true);
 
-                    return selected;
+                return selected;
 
 
             }
@@ -1814,7 +1790,6 @@ public class MainGui {
         this.termComboBox = new JComboBox(termweights);
 
 
-
         //docSearchTitles = new String[]{"%Similarity","Path","Show"};
         docSearchResModel = new DocSearchModel();
         docSearchResTable = new JTable(docSearchResModel);
@@ -1835,12 +1810,8 @@ public class MainGui {
         docSearchResTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
 
 
-
-
-
-
-        termSearchTitles = new String[]{"%Similarities:","Terms:"};
-        termSearchResModel = new DefaultTableModel(termSearchTitles, 0 ){
+        termSearchTitles = new String[]{"%Similarities:", "Terms:"};
+        termSearchResModel = new DefaultTableModel(termSearchTitles, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -1863,29 +1834,285 @@ public class MainGui {
         termSearchResTable.getColumnModel().getColumn(1).setWidth(120);
 
 
-
-
-
         //docSearchResTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         //docSearchResTable.getColumnModel().getColumn(1).sizeWidthToFit();
 
 
-
-
-
-
-
-
-
-
-
     }
 
-    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir,boolean sel, int amSent, boolean areChunks) {
+    public void addTopicCorpTaskWithBar(ProgressBar bar, File folder, File newDir, boolean sel, int amSent, boolean areChunks) {
 
         addTopicCorpTask task = new addTopicCorpTask(bar, folder, newDir, sel, amSent, areChunks);
         logger.debug("Runs");
         task.execute();
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        createUIComponents();
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new FormLayout("fill:max(m;620px):grow", "center:max(m;600px):grow"));
+        tabbedPane1 = new JTabbedPane();
+        tabbedPane1.setEnabled(true);
+        CellConstraints cc = new CellConstraints();
+        mainPanel.add(tabbedPane1, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
+        setupPanel = new JPanel();
+        setupPanel.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:126px:noGrow,fill:max(d;4px):noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:5dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:52px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,fill:d:grow,fill:d:grow,fill:66px:noGrow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+        tabbedPane1.addTab("Project", setupPanel);
+        newFolderButton = new JButton();
+        newFolderButton.setText("New Folder");
+        setupPanel.add(newFolderButton, cc.xy(1, 5));
+        final JLabel label1 = new JLabel();
+        label1.setText("Project Folder:");
+        setupPanel.add(label1, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+        selectFolderButton = new JButton();
+        selectFolderButton.setText("Select Folder");
+        setupPanel.add(selectFolderButton, cc.xy(5, 5));
+        wDirText = new JTextField();
+        wDirText.setEditable(false);
+        wDirText.setText("Create or select Project Folder");
+        setupPanel.add(wDirText, cc.xyw(7, 5, 48, CellConstraints.FILL, CellConstraints.DEFAULT));
+        final JLabel label2 = new JLabel();
+        label2.setText("The Project Folder contains all the Project Data.");
+        setupPanel.add(label2, cc.xyw(1, 3, 54));
+        final JLabel label3 = new JLabel();
+        label3.setText("Arrange your Documents in a Folder. Then add it to the Software.");
+        setupPanel.add(label3, cc.xyw(1, 15, 54));
+        downloadModelButton = new JButton();
+        downloadModelButton.setText("Download Models");
+        setupPanel.add(downloadModelButton, cc.xy(1, 9));
+        final JLabel label4 = new JLabel();
+        label4.setText("Language Models:");
+        setupPanel.add(label4, cc.xy(5, 9));
+        langModelsText = new JLabel();
+        langModelsText.setText("");
+        setupPanel.add(langModelsText, cc.xyw(7, 9, 48));
+        trainCorpButton = new JButton();
+        trainCorpButton.setText("Train Semantics");
+        setupPanel.add(trainCorpButton, cc.xy(1, 33, CellConstraints.FILL, CellConstraints.DEFAULT));
+        final JLabel label5 = new JLabel();
+        label5.setText("Create Semantic Knowledge with selected Training Corpus:");
+        setupPanel.add(label5, cc.xyw(1, 25, 7));
+        addTopicCorpusButton = new JButton();
+        addTopicCorpusButton.setEnabled(true);
+        addTopicCorpusButton.setText(" Add Corpus Folder");
+        setupPanel.add(addTopicCorpusButton, cc.xy(1, 19));
+        addCorpRecursiveCheckBox = new JCheckBox();
+        addCorpRecursiveCheckBox.setSelected(true);
+        addCorpRecursiveCheckBox.setText("Recursive");
+        setupPanel.add(addCorpRecursiveCheckBox, cc.xy(5, 19));
+        createChunksCheckBox = new JCheckBox();
+        createChunksCheckBox.setSelected(true);
+        createChunksCheckBox.setText("Split in Paragraph of:");
+        setupPanel.add(createChunksCheckBox, cc.xy(7, 19));
+        final JLabel label6 = new JLabel();
+        label6.setText("Add/Remove Training Corpus:");
+        setupPanel.add(label6, cc.xyw(1, 17, 5));
+        final JLabel label7 = new JLabel();
+        label7.setText("Select Training Corpus:");
+        setupPanel.add(label7, cc.xyw(1, 21, 54));
+        selectTrainCorp = new JComboBox();
+        selectTrainCorp.setEnabled(true);
+        setupPanel.add(selectTrainCorp, cc.xyw(1, 23, 5));
+        removeTopicCorpusButton = new JButton();
+        removeTopicCorpusButton.setEnabled(true);
+        removeTopicCorpusButton.setHorizontalAlignment(2);
+        removeTopicCorpusButton.setText("Remove Training Corpus");
+        setupPanel.add(removeTopicCorpusButton, cc.xy(7, 23));
+        setupPanel.add(indexTypeComboBox, cc.xy(7, 33));
+        amountOfSentencesPerTextField = new JTextField();
+        amountOfSentencesPerTextField.setHorizontalAlignment(2);
+        amountOfSentencesPerTextField.setText("20");
+        setupPanel.add(amountOfSentencesPerTextField, cc.xyw(9, 19, 6, CellConstraints.FILL, CellConstraints.DEFAULT));
+        posIndRadiusTextField = new JTextField();
+        posIndRadiusTextField.setHorizontalAlignment(2);
+        posIndRadiusTextField.setText("20");
+        setupPanel.add(posIndRadiusTextField, cc.xyw(9, 33, 6, CellConstraints.FILL, CellConstraints.DEFAULT));
+        final JLabel label8 = new JLabel();
+        label8.setText("Indextype:");
+        setupPanel.add(label8, cc.xy(5, 33, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+        final JLabel label9 = new JLabel();
+        label9.setHorizontalAlignment(2);
+        label9.setText("Sentences");
+        setupPanel.add(label9, cc.xy(15, 19));
+        final JLabel label10 = new JLabel();
+        label10.setHorizontalAlignment(2);
+        label10.setText("Words");
+        setupPanel.add(label10, cc.xy(15, 33));
+        setupPanel.add(termComboBox, cc.xyw(31, 33, 19));
+        final JLabel label11 = new JLabel();
+        label11.setText("Termweight:");
+        setupPanel.add(label11, cc.xyw(18, 33, 13));
+        updateIndexButton = new JButton();
+        updateIndexButton.setText("Update Index");
+        setupPanel.add(updateIndexButton, cc.xy(1, 29));
+        removeIndexButton = new JButton();
+        removeIndexButton.setText("Remove Index");
+        setupPanel.add(removeIndexButton, cc.xy(5, 29));
+        final JLabel label12 = new JLabel();
+        label12.setText("Add/Remove Search Corpus:");
+        setupPanel.add(label12, cc.xyw(1, 41, 5));
+        impSearchCorpButton = new JButton();
+        impSearchCorpButton.setText("Add Search Corpus");
+        setupPanel.add(impSearchCorpButton, cc.xy(1, 43));
+        impSearchCorpRecursiveCheckBox = new JCheckBox();
+        impSearchCorpRecursiveCheckBox.setSelected(true);
+        impSearchCorpRecursiveCheckBox.setText("Recursive");
+        setupPanel.add(impSearchCorpRecursiveCheckBox, cc.xy(5, 43));
+        splitSearchCorpCheckBox = new JCheckBox();
+        splitSearchCorpCheckBox.setSelected(true);
+        splitSearchCorpCheckBox.setText("Split in Paragraph of:");
+        setupPanel.add(splitSearchCorpCheckBox, cc.xy(7, 43));
+        amountSearchCorpSent = new JTextField();
+        amountSearchCorpSent.setHorizontalAlignment(2);
+        amountSearchCorpSent.setText("20");
+        setupPanel.add(amountSearchCorpSent, cc.xyw(9, 43, 6, CellConstraints.FILL, CellConstraints.DEFAULT));
+        final JLabel label13 = new JLabel();
+        label13.setHorizontalAlignment(2);
+        label13.setText("Sentences");
+        setupPanel.add(label13, cc.xy(15, 43));
+        searchCorpComboBox = new JComboBox();
+        setupPanel.add(searchCorpComboBox, cc.xyw(1, 47, 5, CellConstraints.DEFAULT, CellConstraints.TOP));
+        removeSearchCorpButton = new JButton();
+        removeSearchCorpButton.setText("Remove Search Corpus");
+        setupPanel.add(removeSearchCorpButton, cc.xy(7, 47));
+        final JLabel label14 = new JLabel();
+        label14.setText("Select Search Corpus:");
+        setupPanel.add(label14, cc.xyw(1, 45, 5));
+        final JLabel label15 = new JLabel();
+        label15.setText("Arrange your Search Corpus in a Folder. Then add it to the Software. ");
+        setupPanel.add(label15, cc.xyw(1, 39, 54));
+        final JLabel label16 = new JLabel();
+        label16.setText("First update the Index.");
+        setupPanel.add(label16, cc.xyw(1, 27, 5));
+        final JLabel label17 = new JLabel();
+        label17.setText("Then select an Algorithm and train the Software. On the Search Tab you can select the Algorithms to run your semantic searches.");
+        setupPanel.add(label17, cc.xyw(1, 31, 54));
+        final JLabel label18 = new JLabel();
+        label18.setText("Download Language Models:");
+        setupPanel.add(label18, cc.xyw(1, 7, 54));
+        final JLabel label19 = new JLabel();
+        label19.setText("Training Corpora:");
+        setupPanel.add(label19, cc.xyw(1, 13, 54));
+        final JLabel label20 = new JLabel();
+        label20.setText("Search Corpora:");
+        setupPanel.add(label20, cc.xyw(1, 37, 54));
+        final JLabel label21 = new JLabel();
+        label21.setEnabled(true);
+        label21.setText(" ");
+        setupPanel.add(label21, cc.xy(1, 11));
+        final JLabel label22 = new JLabel();
+        label22.setText(" ");
+        setupPanel.add(label22, cc.xy(1, 35));
+        searchDocs = new JPanel();
+        searchDocs.setLayout(new FormLayout("left:4dlu:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:277px:noGrow,left:4dlu:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(m;400px):grow,left:4dlu:noGrow,fill:max(m;200px):grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,top:3dlu:noGrow,center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:243px:grow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:38px:noGrow,top:3dlu:noGrow"));
+        searchDocs.setEnabled(true);
+        tabbedPane1.addTab("Search", searchDocs);
+        final JLabel label23 = new JLabel();
+        label23.setText("Choose Semantic Knowledge Algorithm:");
+        searchDocs.add(label23, cc.xyw(3, 1, 5));
+        final JLabel label24 = new JLabel();
+        label24.setText("Enter Search Text or select Search Document:");
+        searchDocs.add(label24, cc.xyw(3, 20, 5));
+        final JLabel label25 = new JLabel();
+        label25.setText("Document Search Results:");
+        searchDocs.add(label25, cc.xyw(10, 1, 3));
+        final JLabel label26 = new JLabel();
+        label26.setText("Selection Metadata:");
+        searchDocs.add(label26, cc.xyw(10, 27, 3));
+        selectIndexTypeComboBox = new JComboBox();
+        searchDocs.add(selectIndexTypeComboBox, cc.xyw(7, 10, 3));
+        final JLabel label27 = new JLabel();
+        label27.setText("Index Type:");
+        searchDocs.add(label27, cc.xy(7, 8));
+        final JLabel label28 = new JLabel();
+        label28.setText("Termweight:");
+        searchDocs.add(label28, cc.xy(7, 12));
+        selectTermweightComboBox = new JComboBox();
+        searchDocs.add(selectTermweightComboBox, cc.xy(7, 14));
+        final JLabel label29 = new JLabel();
+        label29.setText("Number of search results:");
+        searchDocs.add(label29, cc.xy(7, 16));
+        noOfSearchResultsText = new JTextField();
+        noOfSearchResultsText.setText("20");
+        searchDocs.add(noOfSearchResultsText, cc.xy(7, 18, CellConstraints.FILL, CellConstraints.DEFAULT));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        searchDocs.add(scrollPane1, cc.xywh(7, 22, 1, 2, CellConstraints.FILL, CellConstraints.FILL));
+        searchTextArea = new JTextArea();
+        searchTextArea.setLineWrap(true);
+        searchTextArea.setText("");
+        searchTextArea.setWrapStyleWord(true);
+        scrollPane1.setViewportView(searchTextArea);
+        selTextRadioButton = new JRadioButton();
+        selTextRadioButton.setSelected(true);
+        selTextRadioButton.setText("");
+        searchDocs.add(selTextRadioButton, cc.xy(5, 22));
+        algTextField = new JLabel();
+        algTextField.setText("Knowledge Corpus: null");
+        searchDocs.add(algTextField, cc.xy(7, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
+        selectDocumentButton = new JButton();
+        selectDocumentButton.setEnabled(false);
+        selectDocumentButton.setText("Select Document");
+        searchDocs.add(selectDocumentButton, cc.xy(7, 25));
+        selDocRadioButton = new JRadioButton();
+        selDocRadioButton.setText("");
+        searchDocs.add(selDocRadioButton, cc.xy(5, 25));
+        final JLabel label30 = new JLabel();
+        label30.setText("Select Corpus to Search:");
+        searchDocs.add(label30, cc.xyw(3, 30, 5));
+        searchTopCorpRadioButton = new JRadioButton();
+        searchTopCorpRadioButton.setSelected(true);
+        searchTopCorpRadioButton.setText("Topic Corpus");
+        searchDocs.add(searchTopCorpRadioButton, cc.xy(7, 32, CellConstraints.DEFAULT, CellConstraints.TOP));
+        searchSearchCorpRadioButton = new JRadioButton();
+        searchSearchCorpRadioButton.setSelected(false);
+        searchSearchCorpRadioButton.setText("Search Corpus");
+        searchDocs.add(searchSearchCorpRadioButton, cc.xy(7, 34, CellConstraints.DEFAULT, CellConstraints.TOP));
+        searchButton = new JButton();
+        searchButton.setText("Search");
+        searchDocs.add(searchButton, cc.xy(7, 36));
+        final JScrollPane scrollPane2 = new JScrollPane();
+        searchDocs.add(scrollPane2, cc.xywh(10, 30, 3, 7, CellConstraints.FILL, CellConstraints.FILL));
+        metadataTextField = new JTextArea();
+        metadataTextField.setEditable(false);
+        scrollPane2.setViewportView(metadataTextField);
+        termTablePane = new JScrollPane();
+        termTablePane.setEnabled(true);
+        termTablePane.setVerticalScrollBarPolicy(22);
+        searchDocs.add(termTablePane, cc.xywh(14, 3, 1, 21, CellConstraints.FILL, CellConstraints.FILL));
+        termSearchResTable.setAutoCreateRowSorter(true);
+        termSearchResTable.setAutoResizeMode(2);
+        termSearchResTable.setFillsViewportHeight(false);
+        termSearchResTable.setForeground(new Color(-16777216));
+        termTablePane.setViewportView(termSearchResTable);
+        docTablePane = new JScrollPane();
+        docTablePane.setVerticalScrollBarPolicy(22);
+        searchDocs.add(docTablePane, cc.xywh(10, 3, 3, 21, CellConstraints.FILL, CellConstraints.FILL));
+        docSearchResTable.setAutoCreateRowSorter(true);
+        docTablePane.setViewportView(docSearchResTable);
+        final JLabel label31 = new JLabel();
+        label31.setText("Term Search Result:");
+        searchDocs.add(label31, cc.xy(14, 1));
+        searchDocValue = new JLabel();
+        searchDocValue.setText("nothing selected");
+        searchDocs.add(searchDocValue, cc.xyw(12, 25, 3, CellConstraints.LEFT, CellConstraints.DEFAULT));
+        openSearchDocumentButton = new JButton();
+        openSearchDocumentButton.setEnabled(false);
+        openSearchDocumentButton.setText("Open Search Document");
+        searchDocs.add(openSearchDocumentButton, cc.xy(10, 25, CellConstraints.LEFT, CellConstraints.DEFAULT));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return mainPanel;
     }
 
     class addTopicCorpTask extends SwingWorker<Integer, Integer> {
@@ -1920,7 +2147,7 @@ public class MainGui {
 
             if (sel) {
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
-            }else if (!sel){
+            } else if (!sel) {
                 files = FileUtils.listFiles(folder, FileFileFilter.FILE, FalseFileFilter.FALSE);
             }
 
@@ -1936,7 +2163,7 @@ public class MainGui {
             bar.setTextField("");
 
 
-            for (File file : files ) {
+            for (File file : files) {
                 bar.setTextField(file.getName().toString());
 
                 Parser ps = new Parser(file);
@@ -1975,7 +2202,7 @@ public class MainGui {
         }
     }
 
-    public ProgressBar getProgressBarWithTitleLater(String title, boolean withCancelButton){
+    public ProgressBar getProgressBarWithTitleLater(String title, boolean withCancelButton) {
         final ProgressBar bar = new ProgressBar(withCancelButton);
         bar.setTitle(title);
         SwingUtilities.invokeLater(new Runnable() {
@@ -1993,8 +2220,8 @@ public class MainGui {
         return bar;
     }
 
-    public ReaderGui getReaderLater(DocSearchModel aModel, MainGui maingui){
-        final ReaderGui reader = new ReaderGui(aModel,maingui);
+    public ReaderGui getReaderLater(DocSearchModel aModel, MainGui maingui) {
+        final ReaderGui reader = new ReaderGui(aModel, maingui);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -2010,7 +2237,7 @@ public class MainGui {
     }
 
     public InfoPane getInfoPaneLater(String title, String text) {
-        final InfoPane infoPane = new InfoPane(title,text);
+        final InfoPane infoPane = new InfoPane(title, text);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -2045,16 +2272,17 @@ public class MainGui {
             theParentFolder = new File(theSelFile.getParent());
 
 
-           File[] dirContentArray = theParentFolder.listFiles(new FileFilter() {
-               @Override
-               public boolean accept(File pathname) {
-                   if (pathname.isFile()) {
-                       return true;
-                   } else {
-                   return false;
-               }
+            File[] dirContentArray = theParentFolder.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    if (pathname.isFile()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
 
-           }});
+                }
+            });
 
             logger.debug("The Selected Doc File: " + theModel.getDocSearchFile(row).getFile());
             logger.debug("File Array: " + dirContentArray.length);
@@ -2065,7 +2293,7 @@ public class MainGui {
             docSelCounter = selDocdirContent.indexOf(theSelFile);
             logger.debug("Docselcounter: " + docSelCounter);
 
-            if((reader != null) && (docSelCounter > 0 ) && (docSelCounter < (selDocdirContent.size() -1))) {
+            if ((reader != null) && (docSelCounter > 0) && (docSelCounter < (selDocdirContent.size() - 1))) {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
@@ -2074,7 +2302,8 @@ public class MainGui {
                 reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
                 reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if (docSelCounter == 0 && reader != null) {
-                reader.setBeforeDocText("Reached Beginning of Text");;
+                reader.setBeforeDocText("Reached Beginning of Text");
+                ;
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
 
@@ -2091,13 +2320,13 @@ public class MainGui {
                 reader.setAfterChunkLabel("None");
             }
 
-        } else if(addRem == -1) {
+        } else if (addRem == -1) {
             if (docSelCounter == 0) {
                 return;
             }
             docSelCounter = docSelCounter - 1;
             logger.debug("Docselcounter: " + docSelCounter);
-            if((reader != null) && (docSelCounter > 0 ) && (docSelCounter < (selDocdirContent.size() -1))) {
+            if ((reader != null) && (docSelCounter > 0) && (docSelCounter < (selDocdirContent.size() - 1))) {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
@@ -2106,7 +2335,8 @@ public class MainGui {
                 reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
                 reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if (docSelCounter == 0 && reader != null) {
-                reader.setBeforeDocText("Reached Beginning of Text");;
+                reader.setBeforeDocText("Reached Beginning of Text");
+                ;
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
 
@@ -2131,7 +2361,7 @@ public class MainGui {
 
             docSelCounter = docSelCounter + 1;
             logger.debug("Docselcounter: " + docSelCounter);
-            if((reader != null) && (docSelCounter > 0 ) && (docSelCounter < (selDocdirContent.size() -1))) {
+            if ((reader != null) && (docSelCounter > 0) && (docSelCounter < (selDocdirContent.size() - 1))) {
                 reader.setBeforeDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter - 1)));
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
@@ -2140,7 +2370,8 @@ public class MainGui {
                 reader.setSelChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter), wDir));
                 reader.setAfterChunkLabel(Utilities.getRelFileName(selDocdirContent.get(docSelCounter + 1), wDir));
             } else if (docSelCounter == 0 && reader != null) {
-                reader.setBeforeDocText("Reached Beginning of Text");;
+                reader.setBeforeDocText("Reached Beginning of Text");
+                ;
                 reader.setSelectedDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter)));
                 reader.setAfterDocText(Utilities.readFileToString(selDocdirContent.get(docSelCounter + 1)));
 
@@ -2163,7 +2394,6 @@ public class MainGui {
         }
 
 
-
     }
 
     public void setSelReaderContent() {
@@ -2174,7 +2404,7 @@ public class MainGui {
         logger.debug("The Selected Doc File: " + theModel.getDocSearchFile(row).getFile());
 
 
-        if((reader != null) && (row > 0 ) && (row < (docSearchResTable.getRowCount() -1))) {
+        if ((reader != null) && (row > 0) && (row < (docSearchResTable.getRowCount() - 1))) {
             reader.setBeforeText(Utilities.readFileToString(theModel.getDocSearchFile(row - 1).getFile()));
             reader.setSelectedText(Utilities.readFileToString(theModel.getDocSearchFile(row).getFile()));
             reader.setAfterText(Utilities.readFileToString(theModel.getDocSearchFile(row + 1).getFile()));
@@ -2212,10 +2442,10 @@ public class MainGui {
                     return new File(current, name).isFile();
                 }
 
-        });
+            });
             logger.debug("File Array: " + dirContentArray.toString());
 
-            List <File> theFileList = new ArrayList<File>(Arrays.asList(dirContentArray));
+            List<File> theFileList = new ArrayList<File>(Arrays.asList(dirContentArray));
 
             logger.debug("File List: " + theFileList.toString());
 
@@ -2226,7 +2456,7 @@ public class MainGui {
                 String aString = Utilities.readFileToString(aFile);
 
                 theComplete.append(aString + System.getProperty("line.separator"));
-        }
+            }
             reader.setDocumentText(theComplete.toString());
             reader.setSelFullDocLabel(Utilities.getRelFileName(theParentFolder, wDir));
         }
@@ -2234,6 +2464,17 @@ public class MainGui {
             reader.setSearchTerms(getSelectedTermTableWords());
         }
 
+    }
+
+    public static void openWebpage(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /*
@@ -2349,10 +2590,10 @@ public class MainGui {
     }
     */
 
-    public void addRemoveItemToTopicSearchBoxTaskWithBar(ProgressBar bar,File aFile, Boolean add, boolean isTopicCorp) {
+    public void addRemoveItemToTopicSearchBoxTaskWithBar(ProgressBar bar, File aFile, Boolean add, boolean isTopicCorp) {
 
 
-        addRemoveItemToTopicSearchBoxTask task = new addRemoveItemToTopicSearchBoxTask(bar,aFile,add,isTopicCorp);
+        addRemoveItemToTopicSearchBoxTask task = new addRemoveItemToTopicSearchBoxTask(bar, aFile, add, isTopicCorp);
         logger.debug("Runs");
         task.execute();
 
@@ -2388,16 +2629,16 @@ public class MainGui {
                     selectTrainCorp.addItem(aFile.getName());
                     logger.debug("Added Item to Map: " + trainCorp.get(aFile.getName()).toString());
                     logger.debug("Added Item to Map - Mapsize: " + trainCorp.size());
-                } else if (!add && theFile != null){
+                } else if (!add && theFile != null) {
 
                     logger.debug("Removed Item from Map: " + aFile.toString());
                     logger.debug("Removed Item from Map - Mapsize: " + trainCorp.size());
 
                     File parent = new File(wDir + File.separator + topicFolder);
-                    File indexParent = new File (wDir + File.separator + SemanticParser.getLucIndexParentDirName());
-                    File indexFolder = new File (indexParent + File.separator + aFile.getName());
-                    File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
-                    File indexFileFolder = new File (indexFileParent + File.separator + aFile.getName());
+                    File indexParent = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                    File indexFolder = new File(indexParent + File.separator + aFile.getName());
+                    File indexFileParent = new File(wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder());
+                    File indexFileFolder = new File(indexFileParent + File.separator + aFile.getName());
 
                     logger.debug("Parentfolder: " + parent.toString());
                     logger.debug("Lucene Index Parent Folder: " + indexParent.toString() + " and Index Folder Path: " + indexFolder.toString());
@@ -2416,7 +2657,7 @@ public class MainGui {
                     //int result = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     //if (isIt && result == JOptionPane.YES_OPTION && isIndexIt && isIndexFileIt)
-                    if (isIt && isIndexIt && isIndexFileIt){
+                    if (isIt && isIndexIt && isIndexFileIt) {
 
                         System.out.printf("Delete this Path: " + aFile.toString());
 
@@ -2425,7 +2666,7 @@ public class MainGui {
                             FileUtils.deleteDirectory(indexFolder);
                             FileUtils.deleteDirectory(indexFileFolder);
 
-                        }catch (IOException e1) {
+                        } catch (IOException e1) {
                             JOptionPane.showMessageDialog(null, "Unable to delete Folder");
                         }
 
@@ -2443,16 +2684,16 @@ public class MainGui {
                     searchCorpComboBox.addItem(aFile.getName());
                     logger.debug("Added Item to Map: " + searchCorpusModel.get(aFile.getName()).toString());
                     logger.debug("Added Item to Map - Mapsize: " + searchCorpusModel.size());
-                } else if (!add && theFile != null){
+                } else if (!add && theFile != null) {
 
                     logger.debug("Removed Item from Map: " + aFile.toString());
                     logger.debug("Removed Item from Map - Mapsize: " + searchCorpusModel.size());
 
                     File parent = new File(wDir + File.separator + searchFolder);
-                    File indexParent = new File (wDir + File.separator + SemanticParser.getLucIndexParentDirName());
-                    File indexFolder = new File (indexParent + File.separator + aFile.getName());
-                    File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
-                    File indexFileFolder = new File (indexFileParent + File.separator + aFile.getName());
+                    File indexParent = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName());
+                    File indexFolder = new File(indexParent + File.separator + aFile.getName());
+                    File indexFileParent = new File(wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder());
+                    File indexFileFolder = new File(indexFileParent + File.separator + aFile.getName());
 
                     logger.debug("Parentfolder: " + parent.toString());
                     logger.debug("Lucene Index Parent Folder: " + indexParent.toString() + " and Index Folder Path: " + indexFolder.toString());
@@ -2475,7 +2716,7 @@ public class MainGui {
 
                         try {
                             FileUtils.deleteDirectory(aFile);
-                        }catch (IOException e1) {
+                        } catch (IOException e1) {
                             JOptionPane.showMessageDialog(null, "Unable to delete Folder");
                         }
 
@@ -2489,7 +2730,7 @@ public class MainGui {
 
             }
 
-           return null;
+            return null;
 
         }
 
@@ -2521,7 +2762,7 @@ public class MainGui {
         File[] theModels = theFolder.listFiles();
         if (theModels != null) {
 
-            for (File aFile : theModels){
+            for (File aFile : theModels) {
                 String ext = FilenameUtils.getExtension(aFile.toString());
                 String filename = FilenameUtils.getBaseName(aFile.toString());
 
@@ -2530,7 +2771,7 @@ public class MainGui {
                     String langPre = filename.split("-")[0];
                     String langSuf = filename.split("-")[1];
 
-                    if (langSuf.equals("sent")){
+                    if (langSuf.equals("sent")) {
                         trainSentModels.put(langPre, aFile);
                         logger.debug("Put to TrainSentModel:" + trainSentModels.get(langPre));
                     }
@@ -2539,9 +2780,9 @@ public class MainGui {
 
             }
 
-            if (!trainSentModels.isEmpty()){
+            if (!trainSentModels.isEmpty()) {
                 langModelsText.setText(String.valueOf(trainSentModels.keySet()));
-            }else {
+            } else {
                 langModelsText.setText("None");
             }
 
@@ -2568,9 +2809,8 @@ public class MainGui {
         selectTermweightComboBox.removeAllItems();
 
         File theCorpFolder = trainCorp.get(selectTrainCorp.getSelectedItem().toString());
-        File indexFileParent = new File (wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder() );
-        File indexFileFolder = new File (indexFileParent + File.separator + theCorpFolder.getName());
-
+        File indexFileParent = new File(wDir + File.separator + SemanticParser.getLuceneIndexFilesFolder());
+        File indexFileFolder = new File(indexFileParent + File.separator + theCorpFolder.getName());
 
 
         logger.debug("The CorpFolder: " + indexFileFolder);
@@ -2579,10 +2819,9 @@ public class MainGui {
 
         if (theIndexFiles != null) {
 
-            for (File aFile : theIndexFiles){
+            for (File aFile : theIndexFiles) {
                 String ext = FilenameUtils.getExtension(aFile.toString());
                 String filename = FilenameUtils.getBaseName(aFile.toString());
-
 
 
                 if (ext.equals("bin")) {
@@ -2594,7 +2833,7 @@ public class MainGui {
 
                     indexFilesModel.put(filename, aFile);
 
-                    if(termDocType.equals("term")) {
+                    if (termDocType.equals("term")) {
                         //logger.debug("Get Index in Searchmodellist: " + searchModelList.get(indexType).toString());
 
                         if (searchModelList.get(indexType) == null) {
@@ -2611,14 +2850,13 @@ public class MainGui {
                         logger.debug("The List: " + searchModelList.get(indexType).toString());
 
 
-                    logger.debug("Put to indexFilesModel:" + indexFilesModel.get(filename));
+                        logger.debug("Put to indexFilesModel:" + indexFilesModel.get(filename));
 
 
                     }
 
 
                 }
-
 
 
             }
@@ -2636,7 +2874,6 @@ public class MainGui {
         }
 
 
-
     }
 
     public File[] getSelectedSearchModelFiles() {
@@ -2651,7 +2888,7 @@ public class MainGui {
             String theTermSearchString = new String(selectIndexTypeComboBox.getSelectedItem() + "-term-" + selectTermweightComboBox.getSelectedItem());
             String theDocSearchString = new String(selectIndexTypeComboBox.getSelectedItem() + "-doc-" + selectTermweightComboBox.getSelectedItem());
 
-            if (!theTermSearchString.isEmpty() && !theDocSearchString.isEmpty()){
+            if (!theTermSearchString.isEmpty() && !theDocSearchString.isEmpty()) {
 
 
                 theFiles.add(indexFilesModel.get(theTermSearchString));
@@ -2659,10 +2896,6 @@ public class MainGui {
                 logger.debug("Return Files: " + theFiles.toString());
                 return theFiles.toArray(new File[theFiles.size()]);
             }
-
-
-
-
 
 
         }
@@ -2810,7 +3043,6 @@ public class MainGui {
                         }
 
 
-
                     }
                     addExistingSentModelsToMap();
                 } catch (SocketTimeoutException | SocketException e0) {
@@ -2864,7 +3096,7 @@ public class MainGui {
         trainTopicCorp task = new trainTopicCorp(bar, aCorpDir, aPosIndexRadius, indexType, termweightType, onlylucene);
         logger.debug("Runs");
 
-           task.execute();
+        task.execute();
     }
 
     class trainTopicCorp extends SwingWorker<Integer, Integer> {
@@ -2888,32 +3120,32 @@ public class MainGui {
         @Override
         public Integer doInBackground() {
 
-            SemanticParser sp = new SemanticParser(wDir,theCorpDir,thePosIndexRadius, bar);
+            SemanticParser sp = new SemanticParser(wDir, theCorpDir, thePosIndexRadius, bar);
 
             bar.setProgressBarIndeterminate(true);
 
             if (theOnlyLucene) {
 
-                    boolean success = sp.createLuceneIndexCorp();
-                    if (success) {
-                        logger.info("success lucene");
-
-                    }
-
-                } else {
-                    boolean success2 = sp.buildSemanticIndex(theIndexType,theTermweightType);
-
-                    if (success2) {
-                        logger.info("success semantic");
-
-                    }
+                boolean success = sp.createLuceneIndexCorp();
+                if (success) {
+                    logger.info("success lucene");
 
                 }
 
+            } else {
+                boolean success2 = sp.buildSemanticIndex(theIndexType, theTermweightType);
+
+                if (success2) {
+                    logger.info("success semantic");
+
+                }
+
+            }
 
 
             return null;
         }
+
         /*
          * Executed in event dispatching thread
          */
@@ -2962,10 +3194,8 @@ public class MainGui {
         private ProgressBar bar;
 
 
-
         public searchDocInTopicCorpTask(ProgressBar aBar) {
             this.bar = aBar;
-
 
 
         }
@@ -3013,7 +3243,7 @@ public class MainGui {
             //arguments.add("-minfrequency");
             //arguments.add("-maxnonalphabetchars");
             arguments.add("-termweight");
-            arguments.add(((String)selectTermweightComboBox.getSelectedItem()));
+            arguments.add(((String) selectTermweightComboBox.getSelectedItem()));
             //arguments.add("-docindexing");
             //arguments.add("incremental");
             //arguments.add("-trainingcycles");
@@ -3026,8 +3256,6 @@ public class MainGui {
             arguments.add(docvectorfile.toString());
             //arguments.add("Abraham");
             //arguments.add("Isaac");
-
-
 
 
             for (String aWord : theWords) {
@@ -3047,11 +3275,9 @@ public class MainGui {
             }
 
 
-
-
             if (theResult.size() > 0) {
                 logger.info("Search output follows ...\n");
-                for (SearchResult result: theResult) {
+                for (SearchResult result : theResult) {
 
                     File theFile = new File(result.getObjectVector().getObject().toString());
                     double percent = result.getScore() * 100;
@@ -3069,7 +3295,7 @@ public class MainGui {
 
 
             } else {
-                DocSearchFile theEntry = new DocSearchFile(" ",new File(emptyTable), new File(""));
+                DocSearchFile theEntry = new DocSearchFile(" ", new File(emptyTable), new File(""));
                 docSearchResModel.addDocFile(theEntry);
                 //JOptionPane.showMessageDialog(null, "No Results");
             }
@@ -3078,6 +3304,7 @@ public class MainGui {
             return null;
 
         }
+
         /*
          * Executed in event dispatching thread
          */
@@ -3112,10 +3339,8 @@ public class MainGui {
         private ProgressBar bar;
 
 
-
         public searchTermInTopicCorpTask(ProgressBar aBar) {
             this.bar = aBar;
-
 
 
         }
@@ -3128,7 +3353,6 @@ public class MainGui {
             if (termSearchResModel.getRowCount() != 0) {
                 termSearchResModel.setRowCount(0);
             }
-
 
 
             File termvectorfile = getSelectedSearchModelFiles()[0];
@@ -3153,7 +3377,7 @@ public class MainGui {
 
             ArrayList<String> arguments = new ArrayList<String>();
             arguments.add("-termweight");
-            arguments.add((String)selectTermweightComboBox.getSelectedItem());
+            arguments.add((String) selectTermweightComboBox.getSelectedItem());
             arguments.add("-luceneindexpath");
             arguments.add(theIndexFileFolder.toString());
             arguments.add("-numsearchresults");
@@ -3198,7 +3422,7 @@ public class MainGui {
 
             if (theResult.size() > 0) {
                 logger.info("Search output follows ...\n");
-                for (SearchResult result: theResult) {
+                for (SearchResult result : theResult) {
 
                     System.out.println(result.toSimpleString());
                     logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
@@ -3216,14 +3440,12 @@ public class MainGui {
 
             return null;
         }
+
         /*
          * Executed in event dispatching thread
          */
         @Override
         public void done() {
-
-
-
 
 
             logger.debug("Done");
@@ -3269,7 +3491,7 @@ public class MainGui {
         }
 
         @Override
-        public Void doInBackground() throws IOException{
+        public Void doInBackground() throws IOException {
             bar.setProgressBarIndeterminate(true);
 
             File theIndexFileFolder = new File(wDir + File.separator + SemanticParser.getLucIndexParentDirName() + File.separator + trainCorp.get(selectTrainCorp.getSelectedItem()).getName().toString());
@@ -3278,7 +3500,7 @@ public class MainGui {
 
             ArrayList<String> arguments = new ArrayList<String>();
             arguments.add("-termweight");
-            arguments.add(((String)selectTermweightComboBox.getSelectedItem()));
+            arguments.add(((String) selectTermweightComboBox.getSelectedItem()));
             arguments.add("-luceneindexpath");
             arguments.add(theIndexFileFolder.toString());
             arguments.add("-numsearchresults");
@@ -3310,25 +3532,25 @@ public class MainGui {
             //Get Selected Search Corpus:
             File searchCorpDir = searchCorpusModel.get(searchCorpComboBox.getSelectedItem().toString());
 
-           IOFileFilter filter = new IOFileFilter() {
-               @Override
-               public boolean accept(File file) {
-                   if (file.exists() && !file.isHidden()) {
-                       return true;
-                   } else {
-                       return false;
-                   }
-               }
+            IOFileFilter filter = new IOFileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    if (file.exists() && !file.isHidden()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
 
-               @Override
-               public boolean accept(File file, String s) {
-                   if (s.equals(".metadata.txt")) {
-                       return false;
-                   }else {
-                       return true;
-                   }
-               }
-           };
+                @Override
+                public boolean accept(File file, String s) {
+                    if (s.equals(".metadata.txt")) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            };
 
             Collection<File> theFiles = FileUtils.listFiles(searchCorpDir, filter, TrueFileFilter.INSTANCE);
 
@@ -3387,11 +3609,10 @@ public class MainGui {
                     }
 
 
-
                 }
 
 
-            } else if (selTextRadioButton.isSelected() && !searchTextArea.getText().isEmpty()){
+            } else if (selTextRadioButton.isSelected() && !searchTextArea.getText().isEmpty()) {
 
                 logger.debug("Compare Text with Search Corpus");
                 logger.debug("Compare Doc with Search Corpus");
@@ -3399,7 +3620,6 @@ public class MainGui {
                 String theSearchString = Utilities.removeQuoteFromString(searchTextArea.getText());
 
                 theSearchInputWordlist = Utilities.getWords(theSearchString);
-
 
 
                 for (File aFile : theFiles) {
@@ -3441,7 +3661,6 @@ public class MainGui {
                     }
 
 
-
                 }
 
             }
@@ -3450,8 +3669,8 @@ public class MainGui {
             if (theCompResult.size() > 0) {
                 logger.info("Search output follows ... " + theCompResult.size());
 
-                Comparator<SearchResult> comp = (r1, r2) -> Double.compare(r1.getScore(),r2.getScore());
-                Collections.sort(theCompResult,Collections.reverseOrder(comp));
+                Comparator<SearchResult> comp = (r1, r2) -> Double.compare(r1.getScore(), r2.getScore());
+                Collections.sort(theCompResult, Collections.reverseOrder(comp));
 
                 //theCompResult.stream().forEach(r -> logger.debug("the r:" + r.getScore()));
 
@@ -3471,7 +3690,6 @@ public class MainGui {
                 logger.debug("The Comp List: " + theCompResult.size());
 
 
-
                 for (SearchResult result : theTrimmedList) {
 
                     File theFile = new File(result.getObjectVector().getObject().toString());
@@ -3486,7 +3704,6 @@ public class MainGui {
                     logger.debug("toString: " + result.toString());
 
                     docSearchResModel.addDocFile(theEntry);
-
 
 
                 }
@@ -3516,7 +3733,7 @@ public class MainGui {
 
                 if (theTermResult.size() > 0) {
                     logger.info(" Term Search output follows ...\n");
-                    for (SearchResult result: theTermResult) {
+                    for (SearchResult result : theTermResult) {
 
                         System.out.println(result.toSimpleString());
                         logger.debug("Term ObjectVector: " + result.getObjectVector().getObject().toString());
@@ -3533,9 +3750,8 @@ public class MainGui {
                 }
 
 
-
             } else {
-                DocSearchFile theEntry = new DocSearchFile(" ",new File(emptyTable), new File(""));
+                DocSearchFile theEntry = new DocSearchFile(" ", new File(emptyTable), new File(""));
                 docSearchResModel.addDocFile(theEntry);
                 termSearchResModel.addRow(new Object[]{null, emptyTable});
                 //JOptionPane.showMessageDialog(null, "No Results");
@@ -3551,9 +3767,8 @@ public class MainGui {
             LuceneUtils luceneUtils = null;
 
 
-            VectorStoreRAM vecReader =null, elementalVecReader=null, semanticVecReader=null, predicateVecReader=null;
-            if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT) || flagConfig.searchtype().equals(Search.SearchType.BOUNDMINIMUM) || flagConfig.searchtype().equals(Search.SearchType.INTERSECTION) || flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE))
-            {
+            VectorStoreRAM vecReader = null, elementalVecReader = null, semanticVecReader = null, predicateVecReader = null;
+            if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT) || flagConfig.searchtype().equals(Search.SearchType.BOUNDMINIMUM) || flagConfig.searchtype().equals(Search.SearchType.INTERSECTION) || flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE)) {
                 elementalVecReader = new VectorStoreRAM(flagConfig);
                 semanticVecReader = new VectorStoreRAM(flagConfig);
                 predicateVecReader = new VectorStoreRAM(flagConfig);
@@ -3581,30 +3796,25 @@ public class MainGui {
                         + "so all query terms will have same weight.\n");
             }
 
-            Vector vec1=null;
-            Vector vec2=null;
+            Vector vec1 = null;
+            Vector vec2 = null;
 
-            if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT))
-            {
+            if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCT)) {
                 vec1 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[0]);
                 vec2 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
 
-            } else  if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE))
-            {
-                ArrayList<pitt.search.semanticvectors.vectors.Vector> vecs1 = CompoundVectorBuilder.getBoundProductQuerySubspaceFromString(
+            } else if (flagConfig.searchtype().equals(Search.SearchType.BOUNDPRODUCTSUBSPACE)) {
+                ArrayList<Vector> vecs1 = CompoundVectorBuilder.getBoundProductQuerySubspaceFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, args[0]);
                 vec2 = CompoundVectorBuilder.getBoundProductQueryVectorFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
 
 
-
                 return VectorUtils.compareWithProjection(vec2, vecs1);
 
-            }
-            else  if (flagConfig.searchtype().equals(Search.SearchType.INTERSECTION))
-            {
+            } else if (flagConfig.searchtype().equals(Search.SearchType.INTERSECTION)) {
 
                 vec1 = CompoundVectorBuilder.getBoundProductQueryIntersectionFromString(
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[0]);
@@ -3613,11 +3823,9 @@ public class MainGui {
                         flagConfig, elementalVecReader, semanticVecReader, predicateVecReader, luceneUtils, args[1]);
 
 
-
                 return vec1.measureOverlap(vec2);
 
-            }
-            else {
+            } else {
                 vec1 = CompoundVectorBuilder.getQueryVectorFromString(
                         vecReader, luceneUtils, flagConfig, args[0]);
                 vec2 = CompoundVectorBuilder.getQueryVectorFromString(
@@ -3627,11 +3835,8 @@ public class MainGui {
             }
 
 
-
             return vec1.measureOverlap(vec2);
         }
-
-
 
 
         /*
@@ -3717,8 +3922,6 @@ public class MainGui {
     //TODO Implement Project File and Defaults
 
 
-
-
     public void searchMatchTermOfSelDocTaskWithBar(ProgressBar bar) {
 
         if (!StringUtils.isNumeric(noOfSearchResultsText.getText())) {
@@ -3738,10 +3941,8 @@ public class MainGui {
         private ProgressBar bar;
 
 
-
         public searchMatchTermOfSelDocTask(ProgressBar aBar) {
             this.bar = aBar;
-
 
 
         }
@@ -3754,7 +3955,6 @@ public class MainGui {
             if (termSearchResModel.getRowCount() != 0) {
                 termSearchResModel.setRowCount(0);
             }
-
 
 
             File termvectorfile = getSelectedSearchModelFiles()[0];
@@ -3780,10 +3980,9 @@ public class MainGui {
 
             int row = docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow());
             logger.debug("The Matchterm row: " + row);
-            DocSearchModel theModel = (DocSearchModel)docSearchResTable.getModel();
+            DocSearchModel theModel = (DocSearchModel) docSearchResTable.getModel();
             File theFile = theModel.getDocFile(row).getFile();
             logger.debug("The Matchterm File: " + theFile.toString());
-
 
 
             ArrayList<String> arguments = new ArrayList<String>();
@@ -3861,6 +4060,7 @@ public class MainGui {
             */
             return null;
         }
+
         /*
          * Executed in event dispatching thread
          */
@@ -3891,7 +4091,6 @@ public class MainGui {
         }
 
 
-
         File termvectorfile = getSelectedSearchModelFiles()[0];
         File docvectorfile = getSelectedSearchModelFiles()[1];
         logger.debug("termfile: " + termvectorfile);
@@ -3915,10 +4114,9 @@ public class MainGui {
 
         int row = docSearchResTable.convertRowIndexToModel(docSearchResTable.getSelectedRow());
         logger.debug("The Matchterm row: " + row);
-        DocSearchModel theModel = (DocSearchModel)docSearchResTable.getModel();
+        DocSearchModel theModel = (DocSearchModel) docSearchResTable.getModel();
         File theFile = theModel.getDocFile(row).getFile();
         logger.debug("The Matchterm File: " + theFile.toString());
-
 
 
         ArrayList<String> arguments = new ArrayList<String>();
@@ -3932,7 +4130,6 @@ public class MainGui {
         arguments.add(termvectorfile.toString());
         arguments.add("-matchcase");
         arguments.add(theFile.toString());
-
 
 
         //arguments.add("-vectortype");
@@ -3976,37 +4173,35 @@ public class MainGui {
         }
 
         try {
-            pitt.search.semanticvectors.Search.main(args);
+            Search.main(args);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
         theResult = Search.runSearch(flagConfig);
-            logger.debug("The Match Result: " + theResult.size());
+        logger.debug("The Match Result: " + theResult.size());
 
-            if (theResult.size() > 0) {
-                logger.info("Search output follows ...\n");
-                for (SearchResult result: theResult) {
+        if (theResult.size() > 0) {
+            logger.info("Search output follows ...\n");
+            for (SearchResult result : theResult) {
 
-                    System.out.println(result.toSimpleString());
-                    logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
-                    logger.debug("Score: " + result.getScore());
-                    logger.debug("toString: " + result.toString());
-                    double percent = result.getScore() * 100;
-                    String theScore = new DecimalFormat("#.###").format(percent);
+                System.out.println(result.toSimpleString());
+                logger.debug("ObjectVector: " + result.getObjectVector().getObject().toString());
+                logger.debug("Score: " + result.getScore());
+                logger.debug("toString: " + result.toString());
+                double percent = result.getScore() * 100;
+                String theScore = new DecimalFormat("#.###").format(percent);
 
-                    termSearchResModel.addRow(new Object[]{theScore, result.getObjectVector().getObject().toString()});
-                }
-
-            } else {
-                termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+                termSearchResModel.addRow(new Object[]{theScore, result.getObjectVector().getObject().toString()});
             }
+
+        } else {
+            termSearchResModel.addRow(new Object[]{null, "No Search Results..."});
+        }
 
 
     }
-
-
 
 
 }

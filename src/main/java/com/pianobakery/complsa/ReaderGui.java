@@ -1,6 +1,11 @@
 package com.pianobakery.complsa;
 
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -56,7 +61,7 @@ public class ReaderGui {
     private JLabel selFullDocLabel;
     private JButton formatTextButton;
     private JTextField textField1;
-    private static String[] viewTypeCombo = {"Result Splitscreen","Document Splitscreen","Document"};
+    private static String[] viewTypeCombo = {"Result Splitscreen", "Document Splitscreen", "Document"};
     private MainGui theMainGui;
     private String[] searchTerms;
     private List<JTextPane> allTextPanes = new ArrayList<JTextPane>();
@@ -115,6 +120,7 @@ public class ReaderGui {
     public boolean getFrameVisible() {
         return frame.isVisible();
     }
+
     public void setFrameVisible(boolean aBool) {
         frame.setVisible(aBool);
 
@@ -130,7 +136,7 @@ public class ReaderGui {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         //frame.setMaximumSize(screenSize);
-        Dimension thePanelDim = new Dimension(1024,700);
+        Dimension thePanelDim = new Dimension(1024, 700);
         logger.debug("Screen height: " + screenSize.height);
         logger.debug("Screen width: " + screenSize.width);
 
@@ -142,7 +148,7 @@ public class ReaderGui {
             logger.debug("Screen width is smaller");
             thePanelDim.setSize(screenSize.width,thePanelDim.height);
         }*/
-        thePanelDim.setSize(1024,screenSize.height/1.125);
+        thePanelDim.setSize(1024, screenSize.height / 1.125);
 
         //frame.setMinimumSize(thePanelDim);
         frame.setLocationRelativeTo(null);
@@ -181,37 +187,34 @@ public class ReaderGui {
         });
 
 
-
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + W");
         frame.getRootPane().getActionMap().put("CTRL + W", closeWindow());
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),"CTRL + S");
+                KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + S");
         frame.getRootPane().getActionMap().put("CTRL + S", toggleViewAction());
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke('T', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),"CTRL + T");
+                KeyStroke.getKeyStroke('T', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "CTRL + T");
         frame.getRootPane().getActionMap().put("CTRL + T", formatFontAction());
 
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(38, 0),"UP");
+                KeyStroke.getKeyStroke(38, 0), "UP");
         frame.getRootPane().getActionMap().put("UP", selUpAction());
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(40, 0),"DOWN");
+                KeyStroke.getKeyStroke(40, 0), "DOWN");
         frame.getRootPane().getActionMap().put("DOWN", selDownAction());
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(37, 0),"LEFT");
+                KeyStroke.getKeyStroke(37, 0), "LEFT");
         frame.getRootPane().getActionMap().put("LEFT", docUpAction());
 
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(39, 0),"RIGHT");
+                KeyStroke.getKeyStroke(39, 0), "RIGHT");
         frame.getRootPane().getActionMap().put("RIGHT", docDownAction());
-
-
 
 
         allTextPanes.add(beforeText);
@@ -226,25 +229,24 @@ public class ReaderGui {
     }
 
 
-
-
     public ReaderGui(DocSearchModel theModel, MainGui theMainGui) {
-            this.theModel = theModel;
-            this.theMainGui = theMainGui;
+        this.theModel = theModel;
+        this.theMainGui = theMainGui;
 
+        $$$setupUI$$$();
         if (theModel != null) {
             theMainGui.setDocReaderContent(0);
         }
 
 
-            prevButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    selectionUpMethod();
+        prevButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionUpMethod();
 
 
-                }
-            });
+            }
+        });
 
 
         nextButton.addActionListener(new ActionListener() {
@@ -333,13 +335,14 @@ public class ReaderGui {
 
                 formatFontMethod();
 
-            }});
+            }
+        });
 
         if (searchTerms != null) {
             setHighliter(highlightSelectedTermsCheckBox.isSelected());
         }
 
-        Font font = new Font("Arial",Font.PLAIN, 12);
+        Font font = new Font("Arial", Font.PLAIN, 12);
         logger.debug("Default Font : " + font);
         beforeText.setFont(font);
         selectedText.setFont(font);
@@ -484,7 +487,7 @@ public class ReaderGui {
 
     }
 
-    private void toggleView(){
+    private void toggleView() {
 
         CardLayout c1 = new CardLayout();
         c1 = (CardLayout) (cardPanel.getLayout());
@@ -556,7 +559,7 @@ public class ReaderGui {
 
 
         for (JTextPane aPane : allTextPanes) {
-            if(setIt) {
+            if (setIt) {
                 Highlighter highlighter = aPane.getHighlighter();
                 Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
                 highlighter.removeAllHighlights();
@@ -571,7 +574,7 @@ public class ReaderGui {
                     for (IndexWrapper anIndex : indexes) {
 
                         try {
-                            highlighter.addHighlight(anIndex.getStart(), anIndex.getEnd(), painter );
+                            highlighter.addHighlight(anIndex.getStart(), anIndex.getEnd(), painter);
                         } catch (BadLocationException e) {
                             e.printStackTrace();
                         }
@@ -580,7 +583,7 @@ public class ReaderGui {
 
                 }
 
-            }else {
+            } else {
                 Highlighter highlighter = aPane.getHighlighter();
                 highlighter.removeAllHighlights();
             }
@@ -589,20 +592,17 @@ public class ReaderGui {
         }
 
 
-
-
-
     }
 
-    public List<IndexWrapper>findIndexesInTextForKeyWord(String text, String keyword) {
+    public List<IndexWrapper> findIndexesInTextForKeyWord(String text, String keyword) {
 
-        String regex = "(?i)\\b"+keyword+"\\b";
+        String regex = "(?i)\\b" + keyword + "\\b";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
         List<IndexWrapper> wrappers = new ArrayList<IndexWrapper>();
 
-        while(matcher.find() == true){
+        while (matcher.find() == true) {
             int end = matcher.end();
             int start = matcher.start();
             IndexWrapper wrapper = new IndexWrapper(start, end);
@@ -666,8 +666,127 @@ public class ReaderGui {
         this.viewType = new JComboBox(viewTypeCombo);
 
 
-
         // TODO: place custom component creation code here
     }
 
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        createUIComponents();
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        cardPanel = new JPanel();
+        cardPanel.setLayout(new CardLayout(0, 0));
+        rootPanel.add(cardPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        splitSelPanel = new JPanel();
+        splitSelPanel.setLayout(new FormLayout("fill:max(m;200px):grow", "fill:22px:noGrow,top:3dlu:noGrow,fill:max(m;20px):grow,top:3dlu:noGrow,center:22px:noGrow,top:3dlu:noGrow,fill:max(m;20px):grow,top:3dlu:noGrow,center:22px:noGrow,top:3dlu:noGrow,fill:max(m;20px):grow"));
+        cardPanel.add(splitSelPanel, "splitSelPanel");
+        final JScrollPane scrollPane1 = new JScrollPane();
+        CellConstraints cc = new CellConstraints();
+        splitSelPanel.add(scrollPane1, cc.xy(1, 7, CellConstraints.FILL, CellConstraints.FILL));
+        selectedText = new JTextPane();
+        selectedText.setEditable(false);
+        scrollPane1.setViewportView(selectedText);
+        final JScrollPane scrollPane2 = new JScrollPane();
+        splitSelPanel.add(scrollPane2, cc.xy(1, 11, CellConstraints.FILL, CellConstraints.FILL));
+        afterText = new JTextPane();
+        afterText.setEditable(false);
+        scrollPane2.setViewportView(afterText);
+        afterSelLabel = new JLabel();
+        afterSelLabel.setText("Label");
+        splitSelPanel.add(afterSelLabel, cc.xy(1, 9));
+        beforeSelLabel = new JLabel();
+        beforeSelLabel.setText("Label");
+        splitSelPanel.add(beforeSelLabel, cc.xy(1, 1));
+        selLabel = new JLabel();
+        selLabel.setText("Label");
+        splitSelPanel.add(selLabel, cc.xy(1, 5));
+        final JScrollPane scrollPane3 = new JScrollPane();
+        splitSelPanel.add(scrollPane3, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
+        beforeText = new JTextPane();
+        beforeText.setEditable(false);
+        scrollPane3.setViewportView(beforeText);
+        splitDocPanel = new JPanel();
+        splitDocPanel.setLayout(new FormLayout("fill:max(d;200px):grow", "center:22px:noGrow,top:3dlu:noGrow,fill:max(m;20px):grow,top:3dlu:noGrow,center:22px:noGrow,top:3dlu:noGrow,fill:max(m;20px):grow,top:3dlu:noGrow,center:22px:noGrow,top:3dlu:noGrow,fill:max(m;20px):grow"));
+        cardPanel.add(splitDocPanel, "splitDocPanel");
+        final JScrollPane scrollPane4 = new JScrollPane();
+        splitDocPanel.add(scrollPane4, cc.xy(1, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
+        selectedDocText = new JTextPane();
+        selectedDocText.setEditable(false);
+        scrollPane4.setViewportView(selectedDocText);
+        final JScrollPane scrollPane5 = new JScrollPane();
+        splitDocPanel.add(scrollPane5, cc.xy(1, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
+        afterDocText = new JTextPane();
+        afterDocText.setEditable(false);
+        scrollPane5.setViewportView(afterDocText);
+        selChunkLabel = new JLabel();
+        selChunkLabel.setText("Label");
+        splitDocPanel.add(selChunkLabel, cc.xy(1, 5));
+        afterChunkLabel = new JLabel();
+        afterChunkLabel.setText("Label");
+        splitDocPanel.add(afterChunkLabel, cc.xy(1, 9));
+        beforeChunkLabel = new JLabel();
+        beforeChunkLabel.setText("Label");
+        splitDocPanel.add(beforeChunkLabel, cc.xy(1, 1));
+        final JScrollPane scrollPane6 = new JScrollPane();
+        splitDocPanel.add(scrollPane6, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+        beforeDocText = new JTextPane();
+        beforeDocText.setEditable(false);
+        scrollPane6.setViewportView(beforeDocText);
+        fullDocPanel = new JPanel();
+        fullDocPanel.setLayout(new FormLayout("fill:d:grow", "center:22px:noGrow,top:3dlu:noGrow,center:d:grow"));
+        cardPanel.add(fullDocPanel, "fullDocPanel");
+        final JScrollPane scrollPane7 = new JScrollPane();
+        fullDocPanel.add(scrollPane7, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
+        fullTextPane = new JTextPane();
+        fullTextPane.setEditable(false);
+        scrollPane7.setViewportView(fullTextPane);
+        selFullDocLabel = new JLabel();
+        selFullDocLabel.setText("Label");
+        fullDocPanel.add(selFullDocLabel, cc.xy(1, 1));
+        buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(m;100px):noGrow,left:max(m;40px):grow,fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow", "center:34px:noGrow,center:34px:noGrow,center:34px:noGrow"));
+        rootPanel.add(buttonPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        buttonPanel.add(spacer1, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+        highlightSelectedTermsCheckBox = new JCheckBox();
+        highlightSelectedTermsCheckBox.setSelected(true);
+        highlightSelectedTermsCheckBox.setText("Highlight selected Terms");
+        buttonPanel.add(highlightSelectedTermsCheckBox, cc.xy(13, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
+        buttonPanel.add(viewType, cc.xyw(1, 3, 4));
+        toggleViewButton = new JButton();
+        toggleViewButton.setText("Toggle View");
+        buttonPanel.add(toggleViewButton, cc.xy(3, 2));
+        prevButton = new JButton();
+        prevButton.setText("Selection Up");
+        buttonPanel.add(prevButton, cc.xy(9, 1));
+        documentUpButton = new JButton();
+        documentUpButton.setEnabled(false);
+        documentUpButton.setText("Prev Doc Chunk");
+        buttonPanel.add(documentUpButton, cc.xy(7, 2));
+        nextButton = new JButton();
+        nextButton.setText("Selection Down");
+        buttonPanel.add(nextButton, cc.xy(9, 3));
+        documentDownButton = new JButton();
+        documentDownButton.setEnabled(false);
+        documentDownButton.setText("Next Doc Chunk");
+        buttonPanel.add(documentDownButton, cc.xy(11, 2));
+        final Spacer spacer2 = new Spacer();
+        buttonPanel.add(spacer2, cc.xy(13, 2, CellConstraints.FILL, CellConstraints.DEFAULT));
+        formatTextButton = new JButton();
+        formatTextButton.setText("Format Text");
+        buttonPanel.add(formatTextButton, cc.xy(13, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return rootPanel;
+    }
 }
