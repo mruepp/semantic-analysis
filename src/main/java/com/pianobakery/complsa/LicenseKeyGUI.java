@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -535,6 +537,11 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
 
     private void buyButtonActionPerformed(ActionEvent evt) {
         System.out.println("Buying");
+        try {
+            openWebpage(new URI("http://www.oyonoko.com/semanticsearch/buy"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     private void  useTrialKeyButtonActionPerformed(ActionEvent evt){
@@ -766,6 +773,17 @@ public class LicenseKeyGUI extends javax.swing.JDialog {
         activatejButton.setEnabled(false);
         changeProductKeyjButton.setEnabled(false);
     }//GEN-LAST:event_activatejButtonActionPerformed
+
+    public static void openWebpage(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 

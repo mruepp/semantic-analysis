@@ -18,7 +18,7 @@ public class Disclaimer {
         public static String getProconsult(){
 
                 return  "       Copyright 2015 Proconsult AG All rights reserved.\n" +
-                        "       Version 1.0, August 2015\n" +
+                        "       Version 0.9, August 2015\n" +
                         "       http://www.oyonoko.com/semanticsearch/license\n" +
                         "\n" +
                         "       We thank the Semantic Vectors Project at the University of Pittburgh\n" +
