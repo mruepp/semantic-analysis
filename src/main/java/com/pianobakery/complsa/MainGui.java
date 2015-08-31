@@ -139,6 +139,8 @@ public class MainGui {
     private static String[] indexType = {"Standard", "LSA", "Positional"};
     private static String[] termweights = {"None", "IDF", "LOGENTROPY", "SQRT"};
     private static String emptyTable = "No Search Result...";
+    private static String helpURL = "http://www.oyonoko.com/semanticsearch/help";
+    private static String updateURL = "http://www.oyonoko.com/semanticsearch/download";
 
 
     private static JMenuItem newAction = new JMenuItem("New Folder");
@@ -1533,7 +1535,7 @@ public class MainGui {
         //Get file from resources folder
 
         try {
-            openWebpage(new URI("http://www.oyonoko.com/semanticsearch/help"));
+            openWebpage(new URI(helpURL));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -1545,7 +1547,7 @@ public class MainGui {
         //Get file from resources folder
 
         try {
-            openWebpage(new URI("http://www.oyonoko.com/semanticsearch/software"));
+            openWebpage(new URI(updateURL));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -3926,8 +3928,6 @@ public class MainGui {
 
 
     //TODO Implement OCR
-
-    //TODO Implement Buy button
 
     //TODO Implement Help and Buy Open Internet Browser
 

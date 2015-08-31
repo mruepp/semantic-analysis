@@ -21,7 +21,8 @@ public class Disclaimer {
                         "       Version 0.9, August 2015\n" +
                         "       http://www.oyonoko.com/semanticsearch/license\n" +
                         "\n" +
-                        "       We thank the Semantic Vectors Project at the University of Pittburgh\n" +
+                        "       We thank the Semantic Vectors the SemanticVectors AUTHORS\n" +
+                        "       (see https://github.com/semanticvectors/semanticvectors)\n" +
                         "       and the Apache Project!\n"+
                         "-------------------------------------------------------------------\n" +
                         "-------------------------------------------------------------------\n" +
