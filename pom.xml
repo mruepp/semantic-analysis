@@ -205,7 +205,7 @@
                 <plugin>
                     <groupId>com.akathist.maven.plugins.launch4j</groupId>
                     <artifactId>launch4j-maven-plugin</artifactId>
-                    <version>1.7.7</version>
+                    <version>1.7.8</version>
                     <executions>
                         <execution>
                             <id>l4j-clui</id>
@@ -227,8 +227,10 @@
                                     <minVersion>1.8.0</minVersion>
                                     <path>../jre</path>
                                     <bundledJre64Bit>true</bundledJre64Bit>
+                                    <bundledJreAsFallback>false</bundledJreAsFallback>
                                     <jdkPreference>preferJre</jdkPreference>
                                     <maxHeapPercent>80</maxHeapPercent>
+                                    <runtimeBits>64/32</runtimeBits>
                                 </jre>
                                 <versionInfo>
                                     <fileVersion>1.0.0.0</fileVersion>
