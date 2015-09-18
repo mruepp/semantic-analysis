@@ -170,9 +170,9 @@
                         <execution>
                             <phase>package</phase>
                             <configuration>
-                                <tasks>
+                                <target>
                                     <mkdir dir="target/staging"/>
-                                </tasks>
+                                </target>
                             </configuration>
                             <goals>
                                 <goal>run</goal>
@@ -306,14 +306,14 @@
                             <execution>
                                 <phase>package</phase>
                                 <configuration>
-                                    <tasks>
+                                    <target>
                                         <exec executable="hdiutil">
                                             <arg value="create"/>
                                             <arg value="-srcfolder"/>
                                             <arg value="${project.build.directory}/${project.artifactId}-${project.version}"/>
                                             <arg value="${project.build.directory}/Semantic Search.dmg"/>
                                         </exec>
-                                    </tasks>
+                                    </target>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>
