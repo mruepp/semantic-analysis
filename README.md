@@ -25,6 +25,6 @@ Thanks!
 * If you want to contribute in any way, please clone, branch and create a pull request.
 
 
-### Who do I talk to? ###
+### Support and Issues ###
 
-* Repo owner or admin
+* Please report Issues with the Issue Tracker
