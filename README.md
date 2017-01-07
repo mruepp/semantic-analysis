@@ -13,8 +13,9 @@ Thanks!
 
 ### Download Applications ###
 
-| OSX |
-| https://www.dropbox.com/s/idt8lq89b2mibjo/Semantic%20Search.dmg?dl=0 |
+[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
+| [OSX](https://www.dropbox.com/s/idt8lq89b2mibjo/Semantic%20Search.dmg?dl=0 "OSX") | [JAR](https://www.dropbox.com/s/rhdboy7u7jg4pky/Semantic%20Search.jar?dl=0 "JAR")
+
 
 ### How do I get set up with the sourcecode? ###
 
