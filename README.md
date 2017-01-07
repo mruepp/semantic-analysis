@@ -1,6 +1,7 @@
 # README #
 
-This is a GUI Version of Semantic Analysis
+Semantic Analyis is a Java GUI Application to analyse and compare large amounts of text on a semantic level. It includes a reader for comparing text snippets with the semantic search phrase, a word highlighting feature and analyzer/stemmer from lucene. It contains code from the project semantic vectors. Thanks for the work, Dominic Widdows and Team:
+https://github.com/semanticvectors/semanticvectors
 
 ### What is this repository for? ###
 
