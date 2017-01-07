@@ -19,10 +19,11 @@ public class Disclaimer {
 
                 return  "       Copyright 2015 Michael Ruepp All rights reserved.\n" +
                         "       Version 0.9, August 2015\n" +
-                        "       http://www.oyonoko.com/semanticsearch/license\n" +
+                        "       https://bitbucket.org/mruepp/semantic-analysis\n" +
+                        "       email: mail-semantic@oyonoko.com\n" +
                         "\n" +
                         "       We thank the Semantic Vectors the SemanticVectors AUTHORS\n" +
-                        "       (see https://github.com/semanticvectors/semanticvectors)\n" +
+                        "       (see https://bitbucket.org/mruepp/semantic-analysis)\n" +
                         "       and the Apache Project!\n"+
                         "-------------------------------------------------------------------\n" +
                         "-------------------------------------------------------------------\n" +
