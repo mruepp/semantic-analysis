@@ -21,11 +21,8 @@ This Software is non profit and will be. If you like to donate:
 
 ### Contribution guidelines ###
 
-* If you want to contribute in any way, please be welcome
-* Code review
-* Other guidelines
+* If you want to contribute in any way, please clone, branch and create a pull request.
 
 ### Who do I talk to? ###
 
 * Repo owner or admin
-* Other community or team contact
