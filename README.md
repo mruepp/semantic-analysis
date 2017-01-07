@@ -11,7 +11,12 @@ This Software is non profit and will be. If you like to donate, please use the b
 
 Thanks!
 
-### How do I get set up? ###
+### Download Applications ###
+
+| OSX |
+| https://www.dropbox.com/s/idt8lq89b2mibjo/Semantic%20Search.dmg?dl=0 |
+
+### How do I get set up with the sourcecode? ###
 
 * Clone the repository
 * Open with IDEA Intellij
