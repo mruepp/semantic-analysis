@@ -6,7 +6,6 @@ import com.license4j.License;
 import com.license4j.ValidationStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,25 +15,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xml.sax.SAXException;
-import pitt.search.semanticvectors.Search;
 import pitt.search.semanticvectors.*;
-import pitt.search.semanticvectors.vectors.*;
 import pitt.search.semanticvectors.vectors.Vector;
+import pitt.search.semanticvectors.vectors.VectorUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -579,7 +574,7 @@ public class MainGui {
         searchSelGroup.add(selTextRadioButton);
         searchSelGroup.add(selDocRadioButton);
 
-        licenseKeyGUI = new LicenseKeyGUI(frame, true);
+        //licenseKeyGUI = new LicenseKeyGUI(frame, true);
 
         //Added to get the docSearchTable the focus when opening the Reader without selecting something so up down button will work
         frame.addWindowFocusListener(new WindowAdapter() {

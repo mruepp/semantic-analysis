@@ -17,7 +17,7 @@ public class Disclaimer {
 
         public static String getProconsult(){
 
-                return  "       Copyright 2015 Proconsult AG All rights reserved.\n" +
+                return  "       Copyright 2015 Michael Ruepp All rights reserved.\n" +
                         "       Version 0.9, August 2015\n" +
                         "       http://www.oyonoko.com/semanticsearch/license\n" +
                         "\n" +
