@@ -23,7 +23,7 @@ Thanks!
 * Import Maven Dependencies/Enable Auto Import
 * Go to "Maven Project" Tab and enable OSX/Windows and run "package"
 * You find the Packages under semantic-analysis/target
-* Copy the App from the dmg to /Applications on OSX, run the Installer jar on Windows.
+* Copy the App from the dmg to /Applications on OSX, run the Installer jar on Windows. On other Platforms, download the JAR Zip, unzip and run in the unzipped folder: `java -jar Semantic Search.jar` 
 
 ### Contribution guidelines ###
 
