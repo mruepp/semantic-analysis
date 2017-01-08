@@ -13,7 +13,7 @@ Thanks!
 
 ### Download Applications ###
 
-| [OSX](https://www.dropbox.com/s/idt8lq89b2mibjo/Semantic%20Search.dmg?dl=1 "OSX") | [Windows Installer](https://www.dropbox.com/s/m1ypcxwewgapahx/Semantic%20Search-installer.jar?dl=1 "Windows Installer") |
+| [OSX](https://www.dropbox.com/s/idt8lq89b2mibjo/Semantic%20Search.dmg?dl=1 "OSX") | [Windows Installer](https://www.dropbox.com/s/m1ypcxwewgapahx/Semantic%20Search-installer.jar?dl=1 "Windows Installer") | [JAR Zip](https://www.dropbox.com/s/tqoe0rhztln8epk/Semantic%20Search_jar.zip?dl=1 "JAR Zip") |
 
 
 ### How do I get set up with the sourcecode? ###
